@@ -15,3 +15,6 @@ npm start
 ```
 
 6. And then go to htpp://localhost:3000
+
+### Pushing and Pulling ;)
+Please please please dont push to master. Make a branch with your FIRST NAME, or just fork this repo, and make changes and then submit a PR to daddy.
