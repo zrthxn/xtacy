@@ -10,15 +10,12 @@ const homepage = express();
 
 const PORT = process.env.PORT || 3000;
 
-homepage.listen(PORT, ()=>{
-    console.log("SERVER :: Initialized :: Listening on PORT : ", PORT);
-});
+// =====================================
 
 homepage.use( express.static(path.join(__dirname, 'homepage')) );
-
 homepage.set('views', path.join(__dirname, 'homepage'));
 homepage.set('view engine', 'hbs');
-homepage.engine('hbs', handle({
+homepage.engine('hbs', hbs({
     defaultLayout: 'main',
     extname: 'hbs',
     layoutsDir: __dirname + '/homepage/layouts',
@@ -27,8 +24,12 @@ homepage.engine('hbs', handle({
     ]
 }));
 
+homepage.listen(PORT, ()=>{
+    console.log("SERVER :: Initialized :: Listening on PORT : ", PORT);
+});
+
 // ROUTER ===========================
 
 homepage.get('/', (req, res)=>{
-    res.sendFile( path.resolve(__dirname, 'homepage', 'index.html') );
+    res.render('index', { title: 'Home' });
 });
