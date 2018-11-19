@@ -6,30 +6,32 @@
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
-const homepage = express();
 
 const PORT = process.env.PORT || 3000;
+const __domain = require('config.json').domain || 'encomium.in';
 
-// =====================================
+const app = express();
+const homepage = express();
 
-homepage.use( express.static(path.join(__dirname, 'homepage')) );
-homepage.set('views', path.join(__dirname, 'homepage'));
-homepage.set('view engine', 'hbs');
+homepage.use( express.static( path.join(__dirname, 'homepage') ) )
+homepage.set('views', path.join(__dirname, 'homepage'))
+homepage.set('view engine', 'hbs')
 homepage.engine('hbs', hbs({
     defaultLayout: 'main',
     extname: 'hbs',
-    layoutsDir: __dirname + '/homepage/layouts',
-    partialsDir  : [
-        __dirname + '/homepage/partials',
+    layoutsDir: __dirname + '\\homepage\\layouts',
+    partialsDir: [
+        __dirname + '\\homepage\\partials'
     ]
-}));
+}))
 
-homepage.listen(PORT, ()=>{
-    console.log("SERVER :: Initialized :: Listening on PORT : ", PORT);
-});
+app.use(vhost('' + __domain, homepage))
+app.use(vhost('www.' +  __domain, homepage))
 
-// ROUTER ===========================
+// =============================================================== //
+// ROUTING ----------------------------------------------- ROUTING //
+// =============================================================== //
 
-homepage.get('/', (req, res)=>{
-    res.render('index', { title: 'Home' });
-});
+homepage.get('/', (req,res)=>{
+    res.render('index', { 'title' : 'HOME' });
+})
