@@ -9,15 +9,19 @@ const path = require('path');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
 
+const app = express();
+const homepage = express();
+
 const PORT = process.env.PORT || 3000;
 const ServerConfig = require('./config.json');
 const __domain = require('./config.json').domain;
 
-const firebase = require('./util/Database').firebase;
+const Security = require('./util/Security');
 
-const app = express();
-const homepage = express();
-
+homepage.use(bodyParser.json())
+homepage.use(bodyParser.urlencoded({ extended: true }))
+homepage.use(express.json())
+homepage.use(express.urlencoded({ extended: true }))
 homepage.use( express.static( path.join(__dirname, 'homepage') ) )
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -29,11 +33,6 @@ homepage.engine('hbs', hbs({
         __dirname + '\\homepage\\partials'
     ]
 }))
-
-homepage.use(bodyParser.json())
-homepage.use(bodyParser.urlencoded({ extended: true }))
-homepage.use(express.json())
-homepage.use(express.urlencoded({ extended: true }))
 
 // app.use(vhost(__domain, homepage))
 // app.use(vhost('www.' +  __domain, homepage))
@@ -50,37 +49,25 @@ homepage.listen(PORT, ()=>{
 // =============================================================== //
 
 homepage.get('/', (req,res)=>{
-    res.render('index', { 'title' : 'HOME' });
-})
+    res.render('index', { 'title' : 'HOME' })
+});
 
-// == GET Firebase Credentials == //
 homepage.get('/_secu/firebase/:mode/', (req,res)=>{
+    // == GET Firebase Credentials == //
     if(req.params.mode==='GET'){
-        res.json(ServerConfig.firebase);
+        res.json(ServerConfig.firebase)
+    } else {
+        res.send(500)
     }
-})
+});
 
-// == CSRF Token Validation == //
 homepage.post('/_secu/csrtoken/', (req,res)=>{
-    var key = req.body.key, token = req.body.token;
-    // firestore.collection('csrf-tokens').where('key', '==', key)
-    //     .get()
-    //     .then((query)=>{
-    //             query.forEach((doc)=>{
-    //                 // if (result.data().token===token && result[0].id===key)
-    //                     res.json({ 'validation' : true });
-    //                 // else
-    //                 //     res.json({ 'validation' : false });
-    //                 console.log(doc.id, " => ", doc.data());
-    //             });
-    //     }).catch((e)=>{
-    //         console.log(e);
-    //     })
-
-    firebase.database().ref('csrf-tokens/'+key)
-        .once('value', (csrf_token)=>{
-            if (csrf_token.val()===token)
-                res.json({ 'validation' : true });
-            else res.json({ 'validation' : false });
+    // == CSRF Token Validation == //
+    Security.validateCSRFTokens(req.body.key, req.body.token)
+        .then((result)=>{
+            res.json({ validation : result })
+        }).catch((error)=>{
+            console.error(error)
+            res.send(500)
         })
 });
