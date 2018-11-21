@@ -1,6 +1,4 @@
 <link rel="stylesheet" type="text/css" media="screen" href="static/css/Homepage.css">
-<script src="./static/js/database.js"></script>
-<script src="./static/js/config.js"></script>
 {{!------ ==== PAGE ==== ------}}
 
 {{> header }}
@@ -11,22 +9,6 @@
         
     </div>
 </section>
-
-<script>
-    window.onload = () => {
-        validateToken().then((r)=>{
-            if (r==='CSR_TOKEN_VALID') {
-                generateSecurityFluff(4);
-                console.log('SW Tokens Verified');
-            }
-        }).catch((e)=>{
-            if (e==='CSR_TOKEN_INVALID') {
-                alert('Security Check Failed. You may be on a maliscious site!');
-                window.location = '/';
-            } 
-        });
-    }
-</script>
 {{!-- END PAGE CONTENT --}}
 
 {{> footer }}

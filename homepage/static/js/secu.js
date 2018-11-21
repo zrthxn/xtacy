@@ -15,7 +15,7 @@ function validateToken() {
     return new Promise((resolve, reject)=>{
         //validation from server
         const valReq = new XMLHttpRequest();
-        valReq.open('POST', 'http://xtacy.org:3000/_secu/csrtoken/', true);
+        valReq.open('POST', '/_secu/csrtoken/', true);
         valReq.setRequestHeader('Content-Type', 'application/json');
         valReq.send(JSON.stringify({ "key" : key, "token" : token }));
         valReq.onreadystatechange = () => {

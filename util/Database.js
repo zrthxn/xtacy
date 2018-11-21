@@ -1,13 +1,14 @@
-const firebase = require('../node_modules/firebase/');
+const firebase = require('../node_modules/firebase');
 const DatabaseConfig = require('../config.json');
 
 firebase.initializeApp(DatabaseConfig.firebase);
+exports.default = firebase;
 
-// const firestore = firebase.firestore();
-// firestore.settings({ timestampsInSnapshots: true });
+const database = firebase.database();
+exports.database = database;
 
-// exports.firestore = firestore;
-exports.firebase = firebase;
+const firestore = firebase.firestore().settings({ timestampsInSnapshots: true });
+exports.firestore = firestore;
 
 /**
 * @author Alisamar Husain
