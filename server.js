@@ -35,9 +35,13 @@ homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
 
-app.use(vhost(__domain, homepage))
-app.use(vhost('www.' +  __domain, homepage))
-app.listen(PORT, ()=>{
+// app.use(vhost(__domain, homepage))
+// app.use(vhost('www.' +  __domain, homepage))
+// app.listen(PORT, ()=>{
+//     console.log('\tServer Running :: Virtual Host');
+// })
+
+homepage.listen(PORT, ()=>{
     console.log('\tServer Running');
 })
 
