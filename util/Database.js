@@ -22,6 +22,5 @@ exports.firestore = firestore;
 * 
 * Use the object to get a database
 * namespace by 'db.firebase.database()'
-* 
 * Check the firebase docs for more.
 */
