@@ -2,7 +2,7 @@
     "domain" : "xtacy.org",
     "csrfTokenName" : "_xta_srf-tk:",
     "csrfTokenNameKey" : "_tk_nmk-del",
-    "clientKey" : "@xtacy.ieeejmi.org",
+    "clientKey" : "clientKey@xtacy.ieeejmi.org",
     "firebase" : {
         "apiKey": "AIzaSyADVyiiQYZMWqsK-oAGY0jPoslrNUNzDFw",
         "authDomain": "xtacy-web.firebaseapp.com",

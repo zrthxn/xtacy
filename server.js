@@ -34,15 +34,15 @@ homepage.engine('hbs', hbs({
     ]
 }))
 
-// app.use(vhost(__domain, homepage))
-// app.use(vhost('www.' +  __domain, homepage))
-// app.listen(PORT, ()=>{
-//     console.log('\tServer Running :: Virtual Host');
-// })
-
-homepage.listen(PORT, ()=>{
-    console.log('\tServer Running');
+app.use(vhost(__domain, homepage))
+app.use(vhost('www.' +  __domain, homepage))
+app.listen(PORT, ()=>{
+    console.log('\tServer Running :: Virtual Host');
 })
+
+// homepage.listen(PORT, ()=>{
+//     console.log('\tServer Running');
+// })
 
 // =============================================================== //
 // ROUTING ----------------------------------------------- ROUTING //
@@ -52,9 +52,10 @@ homepage.get('/', (req,res)=>{
     res.render('index', { 'title' : 'HOME' })
 });
 
-homepage.get('/_secu/firebase/:mode/', (req,res)=>{
+homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     // == GET Firebase Credentials == //
-    if(req.params.mode==='GET'){
+    var ckey = Buffer.from(req.params.ckey, 'base64').toString('ascii')
+    if(req.params.mode==='GET' && ckey===require('./config.json').clientKey){
         res.json(ServerConfig.firebase)
     } else {
         res.send(500)

@@ -1,30 +1,38 @@
 function validateToken() {
-    var key = localStorage.getItem( config.csrfTokenNameKey );    
-    var token = localStorage.getItem( config.csrfTokenName+key );
-    if(key===null) {
-        key = generateTokenKey(12);
-        token = generateToken(128);
-        localStorage.setItem(config.csrfTokenNameKey, key);
-        localStorage.setItem(config.csrfTokenName+key, token);
-        initializeClientFirebase().then(()=>{
-            firebase.database().ref('csrf-tokens/' + key)
-                .set(token);
-        });
-    }
-
     return new Promise((resolve, reject)=>{
-        //validation from server
         const valReq = new XMLHttpRequest();
-        valReq.open('POST', '/_secu/csrtoken/', true);
+        valReq.open('POST', 'http://xtacy.org:3000/_secu/csrtoken/', true);
         valReq.setRequestHeader('Content-Type', 'application/json');
-        valReq.send(JSON.stringify({ "key" : key, "token" : token }));
+
+        var key = localStorage.getItem( config.csrfTokenNameKey );    
+        var token = localStorage.getItem( config.csrfTokenName+key );
+        if(key===null) {
+            key = generateTokenKey(12);
+            token = generateToken(128);
+            localStorage.setItem(config.csrfTokenNameKey, key);
+            localStorage.setItem(config.csrfTokenName+key, token);
+            initializeClientFirebase(config.clientKey).then(()=>{
+                firebase.database().ref('csrf-tokens/' + key).set(token)
+                    .then(()=>{
+                        valReq.send(JSON.stringify({ "key" : key, "token" : token }));
+                    }).catch((e)=>{
+                        console.log(e);
+                    });
+            });
+        } else {
+            valReq.send(JSON.stringify({ "key" : key, "token" : token }));
+        }
+        
         valReq.onreadystatechange = () => {
             if(valReq.readyState===4 && valReq.status===200) {
                 let valRes = JSON.parse(valReq.response);
                 if(valRes.validation) {
                     resolve('CSR_TOKEN_VALID');
                 } else {
+                    let k = localStorage.getItem( config.csrfTokenNameKey );
                     localStorage.removeItem( config.csrfTokenNameKey );
+                    localStorage.removeItem( config.csrfTokenName+k );
+                    delete k;
                     reject('CSR_TOKEN_INVALID');
                 }
             }
