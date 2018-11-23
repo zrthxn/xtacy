@@ -8,5 +8,12 @@ body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
-    position: relative;
+}
+
+header p {
+
+}
+footer p {
+    font-size: 0.5em;
+    font-weight: 400;
 }
