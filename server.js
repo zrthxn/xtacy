@@ -51,6 +51,31 @@ app.listen(PORT, ()=>{
 homepage.get('/', (req,res)=>{
     res.render('index', { 'title' : 'HOME' })
 });
+homepage.get('/about', (req,res)=>{
+    res.render('about', { 'title' : 'ABOUT' })
+});
+homepage.get('/contact', (req,res)=>{
+    res.render('contact', { 'title' : 'CONTACT' })
+});
+homepage.get('/events', (req,res)=>{
+    res.render('events', { 'title' : 'EVENTS' })
+});
+homepage.get('/register', (req,res)=>{
+    res.render('register', { 'title' : 'REGISTER' })
+});
+
+homepage.post('/_register/:ckey/:mode/', (req,res)=>{
+    // Example of NON-PAGE REQUEST
+    Security.validateCSRFTokens(req.body.key, req.body.token)
+        .then((result)=>{
+            // do whatever has to be done
+            res.send(200)
+        }).catch((error)=>{
+            console.error(error)
+            res.send(500)
+        })
+});
+
 
 homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     // == GET Firebase Credentials == //
