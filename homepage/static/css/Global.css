@@ -8,11 +8,42 @@ body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
-
-header p {
+/* HEADER ================================================== HEADER */
+header {
 
 }
+header nav ul {
+    margin: 2em 2em;
+    font-size: 0.9em;
+    list-style: none;
+    float: right;
+}
+header nav li {
+    display: inline-block;
+    text-align: center;
+    position: relative;
+    margin: 0 1em 0.25em 1em;
+} 
+header nav ul li a {
+    text-decoration: none;
+    color: #000;
+} header nav a::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 1.5px;
+    top: 50%;
+    transition: all 250ms ease;
+    background-color: #000;
+} header nav li:hover > a::after {
+    width: 100%;
+} 
+
+/* FOOTER ================================================== FOOTER */
 footer p {
     font-size: 0.5em;
     font-weight: 400;
