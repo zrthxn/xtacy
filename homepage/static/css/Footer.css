@@ -1,0 +1,14 @@
+footer {
+    position: relative;
+    background-color: #000;
+    padding: 1em;
+    padding-top: 4em;
+}
+
+footer .dev {
+    font-size: 0.5em;
+    font-weight: 400;
+    color: #fff;
+    margin: 2em auto 1em auto;
+    bottom: 0;
+}

@@ -1,73 +1,8 @@
 section {
     height: 90vh;
-    display: flex;
-    /* flex-flow: column; */
-    /* align-content: center; */
 }
 
 .hero {
     margin: auto auto;
-    font-size: 4em;
-    font-weight: 600;
     display: block;
-}
-
-.btn {
-    margin: 1em;
-    width: 10em;
-    height: 4em;
-    /* padding: 1em 2em; */
-    background-color: transparent;
-    border: 1.5px solid #000;
-    transition: all 0.25s ease;
-}
-
-.solid {
-    color: #fff;
-    background-color: #000;
-    border: 2px solid #000;
-}
-
-.rotary-container {
-    margin: auto auto;
-    width: 2em;
-    height: 0.5em;
-    position: relative;
-} .rotary-container:hover .rotary {
-    animation: rotor 1000ms ease 5;
-}
-.rotary {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    right: 0;
-    left: 0;
-    background-color: rgb(255, 255, 0);
-}
-@keyframes rotor {
-    0%{
-        width: 100%;
-        right: 0;
-        left: 0;
-    }
-    49%{
-        width: 0;
-        right: 0;
-        left: 100%;
-    }
-    50%{        
-        width: 0;
-        left: 0;
-        right: 100%;
-    }
-    99%{
-        width: 100%;
-        left: 0;
-        right: 0;
-    }
-    100% {
-        width: 100%;
-        right: 0;
-        left: 0;
-    }
 }

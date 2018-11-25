@@ -76,6 +76,21 @@ homepage.post('/_register/:ckey/:mode/', (req,res)=>{
         })
 });
 
+homepage.get('/_file/GET/:type/:path/:filename/', (req,res)=>{
+    // FILE DELIVERY NETWORK
+    let __path = Buffer.from(req.params.path, 'base64').toString('ascii');
+    if(req.params.type==='preset' && __path==='root') {
+        switch(req.params.filename) {
+            case 'favicon':
+                res.sendFile( path.resolve(__dirname, 'homepage/static/img', 'favicon.png') )
+                break;
+            default:
+                res.send(404)
+        }
+    } else {
+        res.send(500)
+    }
+});
 
 homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     // == GET Firebase Credentials == //
