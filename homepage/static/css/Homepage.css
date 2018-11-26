@@ -1,8 +1,12 @@
-section {
-    height: 90vh;
-}
-
 .hero {
     margin: auto auto;
-    display: block;
+    /* width: fit-content; */
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-rotor {
+    width: 4em;
+    height: 1.5em;
 }

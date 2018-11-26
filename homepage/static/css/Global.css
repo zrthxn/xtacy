@@ -14,7 +14,8 @@ body {
 
 section {
     padding: 1em;
-    display: flex;
+    z-index: 0;
+    /* display: flex; */
 }
 
 .container {
@@ -24,7 +25,8 @@ section {
     height: fit-content;
     max-width: 1200px;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
+    position: relative;
 }
 
 /* TYPOGRAPHY ========================================= TYPOGRAPHY  */
@@ -160,11 +162,12 @@ em {
 }
 
 .compound-textbox {
-    margin: 1em auto 1em auto;
+    margin: 1em;
     display: flex;
     background-color: #fff;
     flex-direction: row;
     width: fit-content;
+    transition: all 0.25s ease;
     outline: 2px solid #000;
 } .compound-textbox:active {
     background-color: #eee;
