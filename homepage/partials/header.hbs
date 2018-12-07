@@ -24,7 +24,7 @@
             </nav>
             <div class="accent"></div>
         </div>
-        <div class="sidebar-shadow"></div>
+        <div class="sidebar-shadow" id="sidebar-shadow"></div>
         
 
         <nav class="desktop-nav">
@@ -36,5 +36,11 @@
                 <li class="highlight"><a href="/register" class="highlight">register</a></li>
             </ul>
         </nav>
-    </div>    
+    </div>
+
+    <script>
+        document.getElementById("sidebar-shadow").onclick = () => {
+            document.getElementById("sidebar-toggle").checked = false;
+        }
+    </script>
 </header>

@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,800,900');
 
+:root {
+    --yellow: rgb(255, 255, 0);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -10,6 +14,10 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
+    animation: body 0.25s ease;
+} @keyframes body {
+    from { opacity: 0 }
+    to { opacity: 1 }
 }
 
 section {
@@ -25,8 +33,11 @@ section {
     height: fit-content;
     max-width: 1200px;
     display: flex;
-    /* flex-direction: column; */
     position: relative;
+} @media (max-width: 600px){
+    .container {
+        flex-direction: column;
+    }
 }
 
 /* TYPOGRAPHY ========================================= TYPOGRAPHY  */
@@ -54,7 +65,9 @@ h3 {
 /* Paragraphs */
 p {
     font-size: 14px;
-    font-weight: 400;   
+    font-weight: 400;
+    max-width: 50%;
+    margin: auto;
     margin-block-start: 1em;
     margin-block-end: 1em;
 } p[class~="left"] {
@@ -74,7 +87,7 @@ em {
 /* Highlight */
 .highlight {
     height: 100%;
-    background-color: rgb(255, 255, 0);
+    background-color: var(--yellow);
 }
 
 /* BUTTONS ================================================ BUTTONS */
@@ -173,7 +186,7 @@ em {
     background-color: #eee;
 } .compound-textbox input {
     float: left;
-    width: 15em;
+    width: 12em;
     margin: 0 1em;
     background: transparent;
     border: none;
@@ -181,7 +194,7 @@ em {
     float: right;
     outline: none;
 } .compound-textbox .button {
-    width: 8em;
+    width: 6em;
     height: 3em;
     margin: 0 0;
 }
@@ -204,7 +217,7 @@ em {
     right: 0;
     left: 0;
     z-index: -1;
-    background-color: rgb(255, 255, 0);
+    background-color: var(--yellow);
 } .rotary:hover::after {
     animation: rotor 1000ms ease 5;
 }
