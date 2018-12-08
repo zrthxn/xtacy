@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,800,900');
 
+:root {
+    --yellow: rgb(255, 255, 0);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -8,12 +12,239 @@ body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    animation: body 0.25s ease;
+} @keyframes body {
+    from { opacity: 0 }
+    to { opacity: 1 }
 }
 
-header p {
-
+section {
+    padding: 1em;
+    z-index: 0;
+    /* display: flex; */
 }
-footer p {
-    font-size: 0.5em;
+
+.container {
+    width: 100%;
+    padding: 1em;
+    margin: auto auto;
+    height: fit-content;
+    max-width: 1200px;
+    display: flex;
+    position: relative;
+} @media (max-width: 600px){
+    .container {
+        flex-direction: column;
+    }
+}
+
+/* TYPOGRAPHY ========================================= TYPOGRAPHY  */
+
+/* Headings */
+h1 {
+    margin-bottom: 0.5em;
+    margin-top: 0;
+    font-size: 60px;
+    font-weight: 500;
+}
+h2 {
+    margin-bottom: 0.5em;
+    margin-top: 0;
+    font-size: 42px;
+    font-weight: 500;
+}
+h3 {
+    margin-bottom: 0.5em;
+    margin-top: 0;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+/* Paragraphs */
+p {
+    font-size: 14px;
     font-weight: 400;
+    max-width: 50%;
+    margin: auto;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+} p[class~="left"] {
+    text-align: left;
+} p[class~="right"] {
+    text-align: right;
+} p[class~="justify"] {
+    text-align: justify;
+} 
+
+/* Emphasis */
+em {
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Highlight */
+.highlight {
+    height: 100%;
+    background-color: var(--yellow);
+}
+
+/* BUTTONS ================================================ BUTTONS */
+
+.button {
+    margin: 1em;
+    width: 10em;
+    height: 4em;
+    background-color: transparent;
+    border: 1.5px solid #000;
+    transition: all 0.25s ease;
+} .button:focus {
+    outline: none;
+} .button:active {
+    background-color: #eee;
+}
+
+.solid[class~="button"] {
+    color: #fff;
+    background-color: #000;
+    border: 1.5px solid #000;
+} .solid[class~="button"]:active {
+    background-color: #1d1d1d;
+    border: 1.5px solid #1d1d1d;
+}
+
+/* GREEN Buttons */
+.green[class~="solid"] {
+    color: #fff;
+    background-color: #177400;
+    border: 1.5px solid #177400;
+} .green[class~="solid"]:active{
+    background-color: #125a00;
+    border: 1.5px solid #125a00;
+} .green:not([class~="solid"]) {
+    color: #177400;
+    background-color: transparent;
+    border: 1.5px solid #177400;
+} .green:not([class~="solid"]):active {
+    background-color: #eeffee;
+}
+
+/* RED Buttons */
+.red[class~="solid"] {
+    color: #fff;
+    background-color: #bd0000;
+    border: 1.5px solid #bd0000;
+} .red[class~="solid"]:active{
+    background-color: #990101;
+    border: 1.5px solid #990101;
+} .red:not([class~="solid"]) {
+    color: #bd0000;
+    background-color: transparent;
+    border: 1.5px solid #bd0000;
+} .red:not([class~="solid"]):active {
+    background-color: #ffeeee;
+}
+
+/* DISABLED Buttons */
+.button:disabled {
+    color: #fff;
+    background-color: #ddd;
+    border: 1.5px solid #ddd;
+}
+
+.small[class~="button"] {
+    margin: 0.5em;
+    width: 8em;
+    height: 2.5em;
+    font-size: 0.15em;
+}
+
+/* INPUTS ============================================= INPUTS */
+.textbox {
+    margin: 1em;
+    width: 20em;
+    padding: 1em;
+    font-size: 0.85em;
+    background-color: #fff;
+    transition: all 0.25s ease;
+    border: 1.5px solid #000;
+} .textbox:focus{
+    outline: none;
+    background-color: #eee;
+}
+
+.compound-textbox {
+    margin: 1em;
+    display: flex;
+    background-color: #fff;
+    flex-direction: row;
+    width: fit-content;
+    transition: all 0.25s ease;
+    outline: 2px solid #000;
+} .compound-textbox:active {
+    background-color: #eee;
+} .compound-textbox input {
+    float: left;
+    width: 12em;
+    margin: 0 1em;
+    background: transparent;
+    border: none;
+} .compound-textbox input:focus {
+    float: right;
+    outline: none;
+} .compound-textbox .button {
+    width: 6em;
+    height: 3em;
+    margin: 0 0;
+}
+
+/* FEATURES ============================================= FEATURES */
+
+/* ROTARY */
+/* Useage: Insert a div with "rotary" class inside a container*/
+/* change width-height of container to control size */
+.rotary {
+    margin: auto auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+} .rotary:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    left: 0;
+    z-index: -1;
+    background-color: var(--yellow);
+} .rotary:hover::after {
+    animation: rotor 1000ms ease 5;
+}
+@keyframes rotor {
+    0%{
+        width: 100%;
+        right: 0;
+        left: 0;
+    }
+    49%{
+        width: 0;
+        right: 0;
+        left: 100%;
+    }
+    50%{        
+        width: 0;
+        left: 0;
+        right: 100%;
+    }
+    99%{
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+    100% {
+        width: 100%;
+        right: 0;
+        left: 0;
+    }
 }

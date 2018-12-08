@@ -1,18 +1,64 @@
-<link rel="stylesheet" type="text/css" media="screen" href="static/css/Homepage.css">
+<link rel="stylesheet" type="text/css" media="screen" href="./static/css/Homepage.css">
+<link rel="stylesheet" type="text/css" media="screen" href="./static/css/Events.css">
 {{!------ ==== PAGE ==== ------}}
 
 {{> header }}
 
 {{!-- START PAGE CONTENT --}}
 <section>
-    <div class="hero">
-        <p>xtacy</p>
+    <div class="hero container">
+        <h1>xtacy</h1>
+        <h2>xtacy</h2>
+        <h3>xtacy</h3>
+        <p class="center">
+            Lorem ipsum ist dolor vala lorem ipsum isnt ist dolor vala isnt the lorem.<br>
+            Lorem ipsum ist dolor vala <span class="highlight">ist the lorem</span> ist the.<br>
+            Lorem ipsum <em>ist dolor vala</em>
+        </p>
 
-        <button class="btn solid">Register</button>
-        <button class="btn">Read More</button>
-        <br>
-        {{!-- <button class="btn green">Click Me</button> --}}
-        {{!-- <button class="btn red">Click Me</button> --}}
+        <div class="home-rotor">
+            <div class="rotary"></div>
+        </div>
+
+        <button class="button solid">Register</button>
+        <button class="button">Read More</button>
+
+        <div class="compound-textbox">
+            <input type="text" placeholder="Composite">
+            <button class="button solid">SUBMIT</button>
+        </div>
+
+        <input class="textbox" type="text" placeholder="Textbox">
+    </div>
+
+    <div class="container">
+        {{!-- <div class="banner"></div> --}}
+        {{!-- <h1>xtacy</h1> --}}
+        <div class="banner"></div>
+
+        <p class="justify">
+            Mauris tincidunt mauris quis leo consectetur egestas. Nam quis nibh in mauris tristique pretium. 
+            Sed at cursus diam, sit amet maximus orci. Etiam at diam at leo finibus tincidunt. Nunc mollis 
+            tincidunt lectus. Maecenas placerat <span class="highlight">purus dapibus mauris rutrum, quis commodo erat porta. 
+            Aliquam erat volutpat. Ut finibus erat eget dapibus ultricies. Ut sit amet justo in leo viverra gravida. 
+            Etiam a dictum justo. Aliquam eu efficitur tellus.</span> Curabitur facilisis purus non velit tincidunt semper. 
+            Sed interdum vehicula urna. Morbi suscipit accumsan finibus. Sed sed est et dui bibendum consectetur in vel purus. 
+            Quisque dignissim nisl lacus, ut convallis est luctus nec.
+        </p>
+
+        {{!-- <p class="justify">
+            Mauris tincidunt mauris quis leo consectetur egestas. Nam quis nibh in mauris tristique pretium. 
+            Sed at cursus diam, sit amet maximus orci. Etiam at diam at leo finibus tincidunt. Nunc mollis 
+            tincidunt lectus. Maecenas placerat purus dapibus mauris rutrum, quis commodo erat porta. 
+            Aliquam erat volutpat. Ut finibus erat eget dapibus ultricies. Ut sit amet justo in leo viverra gravida. 
+            Etiam a dictum justo. Aliquam eu efficitur tellus. Curabitur facilisis purus non velit tincidunt semper. 
+            Sed interdum vehicula urna. Morbi suscipit accumsan finibus. Sed sed est et dui bibendum consectetur in vel purus. 
+            Quisque dignissim nisl lacus, ut convallis est luctus nec.
+        </p> --}}
+    </div>
+
+    <div class="container">
+        <div class="banner"></div>
     </div>
 </section>
 {{!-- END PAGE CONTENT --}}

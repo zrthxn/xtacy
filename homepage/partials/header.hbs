@@ -1,1 +1,46 @@
-<header></header>
+<link rel="stylesheet" type="text/css" media="screen" href="../static/css/Header.css">
+
+<header>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-rotor">
+                <div class="rotary"></div>
+            </div>
+            <p class="logo-text">xtacy</p>
+        </div>
+
+        <input type="checkbox" id="sidebar-toggle" hidden="true">
+        <label for="sidebar-toggle" class="hamburger"><span></span></label>
+
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="/">home</a></li>
+                    <li><a href="/about">about</a></li>
+                    <li><a href="/events">events</a></li>
+                    <li><a href="/contact">contact</a></li>
+                    <li><a href="/register">register</a></li>
+                </ul>
+            </nav>
+            <div class="accent"></div>
+        </div>
+        <div class="sidebar-shadow" id="sidebar-shadow"></div>
+        
+
+        <nav class="desktop-nav">
+            <ul>
+                <li><a href="/">home</a></li>
+                <li><a href="/about">about</a></li>
+                <li><a href="/events">events</a></li>
+                <li><a href="/contact">contact</a></li>
+                <li class="highlight"><a href="/register" class="highlight">register</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        document.getElementById("sidebar-shadow").onclick = () => {
+            document.getElementById("sidebar-toggle").checked = false;
+        }
+    </script>
+</header>
