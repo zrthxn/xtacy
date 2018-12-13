@@ -6,6 +6,7 @@
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
+const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
 
@@ -17,6 +18,7 @@ const ServerConfig = require('./config.json');
 const __domain = require('./config.json').domain;
 
 const Security = require('./util/Security');
+const Gmailer = require('./Gmailer');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
@@ -112,3 +114,51 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
             res.send(500)
         })
 });
+
+function EXAMPLE_EMAIL_SENDING() {
+    var mail = {
+        to:"", //just email
+        from:"alisamar181099@gmail.com", // just email
+        username:"Alisamar Husain", // name on Account "Alisamar Husain",
+        userId: "alisamar181099@gmail.com", // Just email
+        subject:"",
+        body:"" // raw non-base64 html text body
+    };
+    
+    fs.readFile('email.txt', (err,content)=>{
+        if (err) return console.log(err);
+    
+        fs.readFile('data.csv', (e,db)=>{
+            if (e) return console.log(e);
+            // Gmailer.DatasetDelivery({
+            //     to:"", //just email
+            //     from:"alisamar181099@gmail.com", // just email
+            //     username:"Alisamar Husain", // name on Account "Alisamar Husain",
+            //     userId: "alisamar181099@gmail.com", // Just email
+            //     subject:"",
+            //     body: "" // raw non-base64 html text body
+            // }, content.toString().trim(), db.toString().trim(), {}).then(()=>{
+            //     console.log('DONE');
+            // });
+            Gmailer.DistributedCampaign({
+                to:"", //just email
+                from:"alisamar181099@gmail.com", // just email
+                username:"Alisamar Husain", // name on Account "Alisamar Husain",
+                userId: "alisamar181099@gmail.com", // Just email
+                subject:"",
+                body: "" // raw non-base64 html text body
+            }, content.toString().trim(), db.toString().trim(), {});
+        });
+    
+        // Gmailer.SingleDelivery({
+        //     to:"zrthxn@gmail.com", //just email
+        //     from:"alisamar181099@gmail.com", // just email
+        //     username:"Alisamar Husain", // name on Account "Alisamar Husain",
+        //     userId: "alisamar181099@gmail.com", // Just email
+        //     subject:"Single Email",
+        //     body: content.toString().trim() // raw non-base64 html text body
+        // }).then(()=>{
+        //     console.log('DONE');
+        // }); 
+    });
+}
