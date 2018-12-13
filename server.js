@@ -18,7 +18,7 @@ const ServerConfig = require('./config.json');
 const __domain = require('./config.json').domain;
 
 const Security = require('./util/Security');
-const Gmailer = require('./Gmailer');
+const Gmailer = require('./util/Gmailer');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
