@@ -1,4 +1,5 @@
 /node_modules
+/.vscode
 
 gmail-token.json
 gmail-credentials.json
