@@ -30,9 +30,9 @@ homepage.set('view engine', 'hbs')
 homepage.engine('hbs', hbs({
     defaultLayout: 'main',
     extname: 'hbs',
-    layoutsDir: __dirname + '\\homepage\\layouts',
+    layoutsDir: __dirname + '/homepage/layouts',
     partialsDir: [
-        __dirname + '\\homepage\\partials'
+        __dirname + '/homepage/partials'
     ]
 }))
 
