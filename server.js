@@ -105,7 +105,7 @@ homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
 });
 
 homepage.post('/_secu/csrtoken/', (req,res)=>{
-    // == CSRF Token Validation == //
+    // == Webpage CSRF Token Validation == //
     Security.validateCSRFTokens(req.body.key, req.body.token)
         .then((result)=>{
             res.json({ validation : result })
@@ -114,6 +114,16 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
             res.send(500)
         })
 });
+
+// homepage.post('/_smtp/send/', (req,res)=>{
+//     Security.validateCSRFTokens(req.body.key, req.body.token)
+//         .then((result)=>{
+//             res.json({ validation : result })
+//         }).catch((error)=>{
+//             console.error(error)
+//             res.send(500)
+//         })
+// });
 
 function EXAMPLE_EMAIL_SENDING() {
     var mail = {
