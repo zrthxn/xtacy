@@ -1,14 +1,51 @@
 footer {
     position: relative;
     background-color: #000;
-    padding: 1em;
-    padding-top: 4em;
+    padding: 2em;
 }
 
 footer .dev {
-    font-size: 0.5em;
-    font-weight: 400;
+    font-size: 0.6em;
+    font-weight: 200;
     color: #fff;
     margin: 2em auto 1em auto;
     bottom: 0;
+}
+
+footer .container {
+    display: block;
+}
+
+footer ul {
+    margin: 0;
+    margin-right: 2em;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+} footer ul li {
+    margin: 0;
+    margin-bottom: 0.25em;
+    width: fit-content;
+} footer ul li:first-of-type::before {
+    display: block;
+    margin-bottom: 1em;
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #bbb;
+} footer ul li a {
+    font-size: 0.75em;
+    text-decoration: none;
+    color: #fff;
+}
+
+footer .links li:first-of-type::before {
+    content: 'LINKS';
+}
+footer .faqs li:first-of-type::before {
+    content: 'FAQs';
+}
+
+footer .footer-links {
+    display: flex;
+    flex-direction: row;
 }

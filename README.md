@@ -2,7 +2,7 @@
 ### v0.0.1
 
 ### How to Run
-1. Install Node (from nodejs.org). Have it? Congrats.
+1. Install Node (from nodejs.org).
 2. Open a terminal this repo's folder.
 3. Say the magic words...
 ```
@@ -15,10 +15,33 @@ npm install
 npm start
 ```
 
-6. And then go to http://localhost:3000
+6. And then go to http://xtacy.org:3000
 
-### Pushing and Pulling ;)
-Please please please dont push to master. Make a branch with your FIRST NAME, or just fork this repo, and make changes and then submit a PR to daddy.
+### Pushing and Pulling
+**DO NOT** push to master. Make a branch with your FIRST NAME, or just fork this repo, and make changes and then submit a PR.
+
+### Virtual Host
+Since we are using a package called vhost, short for virtual host, which resolves the incoming requests based on host names, we need to first 
+add the following lines to our HOSTS file, so that we can use the domain name as an alias for our local IP address and use the vhost feature.
+
+Find your hosts file by going to
+```
+Windows > System32 > drivers > etc > hosts
+```
+
+Find your local IPv4 address by opening cmd and run **ipconfig**. Lets say the IP is 192.168.0.101
+
+Add the following lines there
+```
+192.168.0.101       xtacy.org
+192.168.0.101       www.xtacy.org
+192.168.0.101       cdn.xtacy.org
+192.168.0.101       smtp.xtacy.org
+```
+One line for each subdomain being used. Save the file and go to http://xtacy.org:3000
+
+## File Types
+### ALL IMAGE FILES IN PNG, NO EXCEPTIONS
 
 ## Security
 #### CSRF Tokens

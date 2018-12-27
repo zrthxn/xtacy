@@ -10,8 +10,10 @@ const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
 
-const app = express();
+const xtacy = express();
 const homepage = express();
+const cdn = express();
+const api = express();
 
 const PORT = process.env.PORT || 3000;
 const ServerConfig = require('./config.json');
@@ -19,12 +21,14 @@ const __domain = require('./config.json').domain;
 
 const Security = require('./util/Security');
 const Gmailer = require('./util/Gmailer');
+const GSheets = require('./util/GSheets');
+const ConsoleScreen = require('./util/ConsoleScreen');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
-homepage.use( express.static( path.join(__dirname, 'homepage') ) )
+homepage.use(express.static( path.join(__dirname, 'homepage') ))
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
 homepage.engine('hbs', hbs({
@@ -36,15 +40,31 @@ homepage.engine('hbs', hbs({
     ]
 }))
 
-app.use(vhost(__domain, homepage))
-app.use(vhost('www.' +  __domain, homepage))
-app.listen(PORT, ()=>{
-    console.log('\tServer Running :: Virtual Host');
-})
+// ----------- File Delivery ----------
+cdn.use(bodyParser.json())
+cdn.use(bodyParser.urlencoded({ extended: true }))
+cdn.use(express.json())
+cdn.use(express.urlencoded({ extended: true }))
+cdn.use(express.static( path.join(__dirname, 'cdn') ))
 
-// homepage.listen(PORT, ()=>{
-//     console.log('\tServer Running');
-// })
+// ----------- APIs ----------
+api.use(bodyParser.json())
+api.use(bodyParser.urlencoded({ extended: true }))
+api.use(express.json())
+api.use(express.urlencoded({ extended: true }))
+
+// ----------- Virtual Host ----------
+xtacy.use(vhost(__domain, homepage))
+xtacy.use(vhost('www.' +  __domain, homepage))
+xtacy.use(vhost('cdn.' +  __domain, cdn))
+xtacy.use(vhost('api.' +  __domain, api))
+
+xtacy.listen(PORT, ()=>{
+    ConsoleScreen.StartupScreen({
+        "PORT" : PORT,
+        "ServerState" : ServerConfig.ServerState
+    })
+})
 
 // =============================================================== //
 // ROUTING ----------------------------------------------- ROUTING //
@@ -65,33 +85,24 @@ homepage.get('/events', (req,res)=>{
 homepage.get('/register', (req,res)=>{
     res.render('register', { 'title' : 'REGISTER' })
 });
+homepage.get('/terms', (req,res)=>{
+    res.render('terms', { 'title' : 'TERMS' })
+});
+
+homepage.get('/event/:eventId/', (req,res)=>{
+    res.render('events', { 'title' : 'EVENTS' })
+});
 
 homepage.post('/_register/:ckey/:mode/', (req,res)=>{
     // Example of NON-PAGE REQUEST
     Security.validateCSRFTokens(req.body.key, req.body.token)
         .then((result)=>{
             // do whatever has to be done
-            res.send(200)
+            res.sendStatus(200)
         }).catch((error)=>{
             console.error(error)
-            res.send(500)
+            res.sendStatus(500)
         })
-});
-
-homepage.get('/_file/GET/:type/:path/:filename/', (req,res)=>{
-    // FILE DELIVERY NETWORK
-    let __path = Buffer.from(req.params.path, 'base64').toString('ascii');
-    if(req.params.type==='preset' && __path==='root') {
-        switch(req.params.filename) {
-            case 'favicon':
-                res.sendFile( path.resolve(__dirname, 'homepage/static/img', 'favicon.png') )
-                break;
-            default:
-                res.send(404)
-        }
-    } else {
-        res.send(500)
-    }
 });
 
 homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
@@ -100,7 +111,7 @@ homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     if(req.params.mode==='GET' && ckey===require('./config.json').clientKey){
         res.json(ServerConfig.firebase)
     } else {
-        res.send(500)
+        res.sendStatus(500)
     }
 });
 
@@ -111,19 +122,73 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
             res.json({ validation : result })
         }).catch((error)=>{
             console.error(error)
-            res.send(500)
+            res.sendStatus(500)
         })
 });
 
-// homepage.post('/_smtp/send/', (req,res)=>{
-//     Security.validateCSRFTokens(req.body.key, req.body.token)
-//         .then((result)=>{
-//             res.json({ validation : result })
-//         }).catch((error)=>{
-//             console.error(error)
-//             res.send(500)
-//         })
-// });
+// ===============================
+
+// FILE DELIVERY
+cdn.get('/GET/preset/:filename/', (req,res)=>{
+    switch(req.params.filename) {
+        case 'faviconpng':
+            res.sendFile( path.resolve(__dirname, 'cdn/presets', 'favicon.png') )
+            break
+        case 'faviconico':
+            res.sendFile( path.resolve(__dirname, 'cdn/presets', 'favicon.ico') )
+            break
+        default:
+            res.sendStatus(404)
+    }
+});
+
+cdn.get('/GET/file/:path/:filename/', (req,res)=>{
+    let __path = Buffer.from(req.params.path, 'base64').toString('ascii');
+    if (__path=='root') __path = ''
+    res.sendFile( path.resolve(__dirname, 'cdn', __path, decodeURI(req.params.filename)) )
+});
+
+// ===============================
+
+api.post('/_:api/:function/:data/', (req,res)=>{
+    Security.validateCSRFTokens(req.body.key, req.body.token)
+        .then((result)=>{
+            res.json({ validation : result })
+        }).catch((error)=>{
+            console.error(error)
+            res.sendStatus(500)
+        })
+});
+
+api.get('/_:api/test/', (req,res)=>{
+    switch(req.params.api) {
+        case 'sheets':
+            GSheets.TestGSheets()
+                .then((result)=>{
+                    if (result.success) res.send('GSheets : Test Successful')
+                    else res.send('GSheets : Test Failed')
+                })
+                .catch(()=>{
+                    res.send('Internal Error')
+                })
+            break
+
+        case 'mail':
+            Gmailer.TestGmailer()
+                .then((result)=>{
+                    if (result.success) res.send('Gmailer : Test Successful')
+                    else res.send('Gmailer : Test Failed')
+                })
+                .catch(()=>{
+                    res.send('Internal Error')
+                })
+            break
+
+        default:
+            res.sendStatus(404)
+    }
+});
+// ===============================
 
 function EXAMPLE_EMAIL_SENDING() {
     var mail = {

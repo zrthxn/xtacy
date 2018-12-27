@@ -10,17 +10,17 @@ exports.deployNewInstance = function (filename, count, payload, mode) {
     } else {  
         var forks = [];
         for(let i=0; i<count; i++){
-            console.time('duration '+i);
+            let __pid = generateProcessId(6);
+            console.time(__pid);
             forks[i] = fork(filename);
-            forks[i].send({ pid: generateProcessId(6), payload: payload[i], delay: (1000/count)*(i+1) });
+            forks[i].send({ pid: __pid, payload: payload[i], delay: (1000/count)*(i+1) });
             forks[i].on('message', (res)=>{
                 if(res.complete) {
-                    console.log(res.pid, 'DONE');
+                    console.log('DONE');
+                    console.timeEnd(__pid);
                 } else
                     console.log(res.pid, 'FAILED');
                 forks[i].unref();
-                
-                console.timeEnd('duration '+i);
             });
         }
     }

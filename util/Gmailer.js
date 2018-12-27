@@ -1,13 +1,11 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-const os = require('os');
-const cluster = require('cluster');
 const LoadBalancer = require('./LoadBalancer');
 
 const SCOPES = ['https://mail.google.com'];
-const CREDENTIALS_PATH = '../gmail-credentials.json';
-const TOKEN_PATH = '../gmail-token.json';
+const CREDENTIALS_PATH = './util/GoogleAPIs/Gmail/credentials.json';
+const TOKEN_PATH = './util/GoogleAPIs/Gmail/token.json';
 
 var sendFrequency = 1000;
 
@@ -59,6 +57,21 @@ function getNewToken(oAuth2Client) {
             }
         });
     });    
+}
+
+exports.TestGmailer = function() {
+    return new Promise((resolve,reject)=>{
+        authorize().then((auth)=>{
+            try {
+                let testObj = google.gmail({version: 'v1', auth});
+                if (testObj!=null) resolve({ success: true });
+            } catch(err) {
+                resolve({ success: false, errors: err });
+            }
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }
 
 // ========================= DELIVERY MODES ========================= //
