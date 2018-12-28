@@ -29,6 +29,7 @@ homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
 homepage.use(express.static( path.join(__dirname, 'homepage') ))
+homepage.use(express.static( path.join(__dirname, 'bookings') ))
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
 homepage.engine('hbs', hbs({
@@ -89,21 +90,26 @@ homepage.get('/terms', (req,res)=>{
     res.render('terms', { 'title' : 'TERMS' })
 });
 
-homepage.get('/event/:eventId/', (req,res)=>{
-    res.render('events', { 'title' : 'EVENTS' })
-});
+// homepage.post('/_register/:ckey/:mode/', (req,res)=>{
+//     // Example of NON-PAGE REQUEST
+//     Security.validateCSRFTokens(req.body.key, req.body.token)
+//         .then((result)=>{
+//             // do whatever has to be done
+//             res.sendStatus(200)
+//         }).catch((error)=>{
+//             console.error(error)
+//             res.sendStatus(500)
+//         })
+// });
 
-homepage.post('/_register/:ckey/:mode/', (req,res)=>{
-    // Example of NON-PAGE REQUEST
-    Security.validateCSRFTokens(req.body.key, req.body.token)
-        .then((result)=>{
-            // do whatever has to be done
-            res.sendStatus(200)
-        }).catch((error)=>{
-            console.error(error)
-            res.sendStatus(500)
-        })
+//--------------------------
+// Remove for production build
+homepage.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
+//--------------------------
 
 homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     // == GET Firebase Credentials == //
@@ -126,10 +132,26 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
         })
 });
 
+homepage.get('/event/:event/', (req,res)=>{
+    switch(req.params.event) {
+        default:
+            res.redirect('/events')
+    }
+});
+
+homepage.get('/bookings/:title/', (req,res)=>{
+    res.sendFile( path.resolve(__dirname, 'bookings/build', 'book.html') )
+});
+
 // ===============================
 
 // FILE DELIVERY
+cdn.get('/', (req,res)=>{
+    res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
+});
+
 cdn.get('/GET/preset/:filename/', (req,res)=>{
+    if (req.params.filename=='cdnLookup.json') res.sendStatus(403)
     switch(req.params.filename) {
         case 'faviconpng':
             res.sendFile( path.resolve(__dirname, 'cdn/presets', 'favicon.png') )
@@ -143,9 +165,15 @@ cdn.get('/GET/preset/:filename/', (req,res)=>{
 });
 
 cdn.get('/GET/file/:path/:filename/', (req,res)=>{
-    let __path = Buffer.from(req.params.path, 'base64').toString('ascii');
-    if (__path=='root') __path = ''
+    if (req.params.filename=='lookup.json') res.sendStatus(403)
+    let __path = Buffer.from(req.params.path, 'base64').toString('ascii')
+    if (__path=='root' || req.params.path=='root') __path = 'root'
     res.sendFile( path.resolve(__dirname, 'cdn', __path, decodeURI(req.params.filename)) )
+});
+
+cdn.put('/PUT/file/:path/:filename/', (req,res)=>{
+    if (req.params.filename=='lookup.json') res.sendStatus(403)
+    // Upload file
 });
 
 // ===============================
@@ -167,8 +195,7 @@ api.get('/_:api/test/', (req,res)=>{
                 .then((result)=>{
                     if (result.success) res.send('GSheets : Test Successful')
                     else res.send('GSheets : Test Failed')
-                })
-                .catch(()=>{
+                }).catch(()=>{
                     res.send('Internal Error')
                 })
             break
@@ -178,8 +205,7 @@ api.get('/_:api/test/', (req,res)=>{
                 .then((result)=>{
                     if (result.success) res.send('Gmailer : Test Successful')
                     else res.send('Gmailer : Test Failed')
-                })
-                .catch(()=>{
+                }).catch(()=>{
                     res.send('Internal Error')
                 })
             break

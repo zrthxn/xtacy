@@ -1,5 +1,11 @@
 .banner-container {
+    padding: 1em;
+    margin: auto auto;
+    height: fit-content;
+    max-width: 1200px;
+    display: flex;
     flex-direction: column;
+    position: relative;
 } @media (min-width: 600px) {
     .banner-container {
         flex-direction: row;

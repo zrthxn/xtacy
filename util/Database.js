@@ -2,7 +2,7 @@ const firebase = require('../node_modules/firebase');
 const DatabaseConfig = require('../config.json');
 
 firebase.initializeApp(DatabaseConfig.firebase);
-exports.default = firebase;
+exports.firebase = firebase;
 
 const database = firebase.database();
 exports.database = database;

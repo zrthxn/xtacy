@@ -4,10 +4,29 @@
 
 {{!-- START PAGE CONTENT --}}
 <section>
-    <div>
+    <div class="container center">
         {{> loading }}
+
+        <h2>Register</h2>
+
+        <input type="text" class="textbox" placeholder="Name">
+        <input type="text" class="textbox" placeholder="Email or Phone">
+        <input type="password" class="textbox" placeholder="Password">
+        <button class="button solid" id="login">Register</button>
+
+        <p>Or continue with</p>
+        <div>
+            <button class="button solid small red">Google</button>
+            <button class="button solid small">GitHub</button>
+        </div>
     </div>
 </section>
 {{!-- END PAGE CONTENT --}}
 
 {{> footer }}
+
+<script>
+    document.getElementById("login").onclick = () => {
+        $(document.getElementById("loading")).addClass('fadeout');
+    }
+</script>
