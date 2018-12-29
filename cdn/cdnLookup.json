@@ -1,0 +1,15 @@
+{
+    "writeLock" : true,
+    "$schema": [{
+        "__id" : "xkcdSd",
+        "filename" : "JMI Logo.png",
+        "contentType" : "image/png",
+        "path" : "root",
+        "metadata" : {
+            "size" : "",
+            "createdOn" : "",
+            "authors" : "and other small data can be added"
+        }
+    }],
+    "files" : [{}]
+}

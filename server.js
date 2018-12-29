@@ -23,6 +23,7 @@ const Security = require('./util/Security');
 const Gmailer = require('./util/Gmailer');
 const GSheets = require('./util/GSheets');
 const ConsoleScreen = require('./util/ConsoleScreen');
+const ContentDelivery = require('./util/ContentDelivery');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
@@ -46,7 +47,7 @@ cdn.use(bodyParser.json())
 cdn.use(bodyParser.urlencoded({ extended: true }))
 cdn.use(express.json())
 cdn.use(express.urlencoded({ extended: true }))
-cdn.use(express.static( path.join(__dirname, 'cdn') ))
+cdn.use(express.static( path.join(__dirname, 'cdn', 'root') ))
 
 // ----------- APIs ----------
 api.use(bodyParser.json())
@@ -143,20 +144,22 @@ homepage.get('/bookings/:title/', (req,res)=>{
     res.sendFile( path.resolve(__dirname, 'bookings/build', 'book.html') )
 });
 
-// ===============================
+// =============================================================================================
 
 // FILE DELIVERY
 cdn.get('/', (req,res)=>{
     res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
 });
 
-cdn.get('/GET/preset/:filename/', (req,res)=>{
-    if (req.params.filename=='cdnLookup.json') res.sendStatus(403)
-    switch(req.params.filename) {
+cdn.get('/p/:file/', (req,res)=>{
+    if (req.params.file=='cdnLookup.json') res.sendStatus(403)
+    switch(req.params.file) {
         case 'faviconpng':
+            res.type('image/png')
             res.sendFile( path.resolve(__dirname, 'cdn/presets', 'favicon.png') )
             break
         case 'faviconico':
+            res.type('image/x-icon')
             res.sendFile( path.resolve(__dirname, 'cdn/presets', 'favicon.ico') )
             break
         default:
@@ -164,22 +167,40 @@ cdn.get('/GET/preset/:filename/', (req,res)=>{
     }
 });
 
-cdn.get('/GET/file/:path/:filename/', (req,res)=>{
-    if (req.params.filename=='lookup.json') res.sendStatus(403)
-    let __path = Buffer.from(req.params.path, 'base64').toString('ascii')
-    if (__path=='root' || req.params.path=='root') __path = 'root'
-    res.sendFile( path.resolve(__dirname, 'cdn', __path, decodeURI(req.params.filename)) )
+cdn.get('/d/:fileId/', (req,res)=>{
+    // if (req.params.fileId=='cdnLookup.json') res.sendStatus(403)
+    ContentDelivery.Lookup(req.params.fileId)
+        .then((path, filename, contentType)=>{
+            res.type(contentType)
+            res.sendFile( path.resolve(__dirname, 'cdn', path, filename) )
+        }).catch((result, err)=>{
+            console.error(result, err)
+            res.sendStatus(500)
+        })
 });
 
-cdn.put('/PUT/file/:path/:filename/', (req,res)=>{
-    if (req.params.filename=='lookup.json') res.sendStatus(403)
+cdn.put('/u/:path/:filename/', (req,res)=>{
+    if (req.params.filename=='cdnLookup.json') res.sendStatus(403)
+    let __path = Buffer.from(req.params.path, 'base64').toString('ascii')
     // Upload file
 });
 
-// ===============================
+// =============================================================================================
 
-api.post('/_:api/:function/:data/', (req,res)=>{
-    Security.validateCSRFTokens(req.body.key, req.body.token)
+api.post('/_sheets/:function/:options/', (req,res)=>{
+    // == GSheets API == //
+    Security.validateAPIKey(req.body.key, req.body.token)
+        .then((result)=>{
+            res.json({ validation : result })
+        }).catch((error)=>{
+            console.error(error)
+            res.sendStatus(500)
+        })
+});
+
+api.post('/_mail/:function/:options/', (req,res)=>{
+    // == Gmailer API == //
+    Security.validateAPIKey(req.body.key, req.body.token)
         .then((result)=>{
             res.json({ validation : result })
         }).catch((error)=>{
@@ -199,7 +220,7 @@ api.get('/_:api/test/', (req,res)=>{
                     res.send('Internal Error')
                 })
             break
-
+            
         case 'mail':
             Gmailer.TestGmailer()
                 .then((result)=>{
@@ -214,7 +235,7 @@ api.get('/_:api/test/', (req,res)=>{
             res.sendStatus(404)
     }
 });
-// ===============================
+// =============================================================================================
 
 function EXAMPLE_EMAIL_SENDING() {
     var mail = {
