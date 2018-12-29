@@ -20,13 +20,13 @@ exports.Lookup = (fileId) => {
         fs.readFile('./cdn/cdnLookup.json', (err, content)=>{
             if (err) reject('LOOKUP_ERROR', err);
             let lookupTable = JSON.parse(content);
-
+  
             lookupTable.files.forEach(file => {
                 // Better search algorithm needed here
                 // This will take too much time and delay further requests
                 if (file.__id === fileId) resolve(file.path, file.filename, file.contentType);
             });
-        })
+        });
     });
 }
 
@@ -37,10 +37,10 @@ exports.Upload = (fileId) => {
      * The sequence/pattern of file IDs has to be decided. If they are sequential it'll be easy to search
      * like for example they go : A0001, A0002 A0003...
      * 
-     *  - Some hard rules for IDs
-     *    -- should only be alphanumeric
-     *    -- should be combination of upper and lowercase
-     *    -- should be exactly 6 charecters (that gives us (26+26+10)^6 i.e. lots of combinations )
+     * - Some hard rules for IDs
+     *   -- should only be alphanumeric
+     *   -- should be combination of upper and lowercase
+     *   -- should be exactly 6 charecters (that gives us (26+26+10)^6 i.e. lots of combinations )
      * 
      * The array called "files" in the lookup table file has to be sorted each time a new file is added
      */
