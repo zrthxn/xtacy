@@ -36,7 +36,7 @@ Add the following lines there
 192.168.0.101       xtacy.org
 192.168.0.101       www.xtacy.org
 192.168.0.101       cdn.xtacy.org
-192.168.0.101       smtp.xtacy.org
+192.168.0.101       api.xtacy.org
 ```
 One line for each subdomain being used. Save the file and go to http://xtacy.org:3000
 

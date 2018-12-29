@@ -11,8 +11,8 @@
         <form action="#">
             <div class="container center">
                 {{!-- <input id="name" type="text" class="textbox" placeholder="Name" autocomplete="given-name"> --}}
-                <input id="email" type="text" class="textbox" placeholder="Email or Phone" autocomplete="email">
-                <input id="password" type="password" class="textbox" placeholder="Password" autocomplete="current-password">
+                <input id="email" type="text" class="textbox" placeholder="Email or Phone" autocomplete="email" required="true">
+                <input id="password" type="password" class="textbox" placeholder="Password" autocomplete="current-password" required="true">
                 <button class="button solid" id="login">Register</button>
             </div>
         </form>
@@ -27,3 +27,10 @@
 {{!-- END PAGE CONTENT --}}
 
 {{> footer }}
+
+<script>
+    document.getElementById("login").onclick = () => {
+        $(document.getElementById("email")).addClass("error");
+        $(document.getElementById("loading")).addClass("fadeout");
+    }
+</script>

@@ -174,11 +174,16 @@ em {
     padding: 1em;
     font-size: 0.85em;
     background-color: #fff;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     border: 1.5px solid #000;
 } .textbox:focus{
     outline: none;
     background-color: #eee;
+} .textbox[class~="error"] {
+    color: #d60000;
+    border: 1.5px solid #d60000;
+} .textbox[class~="error"]::placeholder {
+    color: #d60000;
 }
 
 .compound-textbox {
@@ -187,7 +192,7 @@ em {
     background-color: #fff;
     flex-direction: row;
     width: fit-content;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     outline: 2px solid #000;
 } .compound-textbox:active {
     background-color: #eee;
