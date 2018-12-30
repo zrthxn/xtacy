@@ -1,0 +1,21 @@
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
+{{!------ ==== PAGE ==== ------}}
+
+{{!-- START PAGE CONTENT --}}
+<section>
+    {{#with page}}
+        <div class="container">
+            <div class="banner-container">
+                <div class="banner"><a href="">
+                    <img src="/static/img/thumb.png" alt="">
+                </a></div>
+            </div>
+
+            <div class="container horizontal">
+                <button class="button">REGISTER</button>
+                <p class="justify">{{ content }}</p>
+            </div>
+        </div>
+    {{/with}}
+</section>
+{{!-- END PAGE CONTENT --}}

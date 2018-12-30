@@ -1,0 +1,25 @@
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
+{{!------ ==== PAGE ==== ------}}
+
+{{> header }}
+
+<script>
+    var __data;
+    window.onload = () => {
+        __data = document.getElementById("__data").innerHTML;
+    }
+</script>
+
+{{!-- START PAGE CONTENT --}}
+<section>
+    {{#with page}}
+        <div>
+            {{{ content }}}
+        </div>
+
+        <div id="__data" hidden="true">{{ data }}</div>
+    {{/with}}
+</section>
+{{!-- END PAGE CONTENT --}}
+
+{{> footer }}

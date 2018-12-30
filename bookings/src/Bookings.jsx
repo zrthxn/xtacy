@@ -25,10 +25,10 @@ class Bookings extends Component {
     getParams = function (location) {
         const searchParams = new URLSearchParams(location.search);
         return ({
-          intent: searchParams.get('intent'),
-          event: searchParams.get('event'),
-          track: searchParams.get('track'),
-          ref: searchParams.get('ref'),
+            intent: searchParams.get('intent'),
+            event: searchParams.get('event'),
+            track: searchParams.get('track'),
+            ref: searchParams.get('ref'),
         });
     }
 

@@ -1,39 +1,45 @@
 function validateToken() {
     return new Promise((resolve, reject)=>{
-        const valReq = new XMLHttpRequest();
-        valReq.open('POST', 'http://xtacy.org:3000/_secu/csrtoken/', true);
-        valReq.setRequestHeader('Content-Type', 'application/json');
-
-        var key = localStorage.getItem( config.csrfTokenNameKey );    
-        var token = localStorage.getItem( config.csrfTokenName+key );
-        if(key===null) {
-            key = generateTokenKey(12);
-            token = generateToken(128);
-            localStorage.setItem(config.csrfTokenNameKey, key);
-            localStorage.setItem(config.csrfTokenName+key, token);
-            initializeClientFirebase(config.clientKey).then(()=>{
-                firebase.database().ref('csrf-tokens/' + key).set(token)
-                    .then(()=>{
-                        valReq.send(JSON.stringify({ "key" : key, "token" : token }));
-                    }).catch((e)=>{
-                        console.log(e);
-                    });
-            });
+        if (localStorage.getItem('x-sr-vtime')!==undefined &&
+            (new Date()).getTime()-localStorage.getItem('x-sr-vtime')<(10*60000)){
+                resolve('CSR_TIME_VALID');
         } else {
-            valReq.send(JSON.stringify({ "key" : key, "token" : token }));
-        }
-        
-        valReq.onreadystatechange = () => {
-            if(valReq.readyState===4 && valReq.status===200) {
-                let valRes = JSON.parse(valReq.response);
-                if(valRes.validation) {
-                    resolve('CSR_TOKEN_VALID');
-                } else {
-                    let k = localStorage.getItem( config.csrfTokenNameKey );
-                    localStorage.removeItem( config.csrfTokenNameKey );
-                    localStorage.removeItem( config.csrfTokenName+k );
-                    delete k;
-                    reject('CSR_TOKEN_INVALID');
+            const valReq = new XMLHttpRequest();
+            valReq.open('POST', 'http://xtacy.org:3000/_secu/csrtoken/', true);
+            valReq.setRequestHeader('Content-Type', 'application/json');
+
+            var key = localStorage.getItem( config.csrfTokenNameKey );    
+            var token = localStorage.getItem( config.csrfTokenName+key );
+            if(key===undefined) {
+                key = generateTokenKey(12);
+                token = generateToken(128);
+                localStorage.setItem(config.csrfTokenNameKey, key);
+                localStorage.setItem(config.csrfTokenName+key, token);
+                initializeClientFirebase(config.clientKey).then(()=>{
+                    firebase.database().ref('csrf-tokens/' + key).set(token)
+                        .then(()=>{
+                            valReq.send(JSON.stringify({ "key" : key, "token" : token }));
+                        }).catch((e)=>{
+                            console.log(e);
+                        });
+                });
+            } else {
+                valReq.send(JSON.stringify({ "key" : key, "token" : token }));
+            }
+            
+            valReq.onreadystatechange = () => {
+                if(valReq.readyState===4 && valReq.status===200) {
+                    let valRes = JSON.parse(valReq.response);
+                    if(valRes.validation) {
+                        localStorage.setItem('x-sr-vtime', (new Date()).getTime())
+                        resolve('CSR_TOKEN_VALID');
+                    } else {
+                        let k = localStorage.getItem( config.csrfTokenNameKey );
+                        localStorage.removeItem( config.csrfTokenNameKey );
+                        localStorage.removeItem( config.csrfTokenName+k );
+                        delete k;
+                        reject('CSR_TOKEN_INVALID');
+                    }
                 }
             }
         }

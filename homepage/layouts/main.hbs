@@ -12,26 +12,27 @@
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-database.js"></script>
     {{!-- <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-firestore.js"></script> --}}
 
-    <link rel="stylesheet" type="text/css" media="screen" href="../static/css/Global.css" />
-    <link rel="shortcut icon" type="image/png" href="../static/img/favicon.png"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Global.css" />
+    <link rel="shortcut icon" type="image/png" href="/static/img/favicon.png"/>
     <link rel="shortcut icon" type="image/png" href="http://cdn.xtacy.org:3000/p/faviconpng/"/>
 
-    <script src="../static/js/secu.js"></script>
-    <script src="./static/js/database.js"></script>
-    <script src="./static/js/config.js"></script>
+    <script src="/static/js/secu.js"></script>
+    <script src="/static/js/database.js"></script>
+    <script src="/static/js/config.js"></script>
 
     <script>
         (()=>{
             validateToken()
                 .then((r)=>{
-                    if (r==='CSR_TOKEN_VALID') {
+                    if (r==='CSR_TOKEN_VALID')
                         console.log('SR Tokens Verified');
-                        generateSecurityFluff(4);
-                    }
+                    else if (r==='CSR_TIME_VALID')
+                        console.log('SR Tokens Valid');
+                    generateSecurityFluff(4);    
                 }).catch((e)=>{
                     console.log(e);
                     if (e==='CSR_TOKEN_INVALID') {
-                        alert(`Security Check Failed! You might be browsing a malicious site or might have clicked on a bad link.`);
+                        // alert('Security Check Failed! You might be browsing a malicious site or might have clicked on a bad link.');
                         window.location = '/';
                     }
                 });

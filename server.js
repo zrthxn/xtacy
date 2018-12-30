@@ -24,6 +24,7 @@ const Gmailer = require('./util/Gmailer');
 const GSheets = require('./util/GSheets');
 const ConsoleScreen = require('./util/ConsoleScreen');
 const ContentDelivery = require('./util/ContentDelivery');
+const EventManager = require('./util/EventManager');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
@@ -31,6 +32,10 @@ homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
 homepage.use(express.static( path.join(__dirname, 'homepage') ))
 homepage.use(express.static( path.join(__dirname, 'bookings') ))
+
+// Static Served Directories
+homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
+
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
 homepage.engine('hbs', hbs({
@@ -133,14 +138,49 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
         })
 });
 
-homepage.get('/event/:event/', (req,res)=>{
-    switch(req.params.event) {
-        default:
+homepage.get('/event/:eventId/', (req,res)=>{
+    EventManager.findEventById(req.params.eventId)
+        .then((result)=>{
+            if (result.success) {
+                res.render('eventTemplate', 
+                    {
+                        'title' : result.title,
+                        'page' : {
+                            'data' : JSON.stringify(result.data),
+                            'content' : result.content
+                        }
+                    }
+                )
+            } else {
+                res.render('404', { 'title' : 'Not Found' })
+            }
+        }).catch(()=>{
             res.redirect('/events')
-    }
+        })
 });
 
-homepage.get('/bookings/:title/', (req,res)=>{
+homepage.get('/event/:eventId/promo', (req,res)=>{
+    EventManager.findEventPromoById(req.params.eventId)
+        .then((result)=>{
+            if (result.success) {
+                res.render('eventPromoTemplate', 
+                    {
+                        'title' : result.title,
+                        'page' : {
+                            'data' : JSON.stringify(result.data),
+                            'content' : result.content
+                        }
+                    }
+                )
+            } else {
+                res.render('404', { 'title' : 'Not Found' })
+            }
+        }).catch(()=>{
+            res.redirect('/events')
+        })
+});
+
+homepage.get('/bookings/', (req,res)=>{
     res.sendFile( path.resolve(__dirname, 'bookings/build', 'book.html') )
 });
 
