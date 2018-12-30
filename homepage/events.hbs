@@ -54,6 +54,12 @@
             <div class="strip"></div>
             {{> loading }}
             <iframe src="" frameborder="0" id="drawer-event"></iframe>
+            <div class="action" id="action">
+                <button id="button_main" class="button solid">REGISTER</button>
+                <button id="button_aux" class="button">READ MORE</button>
+                
+                <div id="metadata" class="metadata">heelo this is meta data</div>
+            </div>
         </div>
     </div>
 </section>
@@ -63,6 +69,7 @@
 <script>
     let banners = document.getElementsByClassName("banner");
     let iframe = document.getElementById("drawer-event");
+    let action = document.getElementById("action");
     let loading = document.getElementById("loading");
     let toggle = document.getElementById("drawer-toggle");
 
@@ -78,8 +85,12 @@
             if (toggle.checked===true) {
                 let url = window.location.href.split('#')[1];
                 if (url!==undefined) iframe.src = '/event/' + url + '/promo';
+
+                document.getElementById("button_aux").onclick = () => {
+                    window.location = '/event/' + url;
+                }
             }
-        }, 1000);
+        }, 100);
     }
 
     window.onload = () => {

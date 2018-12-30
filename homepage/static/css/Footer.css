@@ -13,7 +13,10 @@ footer .dev {
 }
 
 footer .container {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin-bottom: 2em;
 }
 
 footer ul {
@@ -48,4 +51,10 @@ footer .faqs li:first-of-type::before {
 footer .footer-links {
     display: flex;
     flex-direction: row;
+}
+footer .images {
+    height: fit-content;
+    margin: auto auto;
+} footer .images img {
+    max-height: 4em;
 }

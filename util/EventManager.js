@@ -40,7 +40,7 @@ exports.findEventPromoById = (__eventId) => {
         }
         
         if(eventData!=undefined) {
-            fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.txt', (err, content)=> {
+            fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.html', (err, content)=> {
                 if (err) {
                     console.log(err);
                     reject({ errors : err });
