@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Router from 'react-router';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Main from './components/Main';
@@ -61,6 +62,11 @@ class Bookings extends Component {
                 <Header/>
                     <section>
                         <h1>Bookings</h1>
+
+                        {/* <Router>
+                            
+                        </Router> */}
+
                         {
                             this.state.intent==="book" ? <Main data={this.state.event}/> : <Loading/>
                         }
