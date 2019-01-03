@@ -10,7 +10,7 @@ function validateToken() {
 
             var key = localStorage.getItem( config.csrfTokenNameKey );    
             var token = localStorage.getItem( config.csrfTokenName+key );
-            if(key===undefined) {
+            if(key===null) {
                 key = generateTokenKey(12);
                 token = generateToken(128);
                 localStorage.setItem(config.csrfTokenNameKey, key);

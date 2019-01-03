@@ -64,7 +64,7 @@ api.use(express.urlencoded({ extended: true }))
 xtacy.use(vhost(__domain, homepage))
 xtacy.use(vhost('www.' +  __domain, homepage))
 xtacy.use(vhost('cdn.' +  __domain, cdn))
-xtacy.use(vhost('api.' +  __domain, api))
+// xtacy.use(vhost('api.' +  __domain, api))
 
 xtacy.listen(PORT, ()=>{
     ConsoleScreen.StartupScreen({
@@ -137,6 +137,59 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
             res.sendStatus(500)
         })
 });
+
+homepage.post('/_contact/send/', (req,res)=>{
+    let { name, email, msg } = req.body
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((result) => {
+            if (result) {
+                Gmailer.SingleDelivery({
+                    to: email,
+                    from: 'hello@xtacy.org',
+                    subject: 'Hi! Team Xtacy',
+                    body: 'Contact Acknowledgement Email'
+                })
+            } else
+                res.sendStatus(403)
+        }).then(()=>{
+            Gmailer.SingleDelivery({
+                to: 'hello@xtacy.org', //'webParastorage@xtacy.org',
+                from: 'noreply@xtacy.org',
+                replyTo: email,
+                subject: 'Contact Form | ' + name,
+                body: `
+                    <b>---------------- Contact Form Message ----------------</b> <br><br>
+                    Name: ${name} <br>
+                    Email: ${email} <br>
+                    <br>
+                    Message: ${msg}<br>
+                    <br>
+                    <b>------------------- End of Message -------------------</b> <br>
+                    <br>
+                `
+            })
+        }).then(()=>{
+            GSheets.AppendToSpreadsheet([{
+                ssId: ServerConfig.Sheets.spreadsheets.xtacy,
+                sheet: 'Mailing List',
+                values: [
+                    email, name, 'via Contact Form'
+                ]
+            },{
+                ssId: ServerConfig.Sheets.spreadsheets.xtacy,
+                sheet: 'Contact Form',
+                values: [
+                    email, name, msg
+                ]
+            }])
+        }).then(()=>{
+            res.sendStatus(200)
+        }).catch((error)=>{
+            console.error(error)
+            res.sendStatus(500)
+        })
+});
+
 
 homepage.get('/event/:eventId/', (req,res)=>{
     EventManager.findEventById(req.params.eventId)

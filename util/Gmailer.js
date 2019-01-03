@@ -1,5 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
+const GmailConfig = require('../config.json').Gmail;
 const {google} = require('googleapis');
 const LoadBalancer = require('./LoadBalancer');
 
@@ -60,13 +61,13 @@ function getNewToken(oAuth2Client) {
 }
 
 exports.TestGmailer = function() {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve,reject)=>{ 
         authorize().then((auth)=>{
             try {
                 let testObj = google.gmail({version: 'v1', auth});
-                if (testObj!=null) resolve({ success: true });
+                if (testObj!=null) return({ success: true });
             } catch(err) {
-                resolve({ success: false, errors: err });
+                return({ success: false, errors: err });
             }
         }).catch((err)=>{
             reject(err);
@@ -88,14 +89,18 @@ exports.SingleDelivery = function (mail) {
         'Content-Transfer-Encoding: binary\r\n' +
         'Content-Type: text/html; charset="utf-8"\r\n' +
         'Content-Disposition: inline\r\n'+
-        'Content-Length: '+ mail.length +'\r\n\r\n';
+        'Content-Length: '+ mail.body.length +'\r\n\r\n';
     
-    let from = 'From: '+ mail.username + ' <' + mail.from + '>\r\n';
+    let reply = '';
+    if(mail.replyTo!==undefined)
+        reply = 'Reply-To: ' + mail.replyTo + '\r\n';
+
+    let from = 'From: '+ GmailConfig.username + ' <' + mail.from + '>\r\n';
     let to = 'To: '+ mail.to +'\r\n';
     let subject = 'Subject: ' + mail.subject + '\r\n';
 
     return new Promise((resolve,reject)=>{       
-        var mail64 = Buffer.from(from + to + subject + headers + mail.body + "\r\n--==X__MULTIPART__X==--\r\n")
+        var mail64 = Buffer.from(from + to + reply + subject + headers + mail.body + "\r\n--==X__MULTIPART__X==--\r\n")
             .toString('base64')
             .replace(/\+/g, '-')
             .replace(/\//g, '_')
@@ -103,9 +108,9 @@ exports.SingleDelivery = function (mail) {
 
         authorize().then((auth)=>{
             console.log('Sending email to ' + mail.to);
-            send(google.gmail({version: 'v1', auth}), mail64, mail.userId)
+            send(google.gmail({version: 'v1', auth}), mail64, GmailConfig.userId)
                 .then((res)=>{
-                    if(res===200) resolve(res);
+                    if(res===200) return(res);
                     else reject();
                 })
                 .catch((err)=>{
@@ -176,7 +181,7 @@ exports.DatasetDelivery = function (mail, content, database) {
                 'Content-Length: '+ current_email.length +'\r\n\r\n';
 
             let to = 'To: ' + addressList[i]+ '\r\n';
-            let from = 'From: '+ mail.username + ' <' + mail.from + '>\r\n';
+            let from = 'From: '+ GmailConfig.username + ' <' + mail.from + '>\r\n';
             
             let dyn_sub = "";
             try {
@@ -202,7 +207,7 @@ exports.DatasetDelivery = function (mail, content, database) {
                 setTimeout(function() {
                     if(addressList[INDEX]!==undefined) {
                         console.log('Sending email to ' + addressList[INDEX]);
-                        send(google.gmail({version: 'v1', auth}), emails[INDEX], mail.userId)
+                        send(google.gmail({version: 'v1', auth}), emails[INDEX], GmailConfig.userId)
                             .then((res)=>{
                                 if(res===200) {
                                     INDEX++;

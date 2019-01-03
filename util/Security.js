@@ -9,6 +9,7 @@ exports.validateCSRFTokens = (key, token) => {
                     console.log('CSR Key Verified', key);
                     resolve(true);
                 } else {
+                    console.log('CSR Key Rejected', key);
                     resolve(false);
                 }
             }).catch((err)=>{

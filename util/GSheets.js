@@ -74,26 +74,36 @@ exports.TestGSheets = function() {
 
 // ================================================== //
 
-exports.WriteToSpreadsheet = function (payload) {
+exports.AppendToSpreadsheet = function (payload) {
     return new Promise((resolve,reject)=>{
+        let results = [], errors = [];
         authorize().then((auth)=>{
-            google.sheets({version: 'v4', auth}).spreadsheets.values.append({
-                spreadsheetId: payload.ssId,
-                
-                range: payload.sheet,
-                valueInputOption: 'RAW',
-                insertDataOption: 'INSERT_ROWS',
-                
-                resource: {
-                    majorDimension: "ROWS",
-                    values: [payload.values]
-                },
-                auth: auth
-            }, function(err, response) {
-                if (!err) console.log("\tSpreadsheet Payload Delivered");
-                else console.error(err.errors, err.code);
-                resolve(err, response);
+            payload.forEach(entry => {
+                google.sheets({version: 'v4', auth}).spreadsheets.values.append({
+                    spreadsheetId: entry.ssId,
+                    
+                    range: entry.sheet,
+                    valueInputOption: 'RAW',
+                    insertDataOption: 'INSERT_ROWS',
+                    
+                    resource: {
+                        majorDimension: "ROWS",
+                        values: [entry.values]
+                    },
+                    auth: auth
+                }, function(err, response) {
+                    if (!err) results = [...results, response];
+                    else errors = [...errors, err];
+                }); 
             });
+            console.log("Spreadsheet Payload Delivered");
+            resolve(results, errors);
+        }).catch((err)=>{
+            reject(err);
         });
     });
+}
+
+exports.WriteToSpreadsheet = function (payload) {
+    
 }

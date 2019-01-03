@@ -1,3 +1,4 @@
+<script src="/static/js/contact.js"></script>
 {{!------ ==== PAGE ==== ------}}
 
 {{> header }}
@@ -8,9 +9,9 @@
         <h2>Contact</h2>
 
         <div class="container center">
-            <input type="text" class="textbox" placeholder="Name">
-            <input type="text" class="textbox" placeholder="Email or Phone">
-            <input type="text" class="textbox" placeholder="Message">
+            <input id="form_name" type="text" class="textbox" placeholder="Name">
+            <input id="form_email" type="text" class="textbox" placeholder="Email or Phone">
+            <input id="form_msg" type="text" class="textbox" placeholder="Message">
             <button class="button solid" id="login">Send</button>
         </div>
 
@@ -25,5 +26,15 @@
     </div>
 </section>
 {{!-- END PAGE CONTENT --}}
+
+<script>
+    document.getElementById("login").addEventListener('click', ()=>{
+        contactRequest({
+            name : document.getElementById("form_name").value,
+            email : document.getElementById("form_email").value,
+            msg : document.getElementById("form_msg").value
+        });
+    });
+</script>
 
 {{> footer }}
