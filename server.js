@@ -153,7 +153,7 @@ homepage.post('/_contact/send/', (req,res)=>{
                 res.sendStatus(403)
         }).then(()=>{
             Gmailer.SingleDelivery({
-                to: 'webParastorage@xtacy.org',
+                to: 'webparastorage@xtacy.org',
                 from: 'noreply@xtacy.org',
                 replyTo: email,
                 subject: 'Contact Form | ' + name,
