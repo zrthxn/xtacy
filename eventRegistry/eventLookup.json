@@ -4,21 +4,45 @@
             "name" : "",
             "eventId" : "",
             "dates" : "",
+            "type" : "gen / com / tic ",
             "metadata" : {
                 "time" : "",
+                "paid" : "",
                 "price" : "",
+                "teams" : "",
+                "teamSize" : "",
                 "conductedBy" : ""
             }
         }
     },
-    "events" : [{
-        "title" : "Hackathon Real",
-        "eventId" : "hackrp",
-        "dates" : "15/16",
-        "metadata" : {
-            "time" : "1:00PM",
-            "price" : "1000",
-            "conductedBy" : "Daniyal"
+    "events" : [
+        {
+            "title" : "Hackathon Real",
+            "eventId" : "hackrp",
+            "dates" : "15/16",
+            "type" : "com",
+            "metadata" : {
+                "time" : "1:00 PM",
+                "paid" : true,
+                "price" : 1000,
+                "teams" : true,
+                "teamSize" : 4,
+                "collectTeamGit" : true,
+                "conductedBy" : "Omair"
+            }
+        },{
+            "title" : "Mehmood Bhai",
+            "eventId" : "dastan",
+            "dates" : "16",
+            "type" : "tic",
+            "metadata" : {
+                "time" : "1:00 PM",
+                "paid" : true,
+                "price" : 500,
+                "teams" : false,
+                "teamSize" : null,
+                "conductedBy" : "Daniyal"
+            }            
         }
-    }]
+    ]
 }

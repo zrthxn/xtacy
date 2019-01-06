@@ -1,58 +1,67 @@
 import React, { Component } from 'react';
-import Router from 'react-router';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Main from './components/Main';
-import Loading from './components/Loading';
+import crypto from 'crypto';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+import Header from './components/partials/Header';
+import Footer from './components/partials/Footer';
 import Secu from './util/secu';
-
 import './Global.css';
 
+import Main from './components/Main';
+import ErrorPage from './components/ErrorPage';
+
 const firebase  = require('./util/database');
+const config  = require('./util/config.json');
 
 class Bookings extends Component {
 
     constructor() {
-        super();
+        super()
         this.state = {
             intent: null,
             event: null,
-            track: null,
-            ref: null
+            hash: null,
+            ref: null,
+            verified: false
         }
     }
 
-    getParams = function (location) {
-        const searchParams = new URLSearchParams(location.search);
+    getParams = (location) => {
+        const searchParams = new URLSearchParams(location.search)
         return ({
-            intent: searchParams.get('intent'),
-            event: searchParams.get('event'),
-            track: searchParams.get('track'),
+            intent: searchParams.get('int'),
+            event: searchParams.get('evt'),
             ref: searchParams.get('ref'),
-        });
+        })
     }
 
     componentDidMount() {
         Secu.validateToken()
             .then((result)=>{
                 if (result==='CSR_TOKEN_VALID') {
-                    console.log('SR Tokens Verified');
-                    console.log(firebase.database.ref());
+                    console.log('SR Tokens Verified')
+
+
+                    console.log(firebase.database.ref())
                     Secu.generateSecurityFluff(4);
                 }
             }).catch((err)=>{
-                console.error(err); // change later to redirect to homepage
+                console.error(err)
             });
-
-        // load the user data from Local Storage i.e. pwd and username and user id
         
-        var params = this.getParams(window.location);
+        let params = this.getParams(window.location), verified = false
+        if (params.intent==='gen') params.event = 'any'
+
+        let hashSequence = params.intent + config.clientKey + params.event
+        let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+        if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+
         this.setState({
             intent: params.intent,
             event: params.event,
-            track: params.track,
-            ref: params.ref
+            hash: hash,
+            ref: params.ref,
+            verified: true // verified
         })
     }
 
@@ -60,17 +69,25 @@ class Bookings extends Component {
         return (
             <div className="Bookings">
                 <Header/>
-                    <section>
-                        <h1>Bookings</h1>
 
-                        {/* <Router>
-                            
-                        </Router> */}
+                {
+                    this.state.verified ? (
+                        <section>
+                            <Router>
+                                <Switch>
+                                    <Route path='/register/start'>
+                                        <Main intent={this.state.intent} event={this.state.event}/>
+                                    </Route>
 
-                        {
-                            this.state.intent==="book" ? <Main data={this.state.event}/> : <Loading/>
-                        }
-                    </section>
+                                    <Route component={ErrorPage} />
+                                </Switch>
+                            </Router>
+                        </section>
+                    ) : (
+                        <ErrorPage/>
+                    )
+                }
+
                 <Footer/>
             </div>
         );

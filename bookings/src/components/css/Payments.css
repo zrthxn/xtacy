@@ -1,0 +1,19 @@
+.Payments {
+
+}
+
+.Payments #phone {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.Payments .form {
+    display: flex;
+    flex-flow: column;
+}
+.Payments .form .action {
+    display: flex;
+    flex-flow: row;
+} .Payments .form .action * {
+    margin: auto;
+}

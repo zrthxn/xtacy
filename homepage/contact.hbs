@@ -12,7 +12,7 @@
             <input id="form_name" type="text" class="textbox" placeholder="Name">
             <input id="form_email" type="text" class="textbox" placeholder="Email or Phone">
             <input id="form_msg" type="text" class="textbox" placeholder="Message">
-            <button class="button solid" id="login">Send</button>
+            <button class="button solid" id="send">Send</button>
         </div>
 
         <p>Upon Contact
@@ -28,7 +28,7 @@
 {{!-- END PAGE CONTENT --}}
 
 <script>
-    document.getElementById("login").addEventListener('click', ()=>{
+    document.getElementById("send").onclick = ()=>{
         contactRequest({
             name : document.getElementById("form_name").value,
             email : document.getElementById("form_email").value,

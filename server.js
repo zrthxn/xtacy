@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
+const crypto = require('crypto');
 
 const xtacy = express();
 const homepage = express();
@@ -121,7 +122,7 @@ homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
     // == GET Firebase Credentials == //
     var ckey = Buffer.from(req.params.ckey, 'base64').toString('ascii')
     if(req.params.mode==='GET' && ckey===require('./config.json').clientKey){
-        res.json(ServerConfig.firebase)
+        res.json({ config: ServerConfig.firebase, apiKey: ServerConfig.firebaseClientAPIKey})
     } else {
         res.sendStatus(500)
     }
@@ -159,24 +160,20 @@ homepage.post('/_contact/send/', (req,res)=>{
                 subject: 'Contact Form | ' + name,
                 body: `
                     <b>---------------- Contact Form Message ----------------</b> <br><br>
-                    Name: ${name} <br>
-                    Email: ${email} <br>
-                    <br>
-                    Message: ${msg}<br>
-                    <br>
-                    <b>------------------- End of Message -------------------</b> <br>
-                    <br>
+                     Name: ${name} <br> Email: ${email}<br><br>
+                     Message: ${msg}<br><br>
+                    <b>------------------- End of Message -------------------</b> <br><br>
                 `
             })
         }).then(()=>{
             GSheets.AppendToSpreadsheet([{
-                ssId: ServerConfig.Sheets.spreadsheets.xtacy,
+                ssId: ServerConfig.Sheets.spreadsheets.repository,
                 sheet: 'Mailing List',
                 values: [
                     email, name, 'via Contact Form'
                 ]
             },{
-                ssId: ServerConfig.Sheets.spreadsheets.xtacy,
+                ssId: ServerConfig.Sheets.spreadsheets.repository,
                 sheet: 'Contact Form',
                 values: [
                     email, name, msg
@@ -212,7 +209,7 @@ homepage.get('/event/:eventId/', (req,res)=>{
         })
 });
 
-homepage.get('/event/:eventId/promo', (req,res)=>{
+homepage.get('/event/:eventId/promo/', (req,res)=>{
     EventManager.findEventPromoById(req.params.eventId)
         .then((result)=>{
             if (result.success) {
@@ -233,8 +230,48 @@ homepage.get('/event/:eventId/promo', (req,res)=>{
         })
 });
 
-homepage.get('/bookings/', (req,res)=>{
-    res.sendFile( path.resolve(__dirname, 'bookings/build', 'book.html') )
+homepage.get('/eventData/', (res,res)=>{
+    EventManager.getEventData(req.body.eventId)
+        .then((data)=>{
+            if (data!==null) res.json({ validation: true, data: data })
+            else res.json({ validation: false })
+        }).catch((err)=>{
+            res.sendStatus(500)
+        })
+});
+
+homepage.get('/register/start/', (req,res)=>{
+    res.sendFile( path.resolve(__dirname, 'bookings/build', 'index.html') )
+});
+
+homepage.post('/register/gen/', (req,res)=>{
+    let hashSequence = res.body.data.regName + res.body.data.regEmail + ServerConfig.clientKey + res.body.data.regPhone
+    let hash = crypto.createHmac('sha256', hashSequence).digest('hex')
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if (csrfRes) {
+                if ( req.body.checksum === hash ) {
+                    EventManager.generalRegister(req.body.data)
+                } else {
+                    throw "HASH_INVALID"
+                }
+            } else {
+                throw "CSRF_INVALID"
+            }
+        }).then((data)=>{
+            res.json({ validation: data })
+        }).catch((err)=>{
+            console.log('FAILED VALIDATION :: ' + err)
+            res.json({ validation: false })
+        })
+});
+
+homepage.post('/register/com/', (req,res)=>{
+    
+});
+
+homepage.post('/register/tic/', (req,res)=>{
+    
 });
 
 // =============================================================================================

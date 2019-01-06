@@ -10,6 +10,17 @@ const TOKEN_PATH = './util/GoogleAPIs/Gmail/token.json';
 
 var sendFrequency = 1000;
 
+const Head =
+    'Mime-Version: 1.0\r\n' +
+    'Content-Type: multipart/alternative; boundary="==X__MULTIPART__X=="\r\n' +
+    'Content-Transfer-Encoding: binary\r\n'+
+    'X-Mailer: MIME::Lite 3.030 (F2.84; T1.38; A2.12; B3.13; Q3.13)\r\n\r\n'+
+
+    '--==X__MULTIPART__X==\r\n' +
+    'Content-Transfer-Encoding: binary\r\n' +
+    'Content-Type: text/html; charset="utf-8"\r\n' +
+    'Content-Disposition: inline\r\n';
+
 function authorize() {
     return new Promise((resolve,reject)=>{
         fs.readFile(CREDENTIALS_PATH, (err, content) => {
@@ -79,17 +90,7 @@ exports.TestGmailer = function() {
 
 exports.SingleDelivery = function (mail) {
     if(typeof mail==='json') throw "Invalid Types";
-    let headers =
-        'Mime-Version: 1.0\r\n' +
-        'Content-Type: multipart/alternative; boundary="==X__MULTIPART__X=="\r\n' +
-        'Content-Transfer-Encoding: binary\r\n'+
-        'X-Mailer: MIME::Lite 3.030 (F2.84; T1.38; A2.12; B3.13; Q3.13)\r\n\r\n'+
-
-        '--==X__MULTIPART__X==\r\n' +
-        'Content-Transfer-Encoding: binary\r\n' +
-        'Content-Type: text/html; charset="utf-8"\r\n' +
-        'Content-Disposition: inline\r\n'+
-        'Content-Length: '+ mail.body.length +'\r\n\r\n';
+    let headers = Head + 'Content-Length: '+ mail.body.length +'\r\n\r\n';
     
     let reply = '';
     if(mail.replyTo!==undefined)
@@ -110,7 +111,7 @@ exports.SingleDelivery = function (mail) {
             console.log('Sending email to ' + mail.to);
             send(google.gmail({version: 'v1', auth}), mail64, GmailConfig.userId)
                 .then((res)=>{
-                    if(res===200) return(res);
+                    if(res===200) resolve(res);
                     else reject();
                 })
                 .catch((err)=>{
@@ -118,6 +119,64 @@ exports.SingleDelivery = function (mail) {
                 });
         });
     });
+}
+
+exports.SingleDataDelivery = function (mail, content, data) {
+    var splits = content.split('$');
+    var peices = [], identifiers = [];
+
+    var mail64 = null;
+
+    return new Promise((resolve,reject)=>{
+        // ----- EMAIL CONTENT FORMATTING ----- 
+        // Put Address identifiers and surrounding text in arrays
+        for(let p=0; p<=splits.length; p+=2)
+            peices.push(splits[p]);
+        for(let a=1; a<splits.length; a+=2)
+            identifiers.push(splits[a]);
+
+        let current_email = '';
+        // Insert data into email block copy
+        for(var j=0; j<peices.length; j++) {
+            let _data = '';
+            for(var k=0; k<data.length; k++)
+                if(identifiers[j]===data[k].id) {
+                    _data = data[k].data;
+                    break;
+                }
+            let next = peices[j] + _data;
+            current_email = current_email + next;
+        }
+        
+        let headers = Head + 'Content-Length: '+ current_email.length +'\r\n\r\n';
+
+        let to = 'To: ' + mail.to + '\r\n';
+        let from = 'From: '+ GmailConfig.username + ' <' + mail.from + '>\r\n';
+        
+        let dyn_sub = "";
+        try {
+            dyn_sub = current_email.split('<title>')[1].split('</title>')[0];
+        } catch(e) {
+            dyn_sub = mail.subject;
+        }
+        let subject = 'Subject: ' + dyn_sub + '\r\n';
+        mail64 = Buffer.from(from + to + subject + headers + current_email + "\r\n--==X__MULTIPART__X==--\r\n").toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+
+        authorize().then((auth)=>{
+            console.log('Sending email to ' + mail.to);
+            send(google.gmail({version: 'v1', auth}), mail64, GmailConfig.userId)
+                .then((res)=>{
+                    if(res===200) resolve(res);
+                    else reject();
+                })
+                .catch((err)=>{
+                    console.error(err);
+                });
+        });
+    })
 }
 
 exports.DatasetDelivery = function (mail, content, database) {
@@ -168,17 +227,7 @@ exports.DatasetDelivery = function (mail, content, database) {
                 current_email = current_email + next;
             }
 
-            let headers = 
-                'Mime-Version: 1.0\r\n' +
-                'Content-Type: multipart/alternative; boundary="==X__MULTIPART__X=="\r\n' +
-                'Content-Transfer-Encoding: binary\r\n'+
-                'X-Mailer: MIME::Lite 3.030 (F2.84; T1.38; A2.12; B3.13; Q3.13)\r\n\r\n'+
-
-                '--==X__MULTIPART__X==\r\n' +
-                'Content-Transfer-Encoding: binary\r\n' +
-                'Content-Type: text/html; charset="utf-8"\r\n' +
-                'Content-Disposition: inline\r\n'+
-                'Content-Length: '+ current_email.length +'\r\n\r\n';
+            let headers = Head + 'Content-Length: '+ current_email.length +'\r\n\r\n';
 
             let to = 'To: ' + addressList[i]+ '\r\n';
             let from = 'From: '+ GmailConfig.username + ' <' + mail.from + '>\r\n';

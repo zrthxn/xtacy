@@ -7,8 +7,9 @@ function initializeClientFirebase(clientKey) {
         credsReq.onreadystatechange = () => {
             if(credsReq.readyState===4 && credsReq.status===200) {
                 let credentials = JSON.parse(credsReq.response);
+                credentials.config['apiKey'] = credentials.apiKey;
                 if (firebase.apps.length===0)
-                    firebase.initializeApp(credentials);
+                    firebase.initializeApp(credentials.config);
                 resolve();
             }
         }

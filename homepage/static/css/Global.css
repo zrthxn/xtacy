@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,800,900');
 
 :root {
-    --yellow: rgb(255, 255, 0);
+    --yellow: #ffee00;
 }
 
 * {

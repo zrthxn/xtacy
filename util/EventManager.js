@@ -1,13 +1,17 @@
 const fs = require('fs');
+const Gmailer = require('./Gmailer');
+const GSheets = require('./GSheets');
 const eventLookup = require('../eventRegistry/eventLookup.json');
 const database = require('./Database');
 
 exports.findEventById = (__eventId) => {
     return new Promise((resolve,reject)=>{
-        var eventData;
-        for(let i=0; i<eventLookup.events.length; i++) {
-            eventData = eventLookup.events[i];
-            if (eventLookup.events[i].eventId===__eventId) break;
+        var eventData = null;
+        for(let event of eventLookup.events) {
+            if (event.eventId===__eventId) {
+                eventData = event;
+                break;
+            }
         }
         
         if(eventData!=undefined) {
@@ -33,10 +37,12 @@ exports.findEventById = (__eventId) => {
 
 exports.findEventPromoById = (__eventId) => {
     return new Promise((resolve,reject)=>{
-        var eventData;
-        for(let i=0; i<eventLookup.events.length; i++) {
-            eventData = eventLookup.events[i];
-            if (eventLookup.events[i].eventId===__eventId) break;
+        var eventData = null;
+        for(let event of eventLookup.events) {
+            if (event.eventId===__eventId) {
+                eventData = event;
+                break;
+            }
         }
         
         if(eventData!=undefined) {
@@ -60,12 +66,53 @@ exports.findEventPromoById = (__eventId) => {
     });
 }
 
-exports.findEvent = (event) => {
-
+exports.getEventData = (__eventId) => {
+    return new Promise((resolve,reject)=>{
+        var eventData = null;
+        for(let event of eventLookup.events) {
+            if (event.eventId===__eventId) {
+                eventData = event;
+                break;
+            }
+        }
+        resolve(eventData);
+    });
 }
 
 exports.addNewEvent = () => {
 
+}
+
+exports.generalRegister = (data) => {
+    return new Promise((resolve,reject)=>{
+        GSheets.AppendToSpreadsheet([
+            {
+                ssId: ServerConfig.Sheets.spreadsheets.registrations,
+                sheet: 'General',
+                values: [
+                    data.regName, data.regEmail, data.regPhone, data.regInst
+                ]
+            }
+        ]).then(()=>{
+            Gmailer.SingleDelivery(
+                {
+                    to: data.regEmail,
+                    from: 'hello@xtacy.org',
+                    subject: 'Registration Confirmation | Team Xtacy',
+                }, 
+                'Registration Acknowledgement Email $regName$ $regPhone$ $regInst$',
+                [
+                    { id: 'regName', data: data.regName },
+                    { id: 'regPhone', data: data.regPhone },
+                    { id: 'regInst', data: data.regInst }
+                ]
+            )
+        }).then(()=>{
+            resolve(true)
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }
 
 // =========================================== //

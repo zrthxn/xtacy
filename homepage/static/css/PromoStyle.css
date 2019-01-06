@@ -21,3 +21,11 @@
     font-weight: bold;
     margin-right: 5px;
 }
+
+.promo .metadata {
+    margin: 1em 0;
+    height: fit-content;
+    font-size: 0.75em;
+    color: #777;
+    text-align: left;
+}

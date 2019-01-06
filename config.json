@@ -7,7 +7,7 @@
     "clientKey" : "clientKey@xtacy.ieeejmi.org",
     "Sheets" : {
         "spreadsheets" : {
-            "xtacy" : "1ysZY3sGmqsWKMXy1i_YfObq8f-VCL-EqkwZ0pH0LI-0"
+            "repository" : "1ysZY3sGmqsWKMXy1i_YfObq8f-VCL-EqkwZ0pH0LI-0"
         }
     },
     "Gmail" : {
@@ -18,8 +18,9 @@
         "apikey" : "",
         "senders" : {}
     },
+    "firebaseClientAPIKey" : "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
+    "firebaseServerAPIKey": "AIzaSyDvu4G7Z62WqJfb-aMwQa2YGOCGSTUnxtk",
     "firebase" : {
-        "apiKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
         "authDomain": "xtacy-org.firebaseapp.com",
         "databaseURL": "https://xtacy-org.firebaseio.com",
         "projectId": "xtacy-org",
@@ -27,5 +28,3 @@
         "messagingSenderId": "625260114530"
     }
 }
-
-    

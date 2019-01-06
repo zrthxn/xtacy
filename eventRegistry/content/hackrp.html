@@ -6,12 +6,18 @@
 
     <div class="container">
         <h1>HACK RP</h1>
+
+        <button class="button solid" id="reg">REGISTER</button>
     </div>
 
     <script>
         setTimeout(function(){
             console.log(__data);
-        }, 500)
+            
+            document.getElementById("reg").onclick = () => {
+                window.location = '/register/start?int=' + __data.type + '&evt=' + __data.eventId;
+            }
+        }, 100)
     </script>
 
 <!--== END PAGE ==-->
