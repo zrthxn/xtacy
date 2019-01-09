@@ -78,9 +78,21 @@ function mergeLookupTable() {
     // Ignore this right now
 }
 
-function generateFileId(len) {
-    var id = "";
-    for(let k=0; k<len; k++)
-        id += Math.floor( (Math.random())*16 ).toString(16);
-    return id;
+function generateFileId() {
+    let fileId = '', date = new Date()
+    let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
+    let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString()
+
+    let lookupTable = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
+
+    lookupTable.fileRefNumber++
+
+    let flRef = (lookupTable.fileRefNumber).toString(36), k = 4 - flRef.length
+    for (let i=0; i<k; i++)
+        flRef = '0' + flRef
+
+    fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 4))
+    fileId =  (day + month).toString(36).substring(0,2) + flRef
+
+    return fileId
 }

@@ -8,8 +8,6 @@ import SuccessPage from './SuccessPage';
 
 const config = require('../util/config.json');
 
-// Non-competitive Non-paid i.e. general
-
 class Register extends Component {
     constructor() {
         super();
@@ -45,9 +43,7 @@ class Register extends Component {
         if(this.state.requiredFulfilled) {
             let hashSequence = this.state.data.regName + this.state.data.regEmail + config.clientKey + this.state.data.regPhone
             let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-            let key = localStorage.getItem(config.csrfTokenNameKey)
-            let token = localStorage.getItem(config.csrfTokenName+key)
-            Booking.generalRegister(this.state.data, {key: key, token: token}, hash)
+            Booking.generalRegister(this.state.data, hash)
                 .then((res)=>{
                     if (res.validation)
                         this.setState({ completion: true })

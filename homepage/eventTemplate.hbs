@@ -7,6 +7,7 @@
     var __data;
     window.onload = () => {
         __data = document.getElementById("__data").innerHTML;
+        __data = JSON.parse(__data)
     }
 </script>
 
@@ -21,5 +22,21 @@
     {{/with}}
 </section>
 {{!-- END PAGE CONTENT --}}
+
+<script>
+    setTimeout(function(){
+        document.getElementById("reg").onclick = () => {
+            if(__data.type==='gen')
+                __data.eventId = 'any';
+            let checksum = getEventHash(__data.type, __data.eventId);
+            sessionStorage.setItem( config.hashToken, checksum );
+            
+            if(__data.type==='gen')
+                window.location = '/book/start?int=gen';
+            else
+                window.location = '/book/start?int=' + __data.type + '&evt=' + __data.eventId;
+        }
+    }, 100)
+</script>
 
 {{> footer }}

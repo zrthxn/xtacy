@@ -1,48 +1,71 @@
 {
     "$schema": {
-        "eventId" : {
-            "name" : "",
-            "eventId" : "",
-            "dates" : "",
-            "type" : "gen / com / tic ",
-            "metadata" : {
-                "time" : "",
-                "paid" : "",
-                "price" : "",
-                "teams" : "",
-                "teamSize" : "",
-                "conductedBy" : ""
+        "eventId": {
+            "name": "",
+            "eventId": "6 letter ID",
+            "designator": "4 letter + 2 random hex numbers; all caps",
+            "dates": "",
+            "type": "gen / com / tic",
+            "metadata": {
+                "time": "",
+                "paid": "",
+                "price": "",
+                "teams": "",
+                "teamSize": "",
+                "collectTeamGit": true,
+                "conductedBy": ""
             }
         }
     },
-    "events" : [
+    "registrationRefNumber": "0x0004",
+    "events": [
         {
-            "title" : "Hackathon Real",
-            "eventId" : "hackrp",
-            "dates" : "15/16",
-            "type" : "com",
-            "metadata" : {
-                "time" : "1:00 PM",
-                "paid" : true,
-                "price" : 1000,
-                "teams" : true,
-                "teamSize" : 4,
-                "collectTeamGit" : true,
-                "conductedBy" : "Omair"
+            "title": "Hackathon Real",
+            "eventId": "hackrp",
+            "designator": "HACK0F",
+            "dates": "15/16",
+            "type": "com",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": true,
+                "price": 1000,
+                "teams": true,
+                "teamSize": 4,
+                "collectTeamGit": true,
+                "conductedBy": "Omair"
             }
-        },{
-            "title" : "Mehmood Bhai",
-            "eventId" : "dastan",
-            "dates" : "16",
-            "type" : "tic",
-            "metadata" : {
-                "time" : "1:00 PM",
-                "paid" : true,
-                "price" : 500,
-                "teams" : false,
-                "teamSize" : null,
-                "conductedBy" : "Daniyal"
-            }            
+        },
+        {
+            "title": "Mehmood Bhai",
+            "eventId": "dastan",
+            "designator": "DAST5A",
+            "dates": "16",
+            "type": "tic",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": true,
+                "price": 500,
+                "teams": false,
+                "teamSize": null,
+                "collectTeamGit": false,
+                "conductedBy": "Daniyal"
+            }
+        },
+        {
+            "title": "Hackathon Fake",
+            "eventId": "hackfn",
+            "designator": "HACK1B",
+            "dates": "15",
+            "type": "com",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": false,
+                "price": 0,
+                "teams": true,
+                "teamSize": 2,
+                "collectTeamGit": false,
+                "conductedBy": "Omair"
+            }
         }
     ]
 }

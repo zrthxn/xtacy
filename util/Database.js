@@ -2,7 +2,7 @@ const firebase = require('../node_modules/firebase');
 var DatabaseConfig = require('../config.json').firebase;
 DatabaseConfig['apiKey'] = require('../config.json').firebaseServerAPIKey;
 
-firebase.initializeApp(DatabaseConfig.firebase);
+firebase.initializeApp(DatabaseConfig);
 exports.firebase = firebase;
 
 const database = firebase.database();

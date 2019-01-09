@@ -47,19 +47,3 @@ exports.generateSecurityFluff = (amount) => {
         localStorage.setItem(tag, fluff);
     }    
 }
-
-// ------------------------------------------------------- //
-// eslint-disable-next-line
-function generateToken(len) {
-    var k = "";
-    for(let i=0;i<len;i++)
-        k += Math.floor(Math.random()*36).toString('36');
-    return k;
-}
-// eslint-disable-next-line
-function generateTokenKey(len) {
-    var k = "";
-    for(let i=0;i<len;i++)
-        k += Math.floor(Math.random()*16).toString('16');
-    return k;
-}

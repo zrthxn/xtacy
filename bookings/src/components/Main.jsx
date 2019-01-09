@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Booking from '../util/booking';
 import '../Global.css';
 
 import Register from './Register';
@@ -19,43 +20,23 @@ class Main extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            intent: this.props.intent,
-            event: this.props.event,
-            eventData: {
-                "title" : "Hackathon Real Paid",
-                "eventId" : "hackrp",
-                "metadata" : {
-                    "time" : "1:00 PM",
-                    "paid" : true,
-                    "price" : 10,
-                    "teams" : true,
-                    "teamSize" : 4,
-                    "collectTeamGit": true,
-                    "conductedBy" : "Omair"
-                }
-            },
-            loaded: true
-        })
-        // if (this.props.intent!=='gen')
-        //     Booking.getEventData(this.props.event)
-        //         .then((eventData)=>{
-        //             if (eventData.validation)
-        //                 this.setState({
-        //                     intent: this.props.intent,
-        //                     event: this.props.event,
-        //                     eventData: eventData.data,
-        //                     loaded: true
-        //                 })
-        //         }).catch((err)=>{
-        //             console.log(err)
-        //             this.setState({ loaded: true })
-        //         })
-        // else
-        //     this.setState({
-        //         intent: this.props.intent,
-        //         loaded: true
-        //     })
+        if (this.props.intent!=='gen')
+            Booking.getEventData(this.props.event)
+                .then((eventData)=>{
+                    this.setState({
+                        intent: this.props.intent,
+                        event: this.props.event,
+                        eventData: eventData.data,
+                        loaded: true
+                    })
+                }).catch((err)=>{
+                    console.log(err)
+                })
+        else
+            this.setState({
+                intent: this.props.intent,
+                loaded: true
+            })
     }
 
     render() {

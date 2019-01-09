@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import crypto from 'crypto';
 import SuccessPage from './SuccessPage';
 import Payments from './Payments';
 
@@ -12,12 +13,13 @@ class Compete extends Component {
     constructor() {
         super();
         this.state = {
-            paymentReady: true, //false,
+            paymentReady: false,
             requiredFulfilled: false,
             completion: false,
             data : {
-                regTeamName: "NAMAK", //null,
-                regTeamEmail: "namak@xtacy.org", //null,
+                eventId: null,
+                regTeamName: null,
+                regTeamEmail: null,
                 regTeamInst: null,
                 members : []
             },
@@ -29,6 +31,7 @@ class Compete extends Component {
 
     componentDidMount() {
         let _data = this.state.data
+        _data.eventId = this.props.eventData.eventId
         if(this.props.eventData.metadata.teamGit) _data['regTeamGit'] = null
         for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
             _data.members.push({ index: i, name: null, email: null })
@@ -67,20 +70,16 @@ class Compete extends Component {
         if(this.state.requiredFulfilled) {
             if(this.props.eventData.metadata.paid) {
                 this.setState({ paymentReady: true })
-            } else {
-                this.setState({ paymentReady: true, completion: true })
-
-                // let hashSequence = this.state.data.regTeamName + config.clientKey + this.state.data.regTeamEmail
-                // let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-                // let key = localStorage.getItem(config.csrfTokenNameKey)
-                // let token = localStorage.getItem(config.csrfTokenName+key)
-                // Booking.competeRegister(this.state.data, {key: key, token: token}, hash)
-                //     .then((res)=>{
-                //         if (res.validation)
-                //             this.setState({ paymentReady: true, completion: true })
-                //     }).catch(()=>{
-                //         alert('Error')
-                //     })
+            } else {                
+                let hashSequence = this.state.data.regTeamName + config.clientKey + this.state.data.regTeamEmail
+                let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+                Booking.competeFreeRegister(this.state.data, hash)
+                    .then((res)=>{
+                        if (res.validation)
+                            this.setState({ paymentReady: true, completion: true })
+                    }).catch(()=>{
+                        alert('Error')
+                    })
             }
         } else {
             alert('Please fill in the required fields')

@@ -19,7 +19,7 @@
 
         <div class="event">
             <div class="banner">
-                <a href="#hackrp">
+                <a href="#hackfn">
                     <img class="mobile" src="/static/img/JMI Logo.png">
                     <img class="desktop" src="/static/img/thumb.png">
                 </a>
@@ -80,16 +80,22 @@
 
     function setEventUrl() {
         setTimeout(function(){
+            let eventId = window.location.href.split('#')[1];
+            let data = getEventData(eventId);
+            let checksum = getEventHash(data.type, eventId);
+            
             if (toggle.checked===true) {
-                let url = window.location.href.split('#')[1];
-                if (url!==undefined) iframe.src = '/event/' + url + '/promo';
+                if (eventId!==undefined) iframe.src = '/event/' + eventId + '/promo';
 
                 document.getElementById("button_main").onclick = () => {
-                    window.location = '/event/' + url;
-                    // window.location = '/register/start?int=' + gen + '&evt=' + url;
+                    sessionStorage.setItem( config.hashToken, checksum );
+                    if(data.type==='gen')
+                        window.location = '/book/start?int=gen';
+                    else
+                        window.location = '/book/start?int=' + data.type + '&evt=' + eventId;
                 }
                 document.getElementById("button_aux").onclick = () => {
-                    window.location = '/event/' + url;
+                    window.location = '/event/' + eventId;
                 }
             }
         }, 100);

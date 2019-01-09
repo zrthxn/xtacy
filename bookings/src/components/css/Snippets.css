@@ -1,5 +1,9 @@
 .ErrorPage {
     padding: 4em 1em;
+    animation: reveal 750ms ease;
+} @keyframes reveal {
+    from { opacity: 0 }
+    to { opacity: 1 }
 }
 
 .ErrorPage a {

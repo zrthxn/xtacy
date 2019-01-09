@@ -32,10 +32,10 @@ homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
 homepage.use(express.static( path.join(__dirname, 'homepage') ))
-homepage.use(express.static( path.join(__dirname, 'bookings') ))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
+homepage.use('/book/start', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -97,17 +97,44 @@ homepage.get('/terms', (req,res)=>{
     res.render('terms', { 'title' : 'TERMS' })
 });
 
-// homepage.post('/_register/:ckey/:mode/', (req,res)=>{
-//     // Example of NON-PAGE REQUEST
-//     Security.validateCSRFTokens(req.body.key, req.body.token)
-//         .then((result)=>{
-//             // do whatever has to be done
-//             res.sendStatus(200)
-//         }).catch((error)=>{
-//             console.error(error)
-//             res.sendStatus(500)
-//         })
-// });
+homepage.get('/event/:eventId/', (req,res)=>{
+    EventManager.findEventById(req.params.eventId)
+        .then((result)=>{
+            if (result.success) {
+                res.render('eventTemplate', 
+                    {
+                        'title' : result.title,
+                        'page' : {
+                            'data' : JSON.stringify(result.data),
+                            'content' : result.content
+                        }
+                    }
+                )
+            } else {
+                res.render('404', { 'title' : 'Not Found' })
+            }
+        }).catch(()=>{
+            res.redirect('/events')
+        })
+});
+
+homepage.get('/event/:eventId/promo/', (req,res)=>{
+    EventManager.findEventPromoById(req.params.eventId)
+        .then((result)=>{
+            if (result.success)
+                res.render('eventPromoTemplate', {
+                    'title' : result.title,
+                    'page' : {
+                        'data' : JSON.stringify(result.data),
+                        'content' : result.content
+                    }
+                })
+            else
+                res.render('404', { 'title' : 'Not Found' })
+        }).catch(()=>{
+            res.redirect('/events')
+        })
+});
 
 //--------------------------
 // Remove for production build
@@ -140,12 +167,12 @@ homepage.post('/_secu/csrtoken/', (req,res)=>{
 });
 
 homepage.post('/_contact/send/', (req,res)=>{
-    let { name, email, msg } = req.body
-    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+    let { formName, formEmail, formMsg } = req.body
+    Security.validateCSRFTokens(req.body.srKey, req.body.srToken)
         .then((result) => {
             if (result) {
                 Gmailer.SingleDelivery({
-                    to: email,
+                    to: formEmail,
                     from: 'hello@xtacy.org',
                     subject: 'Hi! Team Xtacy',
                     body: 'Contact Acknowledgement Email'
@@ -156,12 +183,12 @@ homepage.post('/_contact/send/', (req,res)=>{
             Gmailer.SingleDelivery({
                 to: 'webparastorage@xtacy.org',
                 from: 'noreply@xtacy.org',
-                replyTo: email,
-                subject: 'Contact Form | ' + name,
+                replyTo: formEmail,
+                subject: 'Contact Form | ' + formName,
                 body: `
                     <b>---------------- Contact Form Message ----------------</b> <br><br>
-                     Name: ${name} <br> Email: ${email}<br><br>
-                     Message: ${msg}<br><br>
+                     Name: ${formName} <br> Email: ${formEmail}<br><br>
+                     Message: ${formMsg}<br><br>
                     <b>------------------- End of Message -------------------</b> <br><br>
                 `
             })
@@ -170,83 +197,50 @@ homepage.post('/_contact/send/', (req,res)=>{
                 ssId: ServerConfig.Sheets.spreadsheets.repository,
                 sheet: 'Mailing List',
                 values: [
-                    email, name, 'via Contact Form'
+                    formEmail, formName, 'via Contact Form'
                 ]
             },{
                 ssId: ServerConfig.Sheets.spreadsheets.repository,
                 sheet: 'Contact Form',
                 values: [
-                    email, name, msg
+                    formEmail, formName, formMsg
                 ]
             }])
         }).then(()=>{
-            res.sendStatus(200)
+            res.render('contactAcknowledge', { 'title' : 'THANK YOU' })
         }).catch((error)=>{
             console.error(error)
             res.sendStatus(500)
         })
 });
 
-
-homepage.get('/event/:eventId/', (req,res)=>{
-    EventManager.findEventById(req.params.eventId)
-        .then((result)=>{
-            if (result.success) {
-                res.render('eventTemplate', 
-                    {
-                        'title' : result.title,
-                        'page' : {
-                            'data' : JSON.stringify(result.data),
-                            'content' : result.content
-                        }
-                    }
-                )
-            } else {
-                res.render('404', { 'title' : 'Not Found' })
-            }
-        }).catch(()=>{
-            res.redirect('/events')
-        })
+homepage.post('/register/_checksum/', (req,res)=>{
+    let { type, id } = JSON.parse(Buffer.from(req.body.data, 'base64').toString('ascii'))
+    let hashSequence = type + ServerConfig.clientKey + id
+    let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+    console.log('Event Hash Created', hash)
+    res.json({ checksum: hash })
 });
 
-homepage.get('/event/:eventId/promo/', (req,res)=>{
-    EventManager.findEventPromoById(req.params.eventId)
-        .then((result)=>{
-            if (result.success) {
-                res.render('eventPromoTemplate', 
-                    {
-                        'title' : result.title,
-                        'page' : {
-                            'data' : JSON.stringify(result.data),
-                            'content' : result.content
-                        }
-                    }
-                )
-            } else {
-                res.render('404', { 'title' : 'Not Found' })
-            }
-        }).catch(()=>{
-            res.redirect('/events')
-        })
-});
-
-homepage.get('/eventData/', (res,res)=>{
-    EventManager.getEventData(req.body.eventId)
+homepage.get('/register/_eventData/:eventId/', (req,res)=>{
+    EventManager.getEventData(req.params.eventId)
         .then((data)=>{
-            if (data!==null) res.json({ validation: true, data: data })
-            else res.json({ validation: false })
+            data = JSON.stringify(data)
+            let arb = Math.floor(Math.random()*10) + 1
+            for (let i = 1; i <= arb; i++) 
+                data = Buffer.from(data, 'ascii').toString('base64')
+            
+            if (data!==null) res.json({ validation: true, found: true, data: data, arb: arb })
+            else res.json({ validation: true, found: false })
         }).catch((err)=>{
-            res.sendStatus(500)
+            console.log('FAILED VALIDATION :: ' + err)
+            res.json({ validation: false })
         })
 });
 
-homepage.get('/register/start/', (req,res)=>{
-    res.sendFile( path.resolve(__dirname, 'bookings/build', 'index.html') )
-});
-
-homepage.post('/register/gen/', (req,res)=>{
+homepage.post('/_register/gen/', (req,res)=>{
     let hashSequence = res.body.data.regName + res.body.data.regEmail + ServerConfig.clientKey + res.body.data.regPhone
-    let hash = crypto.createHmac('sha256', hashSequence).digest('hex')
+    let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
         .then((csrfRes)=>{
             if (csrfRes) {
@@ -258,19 +252,42 @@ homepage.post('/register/gen/', (req,res)=>{
             } else {
                 throw "CSRF_INVALID"
             }
-        }).then((data)=>{
-            res.json({ validation: data })
+        }).then(()=>{
+            let responseHashSequence = ServerConfig.clientKey + req.body.data.regName
+            let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
+            res.json({ validation: true, hash: responseHash })
         }).catch((err)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
         })
 });
 
-homepage.post('/register/com/', (req,res)=>{
-    
+homepage.post('/_register/com/', (req,res)=>{
+    let hashSequence = req.body.data.regTeamName + ServerConfig.clientKey + req.body.data.regTeamEmail
+    let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if (csrfRes) {
+                if ( req.body.checksum === hash ) {
+                    EventManager.competeFreeRegister(req.body.data)
+                } else {
+                    throw "HASH_INVALID"
+                }
+            } else {
+                throw "CSRF_INVALID"
+            }
+        }).then((rgn)=>{
+            console.log(rgn)
+            let responseHashSequence = ServerConfig.clientKey + req.body.data.regTeamName
+            let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
+            res.json({ validation: true, hash: responseHash, rgn: rgn })
+        }).catch((err)=>{
+            console.log('FAILED VALIDATION ::', err)
+            res.json({ validation: false })
+        })
 });
 
-homepage.post('/register/tic/', (req,res)=>{
+homepage.post('/_register/tic/', (req,res)=>{
     
 });
 

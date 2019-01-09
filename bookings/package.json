@@ -2,6 +2,7 @@
   "name": "bookings",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://xtacy.org:3000/book/start",
   "dependencies": {
     "firebase": "^5.7.2",
     "react": "^16.7.0",

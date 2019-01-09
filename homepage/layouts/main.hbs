@@ -37,6 +37,41 @@
                     }
                 });
         })()
+
+        function getEventData(_eventId) {
+            // if (_eventId===undefined) throw 'EVTID_INVALID';
+            const eventReq = new XMLHttpRequest();
+            eventReq.open('GET', 'http://xtacy.org:3000/register/_eventData/' + _eventId + '/', false);
+            eventReq.send();
+
+            if(eventReq.readyState===4 && eventReq.status===200) {
+                let eventRes = JSON.parse(eventReq.response);
+                if(eventRes.validation) {
+                    for (let i = 0; i < eventRes.arb; i++) 
+                        eventRes.data = atob(eventRes.data)
+                    eventRes.data = JSON.parse(eventRes.data)
+                    return eventRes.data;
+                } else {
+                    throw 'CSRF_INVALID';
+                }
+            }
+        }
+
+        function getEventHash(type, eventId) {
+            const hashReq = new XMLHttpRequest();
+            hashReq.open('POST', 'http://xtacy.org:3000/register/_checksum/', false);
+            hashReq.setRequestHeader('Content-Type', 'application/json');
+            hashReq.send(JSON.stringify({ "data": 
+                btoa(JSON.stringify({
+                    type: type,
+                    id: eventId
+                }))
+            }));
+
+            if(hashReq.readyState===4 && hashReq.status===200) {
+                return JSON.parse(hashReq.response).checksum;
+            }
+        }
     </script>
 </head>
 <body>

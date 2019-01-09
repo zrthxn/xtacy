@@ -8,9 +8,9 @@ import Secu from './util/secu';
 import './Global.css';
 
 import Main from './components/Main';
+import LoadingPage from './components/LoadingPage';
 import ErrorPage from './components/ErrorPage';
 
-const firebase  = require('./util/database');
 const config  = require('./util/config.json');
 
 class Bookings extends Component {
@@ -36,33 +36,29 @@ class Bookings extends Component {
     }
 
     componentDidMount() {
-        Secu.validateToken()
-            .then((result)=>{
-                if (result==='CSR_TOKEN_VALID') {
-                    console.log('SR Tokens Verified')
+        Secu.validateToken().then((result)=>{
+            if (result==='CSR_TOKEN_VALID') {
+                console.log('SR Tokens Verified')
+                Secu.generateSecurityFluff(4);
 
-
-                    console.log(firebase.database.ref())
-                    Secu.generateSecurityFluff(4);
-                }
-            }).catch((err)=>{
-                console.error(err)
-            });
+                let params = this.getParams(window.location), verified = false
+                if (params.intent==='gen') params.event = 'any'
         
-        let params = this.getParams(window.location), verified = false
-        if (params.intent==='gen') params.event = 'any'
-
-        let hashSequence = params.intent + config.clientKey + params.event
-        let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-        if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
-
-        this.setState({
-            intent: params.intent,
-            event: params.event,
-            hash: hash,
-            ref: params.ref,
-            verified: true // verified
-        })
+                let hashSequence = params.intent + config.clientKey + params.event
+                let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+                if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+        
+                this.setState({
+                    intent: params.intent,
+                    event: params.event,
+                    hash: hash,
+                    ref: params.ref,
+                    verified: verified
+                })
+            }
+        }).catch((err)=>{
+            console.error(err)
+        });
     }
 
     render() {
@@ -73,9 +69,9 @@ class Bookings extends Component {
                 {
                     this.state.verified ? (
                         <section>
-                            <Router>
+                            <Router basename={'/book'}>
                                 <Switch>
-                                    <Route path='/register/start'>
+                                    <Route path={'/start'}>
                                         <Main intent={this.state.intent} event={this.state.event}/>
                                     </Route>
 
@@ -84,7 +80,7 @@ class Bookings extends Component {
                             </Router>
                         </section>
                     ) : (
-                        <ErrorPage/>
+                        <LoadingPage timeOut={2500}/>
                     )
                 }
 

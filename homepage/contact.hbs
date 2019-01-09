@@ -1,4 +1,4 @@
-<script src="/static/js/contact.js"></script>
+{{!-- <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Contact.css"> --}}
 {{!------ ==== PAGE ==== ------}}
 
 {{> header }}
@@ -8,12 +8,16 @@
     <div class="container fit">
         <h2>Contact</h2>
 
-        <div class="container center">
-            <input id="form_name" type="text" class="textbox" placeholder="Name">
-            <input id="form_email" type="text" class="textbox" placeholder="Email or Phone">
-            <input id="form_msg" type="text" class="textbox" placeholder="Message">
+        <form action="/_contact/send" method="POST" class="container center">
+            <input type="text" hidden="true" readonly="true" name="srKey" id="srKey" value="null">
+            <input type="text" hidden="true" readonly="true" name="srToken" id="srToken" value="null">
+
+            <input type="text" class="textbox" required="true" name="formName" id="formName" placeholder="Name">
+            <input type="text" class="textbox" required="true" name="formEmail" id="formEmail" placeholder="Email or Phone">
+            <input type="text" class="textbox" required="true" name="formMsg" id="formMsg" placeholder="Message">
+
             <button class="button solid" id="send">Send</button>
-        </div>
+        </form>
 
         <p>Upon Contact
             <ul>
@@ -28,13 +32,14 @@
 {{!-- END PAGE CONTENT --}}
 
 <script>
-    document.getElementById("send").onclick = ()=>{
-        contactRequest({
-            name : document.getElementById("form_name").value,
-            email : document.getElementById("form_email").value,
-            msg : document.getElementById("form_msg").value
-        });
-    });
+    window.onload = () => {
+        let key = localStorage.getItem( config.csrfTokenNameKey )
+        let token = localStorage.getItem( config.csrfTokenName+key )
+
+        document.getElementById("srKey").value = key;
+        document.getElementById("srToken").value = token;        
+    }
+    
 </script>
 
 {{> footer }}
