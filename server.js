@@ -338,6 +338,7 @@ api.post('/_sheets/:function/:options/', (req,res)=>{
     // == GSheets API == //
     Security.validateAPIKey(req.body.key, req.body.token)
         .then((result)=>{
+            // Add 
             res.json({ validation : result })
         }).catch((error)=>{
             console.error(error)
@@ -349,6 +350,7 @@ api.post('/_mail/:function/:options/', (req,res)=>{
     // == Gmailer API == //
     Security.validateAPIKey(req.body.key, req.body.token)
         .then((result)=>{
+            // Job
             res.json({ validation : result })
         }).catch((error)=>{
             console.error(error)
