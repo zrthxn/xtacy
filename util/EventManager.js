@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Gmailer = require('./Gmailer');
 const GSheets = require('./GSheets');
-const eventLookup = require('../eventRegistry/eventLookup.json');
+const eventLookup = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
 const ServerConfig = require('../config.json');
 const database = require('./Database');
 
@@ -19,13 +19,13 @@ exports.getEventData = (__eventId) => {
 }
 
 exports.generalRegister = (data) => {
-    let rgnId = generateRegistrationID('gen', 1)
+    var rgnId = generateRegistrationID('gen', 1)
 
     return new Promise((resolve,reject)=>{
         GSheets.AppendToSpreadsheet([
             {
                 ssId: ServerConfig.Sheets.spreadsheets.registrations,
-                sheet: 'General',
+                sheet: 'GEN',
                 values: [
                     rgnId, data.regName, data.regEmail, data.regPhone, data.regInst
                 ]
@@ -43,9 +43,10 @@ exports.generalRegister = (data) => {
                     { id: 'regPhone', data: data.regPhone },
                     { id: 'regInst', data: data.regInst }
                 ]
-            )
-        }).then(()=>{
-            resolve(rgnId)
+            ).then(()=>{
+                console.log('New Registration :', rgnId)
+                resolve(rgnId)
+            })
         }).catch((err)=>{
             reject(err);
         });
@@ -53,13 +54,13 @@ exports.generalRegister = (data) => {
 }
 
 exports.competeFreeRegister = (data) => {
-    let rgnId = generateRegistrationID(data.eventId, data.members.length)
+    var rgnId = generateRegistrationID(data.eventId, data.members.length)
 
     return new Promise((resolve,reject)=>{
         GSheets.AppendToSpreadsheet([
             {
                 ssId: ServerConfig.Sheets.spreadsheets.registrations,
-                sheet: 'Competitions',
+                sheet: data.eventId.toUpperCase(),
                 values: [
                     rgnId, data.regTeamName, data.regTeamEmail, data.regTeamInst,
                     //...data.members
@@ -78,9 +79,10 @@ exports.competeFreeRegister = (data) => {
                     { id: 'regTeamInst', data: data.regTeamInst },
                     { id: 'rgn', data: rgnId }
                 ]
-            )
-        }).then(()=>{
-            resolve(rgnId)
+            ).then(()=>{
+                console.log('New Registration :', rgnId)
+                resolve(rgnId)
+            })
         }).catch((err)=>{
             reject(err);
         });
@@ -164,11 +166,11 @@ function generateRegistrationID(__eventId, nH) {
 
     let registry = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
     if(__eventId==='gen')
-        desgn = 'GENRA1'
+        desgn = 'GENR3E'
     else
         for (const event of registry.events) {
             if (event.eventId===__eventId) {
-                desgn = event.designator;
+                desgn = event.eventId.toUpperCase();
                 break;
             }
         }

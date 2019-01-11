@@ -239,23 +239,23 @@ homepage.get('/register/_eventData/:eventId/', (req,res)=>{
 });
 
 homepage.post('/_register/gen/', (req,res)=>{
-    let hashSequence = res.body.data.regName + res.body.data.regEmail + ServerConfig.clientKey + res.body.data.regPhone
-    let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+    let hashSequence = JSON.stringify(req.body.data)
+    let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
         .then((csrfRes)=>{
             if (csrfRes) {
-                if ( req.body.checksum === hash ) {
-                    EventManager.generalRegister(req.body.data)
+                if ( req.body.checksum === hmac ) {
+                    EventManager.generalRegister(req.body.data).then((rgn)=>{
+                        let responseHashSequence = JSON.stringify({ validation: true, rgn: rgn })
+                        let responseHmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
+                        res.json({ validation: true, rgn: rgn, hash: responseHmac })
+                    })
                 } else {
                     throw "HASH_INVALID"
                 }
             } else {
                 throw "CSRF_INVALID"
             }
-        }).then(()=>{
-            let responseHashSequence = ServerConfig.clientKey + req.body.data.regName
-            let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
-            res.json({ validation: true, hash: responseHash })
         }).catch((err)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
@@ -263,24 +263,23 @@ homepage.post('/_register/gen/', (req,res)=>{
 });
 
 homepage.post('/_register/com/', (req,res)=>{
-    let hashSequence = req.body.data.regTeamName + ServerConfig.clientKey + req.body.data.regTeamEmail
-    let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+    let hashSequence = JSON.stringify(req.body.data)
+    let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
         .then((csrfRes)=>{
             if (csrfRes) {
-                if ( req.body.checksum === hash ) {
-                    EventManager.competeFreeRegister(req.body.data)
+                if ( req.body.checksum === hmac ) {
+                    EventManager.competeFreeRegister(req.body.data).then((rgn)=>{
+                        let responseHashSequence = JSON.stringify({ validation: true, rgn: rgn })
+                        let responseHmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
+                        res.json({ validation: true, rgn: rgn, hash: responseHmac })
+                    })
                 } else {
                     throw "HASH_INVALID"
                 }
             } else {
                 throw "CSRF_INVALID"
             }
-        }).then((rgn)=>{
-            console.log(rgn)
-            let responseHashSequence = ServerConfig.clientKey + req.body.data.regTeamName
-            let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
-            res.json({ validation: true, hash: responseHash, rgn: rgn })
         }).catch((err)=>{
             console.log('FAILED VALIDATION ::', err)
             res.json({ validation: false })
@@ -384,52 +383,3 @@ api.get('/_:api/test/', (req,res)=>{
             res.sendStatus(404)
     }
 });
-// =============================================================================================
-
-function EXAMPLE_EMAIL_SENDING() {
-    var mail = {
-        to:"", //just email
-        from:"alisamar181099@gmail.com", // just email
-        username:"Alisamar Husain", // name on Account "Alisamar Husain",
-        userId: "alisamar181099@gmail.com", // Just email
-        subject:"",
-        body:"" // raw non-base64 html text body
-    };
-    
-    fs.readFile('email.txt', (err,content)=>{
-        if (err) return console.log(err);
-    
-        fs.readFile('data.csv', (e,db)=>{
-            if (e) return console.log(e);
-            // Gmailer.DatasetDelivery({
-            //     to:"", //just email
-            //     from:"alisamar181099@gmail.com", // just email
-            //     username:"Alisamar Husain", // name on Account "Alisamar Husain",
-            //     userId: "alisamar181099@gmail.com", // Just email
-            //     subject:"",
-            //     body: "" // raw non-base64 html text body
-            // }, content.toString().trim(), db.toString().trim(), {}).then(()=>{
-            //     console.log('DONE');
-            // });
-            Gmailer.DistributedCampaign({
-                to:"", //just email
-                from:"alisamar181099@gmail.com", // just email
-                username:"Alisamar Husain", // name on Account "Alisamar Husain",
-                userId: "alisamar181099@gmail.com", // Just email
-                subject:"",
-                body: "" // raw non-base64 html text body
-            }, content.toString().trim(), db.toString().trim(), {});
-        });
-    
-        // Gmailer.SingleDelivery({
-        //     to:"zrthxn@gmail.com", //just email
-        //     from:"alisamar181099@gmail.com", // just email
-        //     username:"Alisamar Husain", // name on Account "Alisamar Husain",
-        //     userId: "alisamar181099@gmail.com", // Just email
-        //     subject:"Single Email",
-        //     body: content.toString().trim() // raw non-base64 html text body
-        // }).then(()=>{
-        //     console.log('DONE');
-        // }); 
-    });
-}
