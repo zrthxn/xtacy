@@ -43,6 +43,29 @@ One line for each subdomain being used. Save the file and go to http://xtacy.org
 ## File Types
 ### ALL IMAGE FILES IN PNG, NO EXCEPTIONS
 
+## Events
+### How to add an event
+Everything related to events is dynamic so you wont actually have to change the code to add an event.
+Follow the steps and test the event before publishing
+1. Add the event to the Lookup Table ('eventLookup.json'). Make sure you follow the schema.
+   Events must have an event type
+   - '*com*' for competitive (paid and non paid)
+   - '*tic*' for non-competitive paid (ticketed)
+   - '*gen*' for general
+   After deciding the event type, fill in all the fields and decide an event ID
+   - The event ID can be anything, but it is recommended to keep a 6 byte **descriptive** ID
+   - The event ID MUST be lowercase in the event lookup file
+
+2. Every event has a main page (content) and a promo page. Add these in the respective folders
+   - **The name of the file must be the same as the event ID**
+   - The file must be an HTML file
+   - *Promo* files should not contain any action elements
+
+3. Add the event to the events page as a banner and the link to "#eventId" where event ID is the event's ID
+4. A developer must be consulted before publishing an event
+5. Commit, push and send a pull request.
+   
+
 ## Security
 #### CSRF Tokens
 We are using Express Handlebars here. If you dont know what that is, please read about it. It's basically a very very basic version of React.

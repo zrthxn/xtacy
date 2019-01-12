@@ -20,10 +20,16 @@ exports.generalRegister = (data, hash) => {
 
         genReq.onreadystatechange = () => {
             if(genReq.readyState===4 && genReq.status===200) {
-                let responseHashSequence = JSON.parse(genReq.response).rgn + config.clientKey + data.regName
-                let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
-                if (JSON.parse(genReq.response).hash===responseHash)
-                    resolve(JSON.parse(genReq.response));
+                let genRes = JSON.parse(genReq.response);
+                
+                let responseHashSequence = JSON.stringify({ validation: genRes.validation, rgn: genRes.rgn })
+                console.log(genRes)
+                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
+
+                // let responseHashSequence = JSON.parse(genReq.response).rgn + config.clientKey + data.regName
+                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
+                if (genRes.hash===responseHmac)
+                    resolve(genRes);
                 else
                     reject('HASH_MISMATCH');
             }
@@ -46,12 +52,25 @@ exports.competeFreeRegister = (data, hash) => {
 
         comReq.onreadystatechange = () => {
             if(comReq.readyState===4 && comReq.status===200) {
-                let responseHashSequence = JSON.parse(comReq.response).rgn + config.clientKey + data.regTeamName
-                let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
-                if (JSON.parse(comReq.response).hash===responseHash)
-                    resolve(JSON.parse(comReq.response));
+                let comRes = JSON.parse(comReq.response);
+                
+                let responseHashSequence = JSON.stringify({ validation: comRes.validation, rgn: comRes.rgn })
+                console.log(comRes.rgn)
+                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
+
+                // let responseHashSequence = JSON.parse(genReq.response).rgn + config.clientKey + data.regName
+                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
+                if (comRes.hash===responseHmac)
+                    resolve(comRes);
                 else
                     reject('HASH_MISMATCH');
+
+                // let responseHashSequence = JSON.parse(comReq.response).rgn + config.clientKey + data.regTeamName
+                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
+                // if (JSON.parse(comReq.response).hash===responseHash)
+                //     resolve(JSON.parse(comReq.response));
+                // else
+                //     reject('HASH_MISMATCH');
             }
         }
     });

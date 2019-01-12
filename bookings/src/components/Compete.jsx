@@ -32,7 +32,7 @@ class Compete extends Component {
     componentDidMount() {
         let _data = this.state.data
         _data.eventId = this.props.eventData.eventId
-        if(this.props.eventData.metadata.teamGit) _data['regTeamGit'] = null
+        if(this.props.eventData.metadata.collectTeamGit) _data['regTeamGit'] = null
         for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
             _data.members.push({ index: i, name: null, email: null })
         this.setState({
@@ -71,9 +71,9 @@ class Compete extends Component {
             if(this.props.eventData.metadata.paid) {
                 this.setState({ paymentReady: true })
             } else {                
-                let hashSequence = this.state.data.regTeamName + config.clientKey + this.state.data.regTeamEmail
-                let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-                Booking.competeFreeRegister(this.state.data, hash)
+                let hashSequence = JSON.stringify(this.state.data)
+                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                Booking.competeFreeRegister(this.state.data, hmac)
                     .then((res)=>{
                         if (res.validation)
                             this.setState({ paymentReady: true, completion: true })
