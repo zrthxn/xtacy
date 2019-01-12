@@ -32,7 +32,7 @@ class Compete extends Component {
     componentDidMount() {
         let _data = this.state.data
         _data.eventId = this.props.eventData.eventId
-        if(this.props.eventData.metadata.teamGit) _data['regTeamGit'] = null
+        if(this.props.eventData.metadata.collectTeamGit) _data['regTeamGit'] = null
         for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
             _data.members.push({ index: i, name: null, email: null })
         this.setState({
