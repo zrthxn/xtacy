@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+var files = require('../cdn/cdnLookup.json').files
 /**
  * @author zrthxn
  * 
@@ -18,7 +18,12 @@ exports.Lookup = (fileRef) => {
      * Inside that you'll see "$schema" and that sorta describes how data will eventually be stored
      */
     return new Promise((resolve,reject)=>{
-        
+        var size = files.length-1
+        var ind = BinarySearch(files,fileId, 0, size)
+        if(ind = -1)
+            reject("FILE_NOT_FOUND")
+        else
+            resolve(files[ind].path)
     });
 }
 
@@ -38,7 +43,20 @@ exports.Upload = (file) => {
         // })
     });
 }
-
+function BinarySearch(fArray,item, lo, hi){
+    if(hi >= lo)
+    {   
+        mid = (lo + hi)/2
+        if(item = FArray[mid].fileId)
+            return mid
+        else if (item > FArray[mid].fileId)
+        {
+            return BinarySearch(fArray, item, mid+1, hi)
+        }
+        return BinarySearch(fArray, item, lo, mid-1)
+    }
+    return -1
+}
 function generateFileRef() {
     let fileRef = '', date = new Date()
     let lookupTable = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
