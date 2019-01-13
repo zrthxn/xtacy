@@ -1,16 +1,21 @@
 {
     "writeLock": false,
     "fileRefNumber": 0,
-    "$schema": [{
-        "__id": "xkcdSd",
-        "filename": "JMI Logo.png",
-        "contentType": "image/png",
-        "path": "root",
-        "metadata": {
-            "size": "",
-            "createdOn": "",
-            "authors": "and other small data can be added"
+    "$schema": [
+        {
+            "fileRef": "0t01",
+            "fileId": 37585,
+            "filename": "JMI Logo.png",
+            "contentType": "image/png",
+            "path": "root",
+            "metadata": {
+                "size": "",
+                "createdOn": "",
+                "authors": "and other small data can be added"
+            }
         }
-    }],
-    "files": [{}]
+    ],
+    "files": [
+        {}
+    ]
 }
