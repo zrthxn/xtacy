@@ -41,7 +41,7 @@ exports.Upload = (file) => {
 
 function generateFileRef() {
     let fileRef = '', date = new Date()
-    let lookupTable = JSON.parse(fs.readFileSync('./xtacy/cdn/cdnLookup.json').toString())
+    let lookupTable = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
     lookupTable.fileRefNumber++
     
     let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
@@ -54,7 +54,7 @@ function generateFileRef() {
     for (let i=0; i<k; i++)
         flRef = '0' + flRef
 
-    fs.writeFileSync('./xtacy/cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 4))
+    fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 4))
     fileRef =  dateDesgn + flRef
 
     return fileRef
