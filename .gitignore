@@ -1,3 +1,19 @@
+# dependencies
+
 /node_modules
 
-*.env
+
+package-lock.json
+
+# misc
+
+.env
+.local
+.env.development
+.local
+.env.test
+.local
+.env.production
+.local
+
+npm-debug.log
