@@ -1,5 +1,4 @@
 const fs = require('fs');
-var files = require('../cdn/cdnLookup.json').files
 /**
  * @author zrthxn
  * 
@@ -18,15 +17,21 @@ exports.Lookup = (fileRef) => {
      * Inside that you'll see "$schema" and that sorta describes how data will eventually be stored
      */
     return new Promise((resolve,reject)=>{
-        var size = files.length-1
-        var ind = BinarySearch(files,fileId, 0, size)
-        if(ind = -1)
-            reject("FILE_NOT_FOUND")
-        else
-            resolve(files[ind].path)
+        fs.readFile('cdn/cdnLookup.json', 'utf-8', (err,fls) => {
+            if(err)
+            {
+                reject('LOOKUP_ERROR',err);
+            }
+            var files = JSON.parse(fls).files;
+            var ind = binarySearch(files,fileId, 0, files.length-1)
+            if(ind != -1)
+            {
+                resolve(files[ind].path);
+            }
+            reject("FILE_NOT_FOUND"); 
+        })
     });
 }
-
 exports.Upload = (file) => {
     var fileRef = generateFileRef()
     var fileId = parseInt(fileRef, 36)
@@ -43,19 +48,19 @@ exports.Upload = (file) => {
         // })
     });
 }
-function BinarySearch(fArray,item, lo, hi){
+function binarySearch(fArray,item, lo, hi){
     if(hi >= lo)
     {   
-        mid = (lo + hi)/2
-        if(item = FArray[mid].fileId)
+        var mid = Math.floor((lo + hi)/2)
+        if(item == fArray[mid].fileId)
             return mid
-        else if (item > FArray[mid].fileId)
+        else if (item > fArray[mid].fileId)
         {
-            return BinarySearch(fArray, item, mid+1, hi)
+            return binarySearch(fArray, item, mid+1, hi);
         }
-        return BinarySearch(fArray, item, lo, mid-1)
+        return binarySearch(fArray, item, lo, mid-1);
     }
-    return -1
+    return -1;
 }
 function generateFileRef() {
     let fileRef = '', date = new Date()
