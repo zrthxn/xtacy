@@ -1,0 +1,71 @@
+{
+    "$schema": {
+        "eventId": {
+            "name": "",
+            "eventId": "6 byte ID",
+            "dates": "",
+            "type": "gen / com / tic",
+            "metadata": {
+                "time": "",
+                "paid": "",
+                "price": "",
+                "teams": "",
+                "teamSize": "",
+                "teamSizeType": "strict / loose",
+                "collectTeamGit": true,
+                "conductedBy": ""
+            }
+        }
+    },
+    "registrationRefNumber": "0x000E",
+    "events": [
+        {
+            "title": "Hackathon",
+            "eventId": "hackhl",
+            "dates": "15/16",
+            "type": "com",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": true,
+                "price": 1000,
+                "teams": true,
+                "teamSize": 4,
+                "teamSizeType": "strict",
+                "collectTeamGit": true,
+                "conductedBy": "Omair"
+            }
+        },
+        {
+            "title": "Nerd Words",
+            "eventId": "nerdwd",
+            "dates": "15",
+            "type": "com",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": false,
+                "price": 0,
+                "teams": true,
+                "teamSize": 2,
+                "teamSizeType": "loose",
+                "collectTeamGit": false,
+                "conductedBy": "Omair"
+            }
+        },
+        {
+            "title": "Mehmood Bhai",
+            "eventId": "dastan",
+            "dates": "16",
+            "type": "tic",
+            "metadata": {
+                "time": "1:00 PM",
+                "paid": true,
+                "price": 500,
+                "teams": false,
+                "teamSize": null,
+                "teamSizeType": null,
+                "collectTeamGit": false,
+                "conductedBy": "Daniyal"
+            }
+        }
+    ]
+}

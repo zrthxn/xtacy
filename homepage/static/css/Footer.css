@@ -1,0 +1,80 @@
+footer {
+    /* position: relative;
+    background-color: #000;
+    padding: 2em; */
+    height: fit-content;
+    background-color: #222;
+}
+footer .footer-wrapper {
+    margin: 0;
+    max-width: 800px;
+}
+
+footer .dev {
+    font-size: 0.6em;
+    font-weight: 400;
+    text-align: left;
+    margin: 2em 1em;
+    bottom: 0;
+    color: #fff;
+}
+
+footer .container {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-bottom: 2em;
+}
+
+footer .footer-links {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+footer ul {
+    margin: 0;
+    margin-right: 4em;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+footer ul li {
+    margin: 0;
+    margin-bottom: 0.5em;
+    width: fit-content;
+} footer ul li:first-of-type::before {
+    font-size: 1.25em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1em;
+    color: #ffd800;
+} footer ul li a {
+    font-size: 0.9em;
+    font-weight: 400;
+    text-decoration: none;
+    color: #fff;
+}
+
+footer .nav-links li:first-of-type::before {
+    content: 'LINKS';
+}
+footer .xtacy li:first-of-type::before {
+    content: 'XTACY';
+}
+footer .social li:first-of-type::before {
+    content: 'FOLLOW';
+} footer .nav-links ul {
+    margin-right: 0;
+}
+
+footer .footer-links {
+    display: flex;
+    flex-direction: row;
+}
+footer .images {
+    height: fit-content;
+    margin: auto auto;
+} footer .images img {
+    max-height: 4em;
+}

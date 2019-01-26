@@ -1,0 +1,130 @@
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
+{{!------ ==== PAGE ==== ------}}
+
+{{> header }}
+
+{{!-- START PAGE CONTENT --}}
+<section>
+    <div class="banner-container">
+        <div class="event">
+            <div class="banner">
+                <a href="#hackhl">
+                    <img src="/static/img/thumb.png">
+                </a>
+            </div>
+
+            <h3>Event XYZ</h3>
+            <p class="left">Lorem ipsum ist dolor vala</p>
+        </div>
+    </div>
+    
+    <div class="banner-container">
+        <div class="event">
+            <div class="banner">
+                <a href="#nerdwd">
+                    <img class="mobile" src="/static/img/JMI Logo.png">
+                    <img class="desktop" src="/static/img/thumb.png">
+                </a>
+            </div>
+
+            <h3>Event ABCD</h3>
+            <p class="left">Lorem ipsum ist dolor vala</p>
+        </div>
+    </div>
+
+    <div class="banner-container">
+        <div class="banner small"><img src="/static/img/thumb.png"></div>
+        <div class="banner small"><a href="#dastan"><img src="/static/img/thumb.png"></a></div>
+        <div class="banner small"><img src="/static/img/thumb.png"></div>
+    </div>
+    <div class="banner-container">
+        <div class="banner small"><a href="#hackhl"><img src="/static/img/thumb.png"></a></div>
+        <div class="banner small"></div>
+        <div class="banner small"></div>
+        <div class="banner small"></div>
+    </div>
+</section>
+
+{{!-- EVENT PROMO DRAWER --}}
+
+<input type="checkbox" id="drawer-toggle" hidden="true">
+<section class="drawer">
+    <div class="container">
+        <div class="container"><label for="drawer-toggle" class="close"><span></span></label></div>
+
+        <div class="container drawer-content">
+            <div class="strip"></div>
+            {{> loading }}
+            <iframe src="" frameborder="0" id="drawer-event"></iframe>
+            <div class="action" id="action">
+                <button id="button_main" class="button solid">REGISTER</button>
+                <button id="button_aux" class="button">READ MORE</button>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="drawer-shadow"></section>
+{{!-- END PAGE CONTENT --}}
+
+<script>
+    let banners = document.getElementsByClassName("banner");
+    let iframe = document.getElementById("drawer-event");
+    let action = document.getElementById("action");
+    let loading = document.getElementById("loading");
+    let toggle = document.getElementById("drawer-toggle");
+
+    for(let i=0; i<banners.length; i++) {
+        banners[i].onclick = () => {
+            toggle.checked = true;
+            setEventUrl();
+        }
+    }
+
+    function setEventUrl() {
+        setTimeout(function(){
+            let eventId = window.location.href.split('#')[1];
+            let data = getEventData(eventId);
+            let checksum = getEventHash(data.type, eventId);
+            
+            if (toggle.checked===true) {
+                if (eventId!==undefined) iframe.src = '/event/' + eventId + '/promo';
+
+                document.getElementById("button_main").onclick = () => {
+                    sessionStorage.setItem( config.hashToken, checksum );
+                    if(data.type==='gen')
+                        window.location = '/book/start?int=gen';
+                    else
+                        window.location = '/book/start?int=' + data.type + '&evt=' + eventId;
+                }
+                document.getElementById("button_aux").onclick = () => {
+                    window.location = '/event/' + eventId;
+                }
+            }
+        }, 100);
+    }
+
+    window.onload = () => {
+        let url = window.location.href.split('#')[1];
+        if (url!==undefined) {
+            toggle.checked = true;
+            setEventUrl();
+        }
+    }
+
+    toggle.onchange = () => {
+        if (toggle.checked===false) {
+            iframe.src = '';
+            window.history.pushState({ "Title" : "EVENTS" , "Url" : "/events"}, "EVENTS", "/events");
+        }
+    }
+
+    iframe.onload = () => {
+        $(iframe).removeClass("disappear");
+        $(iframe).addClass("appear");
+
+        $(loading).removeClass("appear");
+        $(loading).addClass("disappear");
+    }
+</script>
+
+{{> footer }}

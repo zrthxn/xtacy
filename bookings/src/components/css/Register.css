@@ -1,0 +1,41 @@
+.Register {
+    display: flex;
+    flex-flow: column;
+    animation: reveal 750ms ease;
+} @keyframes reveal {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+
+.Register .fluff {
+    height: fit-content;
+    margin-top: 1em;
+    max-width: 20em;
+} .Register .fluff p {
+    max-width: 100%;
+} .Register .fluff h2 {
+    font-weight: 600;
+}
+
+.Register .form {
+    width: fit-content;
+}
+
+.Register .form #reg {
+    margin-right: 1em;
+    margin-left: auto;
+}
+
+@media (min-width: 600px) {
+    /* DESKTOP */
+    .Register {
+        flex-flow: row;
+    }
+    .Register .fluff {
+        text-align: right;
+        margin-right: 2em;
+    } .Register .fluff p {
+        margin: auto 0 auto auto;
+        max-width: 75%;
+    }
+}

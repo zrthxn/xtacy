@@ -1,0 +1,22 @@
+.Payments {
+    animation: reveal 750ms ease;
+} @keyframes reveal {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+
+.Payments #phone {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.Payments .form {
+    display: flex;
+    flex-flow: column;
+}
+.Payments .form .action {
+    display: flex;
+    flex-flow: row;
+} .Payments .form .action * {
+    margin: auto;
+}

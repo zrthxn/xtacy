@@ -1,0 +1,145 @@
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Homepage.css">
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
+<script src="/static/js/particles.min.js"></script>
+<script>
+    particlesJS.load('embelishments', '/static/js/particleConfig.json', ()=>{});
+</script>
+{{!------ ==== PAGE ==== ------}}
+
+{{> header }}
+
+{{!-- START PAGE CONTENT --}}
+<section class="grid">
+    {{!-- Front Page - Above Fold --}}
+    <div class="hero">
+        <div class="embelishments" id="embelishments">
+            {{!-- Position Absolute Embelishments --}}
+        </div>
+
+        <div class="Dates">
+            <h3>25<span class="noLeading">----</span>27</h3>
+            <h3>March</h3>
+        </div>
+
+        <div class="Alex">
+            <img src="/static/img/AlexM.png" class="mobile" alt="alex">
+            <img src="/static/img/AlexD.png" class="desktop" alt="alex">
+        </div>
+        
+        <h1 class="Title">xtacy</h1>  
+        <div class="Info">
+            <p>The annual techno-cultural roller coaster festival organized by 
+                Faculty of Engineering and Technology, Jamia Millia Islamia</p>
+        </div>
+    </div>    
+</section>
+
+<div class="tagline">
+    {{!-- Tagline --}}
+    <p>contact light</p>
+</div>
+
+<section class="nogrid">
+    {{!-- Front Page - Above Fold --}}
+    <div class="hero">
+        <div class="Alex">
+            <img src="/static/img/AlexM.png" class="mobile" alt="alex">
+            <img src="/static/img/AlexD.png" class="desktop" alt="alex">
+        </div>
+
+        <div class="Textual">
+            <h1 class="Title">xtacy</h1> 
+            <div class="Dates">
+                <h3>25-27</h3>
+                <h3>March</h3>
+            </div>
+ 
+            <div class="Info">
+                <p>The annual techno-cultural roller coaster festival organized by 
+                    Faculty of Engineering and Technology, Jamia Millia Islamia</p>
+            </div>
+        </div>        
+    </div>
+</section>
+
+<section>
+    {{!-- About Us --}}
+    <div class="about container">
+        <h2>Dominum Nostrum</h2>
+        <p class="justify">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lectus enim, 
+            porta interdum tincidunt vitae, efficitur a quam. Duis in leo erat. Vestibulum 
+            convallis justo in nunc sodales, nec ullamcorper urna laoreet. Morbi nisi arcu, 
+            ultrices vitae lorem sed, cursus laoreet arcu. Proin diam ligula, laoreet 
+            vitae nibh ut, rhoncus fringilla enim. Vivamus ut eros porta, posuere nisl ut, 
+            tincidunt enim. Sed ut massa sit amet lorem viverra mattis quis et justo. 
+            Praesent consequat imperdiet elit, ut tempus nibh. Ut sagittis semper pretium. 
+            Nam eleifend, elit eu pulvinar mollis, nulla nulla blandit felis, eu 
+            mattis nulla metus tempor urna. Proin varius porttitor tristique.
+        </p>
+    </div>
+</section>
+
+<section class="slideshow-container">
+    {{!-- Previous Years Slideshow --}}
+    <div class="slideshow">
+        <div class="slide" id="sl-1" style="display: flex"><img src="/static/img/hero/2.png"></div>
+        <div class="slide" id="sl-2" style="display: none"><img src="/static/img/hero/3.png"></div>
+        <div class="slide" id="sl-3" style="display: none"><img src="/static/img/hero/4.png"></div>
+        <div class="slide" id="sl-4" style="display: none"><img src="/static/img/hero/5.png"></div>
+        <div class="slide" id="sl-5" style="display: none"><img src="/static/img/hero/6.png"></div>
+        <div class="slide" id="sl-6" style="display: none"><img src="/static/img/hero/7.png"></div>
+    </div>
+</section>
+
+<section>
+    {{!-- Slideshow of Title and Co-Sponsors --}}
+    <div class="sponsors">
+        {{!-- <marquee behavior="" direction=""> --}}
+            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/JMI Logo.png">
+        {{!-- </marquee> --}}
+    </div>
+</section>
+
+<section>
+    {{!-- Call to Action --}}
+    <div class="cta">
+
+    </div>
+</section>
+
+<section class="map-container">
+    {{!-- Google Map of the Location --}}
+    <div class="map">
+
+    </div>
+</section>
+{{!-- END PAGE CONTENT --}}
+
+{{> footer }}
+
+<script>
+    var slides = [
+        document.getElementById("sl-1"),
+        document.getElementById("sl-2"),
+        document.getElementById("sl-3"),
+        document.getElementById("sl-4"),
+        document.getElementById("sl-5"),
+        document.getElementById("sl-6"),
+    ];
+    var i = 0;
+    (function nextSlide() {
+        setTimeout(function(){
+            slides[i].style = 'display: none';
+            if(i===slides.length-1) i = 0;
+            else i++;
+            slides[i].style = 'display: flex';
+            nextSlide();
+        }, 5000);
+    })()
+</script>

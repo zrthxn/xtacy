@@ -1,0 +1,53 @@
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/Contact.css">
+{{!------ ==== PAGE ==== ------}}
+
+{{> header }}
+
+{{!-- START PAGE CONTENT --}}
+<section>
+    <div class="Contact">
+        <div class="Heading container">
+            <h1 class="Title">Contact Us</h1>
+            <p class="Subtitle">On this page you will be able to get in touch with us 
+                lorem ipsum ist dolor vala
+            </p>
+        </div>
+
+        <div class="Message container">
+            <div class="fluff">
+                <h2>Send a Message</h2>
+                <p>Get in touch with us any time you like and we will get back to you</p>
+            </div>
+
+            <form action="/_contact/send" method="POST" class="Form container center">
+                <input type="text" hidden="true" readonly="true" name="srKey" id="srKey" value="null">
+                <input type="text" hidden="true" readonly="true" name="srToken" id="srToken" value="null">
+
+                <input type="text" class="textbox" required="true" name="formName" id="formName" placeholder="Name">
+                <input type="text" class="textbox" required="true" name="formEmail" id="formEmail" placeholder="Email or Phone">
+                <input type="text" class="textbox" required="true" name="formMsg" id="formMsg" placeholder="Message">
+
+                <button class="button solid" id="send">Send</button>
+            </form>
+        </div>
+
+        <div class="Details container">
+            <h3>Or get in touch directly</h3>
+            <p><b>Email</b>  hello@xtacy.org</p>
+            <p><b>Phone</b>  +91 1234556789</p>
+        </div>
+    </div>
+</section>
+{{!-- END PAGE CONTENT --}}
+
+<script>
+    window.onload = () => {
+        let key = localStorage.getItem( config.csrfTokenNameKey )
+        let token = localStorage.getItem( config.csrfTokenName+key )
+
+        document.getElementById("srKey").value = key;
+        document.getElementById("srToken").value = token;        
+    }    
+</script>
+
+{{> footer }}

@@ -1,0 +1,76 @@
+.Contact {
+    display: flex;
+    flex-flow: column;
+    width: fit-content;
+    margin: auto;
+    animation: reveal 750ms ease;
+} @keyframes reveal {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+
+.Heading {
+    margin-block-start: 1em;
+    margin-block-end: 2em;
+    text-align: left;
+}
+.Title {
+    width: fit-content;
+}
+/* .Title::after {
+    content: '';
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 10px;
+    background-color: var(--yellow);
+    margin: 0.25em 0;
+}  */
+.Subtitle {
+    /* max-width: 100%; */
+    margin: 0;
+    text-align: left;
+}
+
+.Message {
+    display: flex;
+    flex-flow: column;
+    background-color: var(--yellow);
+} 
+.Message .fluff {
+    height: fit-content;
+    text-align: left;
+    padding: 1em;
+    margin-top: 1em;
+    max-width: 20em;
+} .Message .fluff p {
+    max-width: 100%;
+} .Message .fluff h2 {
+    font-weight: 600;
+}
+
+.Message .Form {
+    width: fit-content;
+}
+
+.Details {
+    text-align: left;
+    margin-block-start: 2em;
+    margin-block-end: 2em;
+} .Details p {
+    margin: 0;
+    font-size: 1.25em;
+}
+
+@media (min-width: 600px) {
+    /* DESKTOP */
+    .Message {
+        flex-flow: row;
+    }
+    .Message .fluff {
+        margin-right: 2em;
+    }
+    .Message .Form * {
+        margin: 1em;
+    }
+}

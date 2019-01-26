@@ -1,0 +1,33 @@
+{{!------ ==== PAGE ==== ------}}
+
+{{> header }}
+
+{{!-- START PAGE CONTENT --}}
+<section>
+    <div class="container center">
+        <h2>Register</h2>
+
+        <p>A big ass paragraph about registration</p>
+
+        <button class="button solid" id="login">REGISTER</button>
+        {{!-- <form action="#"> --}}
+            {{!-- <div class="container center"> --}}
+                {{!-- <input id="name" type="text" class="textbox" placeholder="Name" autocomplete="given-name"> --}}
+                {{!-- <input id="email" type="text" class="textbox" placeholder="Email or Phone" autocomplete="email" required="true"> --}}
+                {{!-- <input id="password" type="password" class="textbox" placeholder="Password" autocomplete="current-password" required="true"> --}}
+                {{!-- <button class="button solid" id="login">Register</button> --}}
+            {{!-- </div> --}}
+        {{!-- </form> --}}
+    </div>
+</section>
+{{!-- END PAGE CONTENT --}}
+
+{{> footer }}
+
+<script>
+    document.getElementById("login").onclick = () => {
+        let checksum = getEventHash('gen', 'any');
+        sessionStorage.setItem( config.hashToken, checksum );
+        window.location = '/book/start?int=gen';
+    }
+</script>

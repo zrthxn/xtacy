@@ -1,0 +1,96 @@
+.Tickets {
+    display: flex;
+    flex-flow: column;
+    animation: reveal 750ms ease;
+} @keyframes reveal {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+.Tickets .Details {
+    display: flex;
+    flex-flow: column;
+}
+
+.Tickets .fluff {
+    height: fit-content;
+    margin-top: 1em;
+    max-width: 20em;
+} .Tickets .fluff p {
+    max-width: 100%;
+} .Tickets .fluff h2 {
+    font-weight: 600;
+}
+.Tickets .form {
+    width: fit-content;
+}
+
+/* --------------- Seat Controls ------------ */
+.Tickets .Seats {
+    display: flex;
+    flex-flow: column;
+}
+
+.Seats .tiers {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+.Seats .controls {
+    padding: 1em;
+}
+
+/* Tiers */
+.Seats .controls .tiers {
+    padding: 1em;
+} 
+
+/* Number selector */
+.Seats .controls .selector {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    padding: 1em;
+}
+.Seats .controls .selector h3 {
+    margin: 0.5em;
+    border: 2px solid #000;
+}
+.Seats .controls .selector label{
+    padding: 0 0.5em;
+    background-color: var(--yellow);
+    /* margin-left: 0.5em;
+    margin-right: 0.5em; */
+} .Seats .controls .selector h3 * {
+    width: 30px !important;
+}
+
+/* Pricing Display */
+.Seats .controls .pricing {
+    padding: 1em;
+} 
+.Seats .controls .pricing .pricing-display {
+    display: flex;
+    flex-flow: row;
+} 
+
+
+@media (min-width: 600px) {
+    /* DESKTOP */
+    .Tickets {
+        flex-flow: column;
+    }
+    .Tickets .Details {
+        flex-flow: row;
+    }
+    .Tickets .fluff {
+        text-align: right;
+        margin-right: 2em;
+    } .Tickets .fluff p {
+        margin: auto 0 auto auto;
+        max-width: 75%;
+    }
+
+    .Tickets .Seats {
+        flex-flow: row;
+    }
+}

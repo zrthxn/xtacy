@@ -1,0 +1,343 @@
+.grid {
+    display: none;
+}
+.nogrid {
+    display: block;
+}
+
+img[class~="mobile"] {
+    display: block;
+} img[class~="desktop"] {
+    display: none;
+} @media (min-width: 800px) {
+    img[class~="mobile"] {
+        display: none;
+    } img[class~="desktop"] {
+        display: block;
+    }
+}
+
+@supports(display: grid) {
+    .grid {
+        display: block;
+    }
+    .nogrid {
+        display: none;
+    }
+}
+
+.noLeading {
+    letter-spacing: -1rem;
+    margin-inline-start: 1rem;
+    margin-inline-end: 0.75rem;
+}
+
+/* =============================================== */
+
+.grid .hero {
+    position: relative;
+    height: fit-content;
+    max-height: 85vh;
+    margin: auto;
+    padding: 1em 5em;
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr;
+    grid-template-rows: 3fr 1fr 1fr 1fr;
+} 
+
+.grid .hero .Alex {
+    grid-column: 2/3;
+    grid-row: 1/5;
+
+    z-index: 0;
+    position: relative;
+    height: 100%;
+    width: 65%;
+    margin: auto;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+} .grid .hero .Alex img{
+    max-width: 100%;
+    object-fit: cover;
+    transition: all 0.25s ease;
+}
+
+.grid .hero .Dates {
+    grid-column: 1/2;
+    grid-row: 3/4;
+
+    z-index: 100;
+    height: fit-content;
+    margin: 0;
+} .grid .hero .Dates h3{
+    font-weight: 300;
+    margin: 0;
+} 
+
+.grid .hero .Info {
+    grid-column: 3/4;
+    grid-row: 4/5;
+
+    z-index: 100;
+    text-align: right;
+} .grid .hero .Info p {
+    font-size: 0.75em;
+    margin: 0;
+    max-width: 100%;
+}
+
+.home-rotor {
+    width: 4em;
+    height: 1.5em;
+}
+
+/* ---------------------------- */
+
+.grid .hero .Title {
+    position: absolute;
+    text-align: left;
+    left: 50%;
+    top: 35%;
+    font-size: 8em;
+    z-index: 100;
+}
+
+@media (max-width: 800px) {
+    /* MOBILE */
+    .grid .hero {
+        margin: auto;
+        max-width: 500px;
+        padding: 1em;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 3fr 1fr 1fr;
+    }
+
+    .grid .hero .Alex {
+        grid-column: 1/3;
+        grid-row: 1/3;
+
+        width: 100%;
+        margin-left: 0;
+        max-width: 400px;
+    }
+
+    .grid .hero .Dates {
+        grid-column: 2/3;
+        grid-row: 3/4;
+    }
+
+    .grid .hero .Info {
+        grid-column: 1/3;
+        grid-row: 4/5;
+
+        text-align: left;
+    } .grid .hero .Info {
+        font-size: 0.7em;
+        margin-left: 4em;
+        margin-right: 2em;
+    }
+
+    .grid .hero .Title {
+        display: none;
+    }
+}
+@media(min-width: 1200px) {
+    .grid .hero .Title {
+        font-size: 10em;
+    }
+}
+
+/* ======================================================== */
+
+.nogrid .hero {
+    position: relative;
+    height: fit-content;
+    max-height: 85vh;
+    margin: auto;
+    padding: 1em 5em;
+    display: flex;
+    flex-direction: row;
+} 
+
+.nogrid .hero .Alex {
+    z-index: 0;
+    position: relative;
+    height: 100%;
+    width: 25%;
+    margin: auto;
+    margin-left: 25%;
+    margin-right: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+} .nogrid .hero .Alex img{
+    max-width: 100%;
+    object-fit: cover;
+    transition: all 0.25s ease;
+}
+
+.nogrid .hero .Textual {
+    max-width: 15%;
+    margin: auto 2em;
+    display: flex;
+    flex-direction: column;
+}
+
+.nogrid .hero .Textual .Dates {
+    z-index: 100;
+    height: fit-content;
+    text-align: left;
+    margin: 2em 0;
+} .nogrid .hero .Textual .Dates h3{
+    font-weight: 300;
+    margin: 0;
+} 
+
+.nogrid .hero .Textual .Info {
+    z-index: 100;
+    text-align: left;
+} .nogrid .hero .Textual .Info p {
+    font-size: 0.75em;
+    margin: 0;
+    max-width: 100%;
+}
+
+.nogrid .hero .Textual .Title {
+    text-align: left;
+    font-size: 10em;
+    z-index: 100;
+    margin: 0;
+}
+
+@media (max-width: 800px) {
+    /* MOBILE */
+    .nogrid .hero {
+        margin: auto;
+        padding: 1em;
+        flex-direction: column;
+    }
+
+    .nogrid .hero .Alex {
+        width: 50%;
+        max-width: 400px;
+    }
+
+    .nogrid .hero .Textual {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .nogrid .hero .Textual .Title {
+        text-align: center;
+        font-size: 5em;
+    }
+
+    .nogrid .hero .Textual .Dates {
+        text-align: center;
+    }
+
+    .nogrid .hero .Textual .Info {
+        text-align: center;
+    }
+}
+
+/* ======================================================== */
+
+.tagline {
+    display: none;
+    position: absolute;
+    transform: rotateZ(-90deg);
+    left: 1em;
+    top: 40vh
+} .tagline p {
+    max-width: 100%;
+    margin: 0;
+} @media(max-width: 800px) {
+    .hero .Title {
+        top: 20%;
+        left: 25%;
+        font-size: 5em;
+    }
+
+    .tagline {
+        left: 0em;
+        top: 60vh
+    }
+} @supports(display: grid) {
+    .tagline {
+        display: block;
+    }
+}
+.embelishments {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+/* ============================================== */
+
+.about {
+
+}
+
+/* ----- Slideshow ----- */
+.slideshow-container {
+    padding: 0;
+} .slideshow {
+
+}
+.slide {
+    position: relative;
+    width: 100%;
+    height: 36em;
+    background-color: #000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+} .slide img {
+    max-height: 100%;
+    object-fit: cover;
+    transition: all 0.25s ease;
+} .slide:active img {
+    opacity: 0.85;
+} @media (min-width: 600px) {
+    .slide {
+        height: 36em;
+    } .slide:hover img {
+        transform: scale(1.025);
+    }
+}
+
+/* Adaptive slide Images */
+.slide img[class~="mobile"] {
+    display: block;
+} .slide img[class~="desktop"] {
+    display: none;
+} @media (min-width: 800px) {
+    .slide img[class~="mobile"] {
+        display: none;
+    } .slide img[class~="desktop"] {
+        display: block;
+    }
+}
+
+/* ----- Sponsors ----- */
+.sponsors {
+
+} .sponsors marquee {
+
+} .sponsors img {
+    width: 8em;
+    margin: 2em 4em;
+}
