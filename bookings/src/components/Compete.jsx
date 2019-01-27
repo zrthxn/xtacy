@@ -109,6 +109,7 @@ class Compete extends Component {
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.props.eventData.metadata.price}
+                            calcTax={true}
                             info={this.props.eventData.title}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
@@ -123,7 +124,7 @@ class Compete extends Component {
                                 <p><i>Competitions</i></p>
                                 <h2>{this.props.eventData.title}</h2>
                                 <p>Fill in the form and click register. 
-                                    You will recieve a confirmation email 
+                                    You will recieve a confirmation email
                                     after a successful registration.</p>
                             </div>
 

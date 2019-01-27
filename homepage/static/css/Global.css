@@ -235,6 +235,16 @@ em {
     margin: 0 0;
 } */
 
+.dropdown {
+    margin: 1em;
+    max-width: 20em;
+    padding: 1em;
+    font-size: 0.85em;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    border: 1.5px solid #000;
+}
+
 /* FEATURES ============================================= FEATURES */
 
 /* ROTARY */

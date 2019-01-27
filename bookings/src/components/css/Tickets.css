@@ -24,55 +24,95 @@
     width: fit-content;
 }
 
+.Tickets #reg {
+    margin: 5em auto;
+}
+
 /* --------------- Seat Controls ------------ */
 .Tickets .Seats {
     display: flex;
     flex-flow: column;
 }
 
-.Seats .tiers {
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-}
 .Seats .controls {
-    padding: 1em;
+    padding: 0;
+    max-width: 20em;
 }
 
 /* Tiers */
 .Seats .controls .tiers {
-    padding: 1em;
-} 
+    display: flex;
+    flex-flow: column;
+    max-width: 20em;
+    margin: 1em 0;
+} .Seats .controls .tiers p {
+    margin: 0 1em;
+    text-align: left;
+}
 
 /* Number selector */
 .Seats .controls .selector {
     display: flex;
+    flex-flow: column;
+    max-width: 20em;
+    margin: 1em 0;
+} .Seats .controls .selector p {
+    margin: 0 1em;
+    text-align: left;
+} 
+
+.Seats .controls .selector .number {
+    display: flex;
     flex-flow: row;
-    align-items: center;
-    padding: 1em;
 }
-.Seats .controls .selector h3 {
-    margin: 0.5em;
-    border: 2px solid #000;
+.Seats .controls .selector .actual-number {
+    margin: 0.25em 0.5em;
+    text-align: left;
+    width: 150px;
 }
-.Seats .controls .selector label{
-    padding: 0 0.5em;
+.Seats .controls .selector .buttons {
+    float: right;
+    margin: auto auto auto 0;
+    display: flex;
+    flex-flow: row;
+    align-content: center;
+    justify-content: center;
+}
+
+.Seats .controls .selector label {
+    display: inline-block;
+    width: 1em;
+    margin-left: 0.5em;
+    font-size: 2em;
+    font-weight: 600;
+    transition: all 0.25s ease;
     background-color: var(--yellow);
-    /* margin-left: 0.5em;
-    margin-right: 0.5em; */
-} .Seats .controls .selector h3 * {
-    width: 30px !important;
+} .Seats .controls .selector label:hover, .Seats .controls .selector label:active {
+    background-color: #ffd800;
 }
 
 /* Pricing Display */
 .Seats .controls .pricing {
     padding: 1em;
-} 
-.Seats .controls .pricing .pricing-display {
+    max-width: 20em;
     display: flex;
-    flex-flow: row;
-} 
+    flex-flow: column;
+    text-align: left;
+} .Seats .controls .pricing p {
+    margin: 0.25em 0;
+    max-width: 100%;
+} .Seats .controls .pricing * {
+    margin: 0.5em 0;
+}
 
+.Seats .controls .pricing #trP {
+    font-size: 1em;
+} .Seats .controls .pricing #tax {
+    font-size: 0.75em;
+    color: #555;
+} .Seats .controls .pricing h3 {
+    font-weight: 600;
+}
 
 @media (min-width: 600px) {
     /* DESKTOP */

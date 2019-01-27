@@ -93,7 +93,11 @@ class Tickets extends Component {
     }
 
     action = () => {
-        
+        if(this.state.requiredFulfilled) {
+            this.setState({ paymentReady: true })
+        } else {
+            alert('Please fill in the required fields')
+        }
     }
 
     success = () => {
@@ -105,18 +109,17 @@ class Tickets extends Component {
             <div>
             {
                 this.state.paymentReady ? (
-                    this.props.eventData.metadata.paid ? (
+                    this.state.completion ? <SuccessPage/> : (
                         <Payments
                             name={this.state.data.regName}
                             email={this.state.data.regEmail}
                             phone={this.state.data.regPhone}
                             amount={this.state.data.amount}
+                            calcTax={false}
                             info={this.props.eventData.title}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
                         />
-                    ) : (
-                        this.state.completion ? <SuccessPage/> : console.log()
                     )
                 ) : (
                     <div className="Tickets container fit">
@@ -147,7 +150,8 @@ class Tickets extends Component {
                                 {
                                     typeof this.props.eventData.metadata.price === 'object' ? (
                                         <div className="tiers">
-                                            <select className="dropdown" defaultValue={1} onChange={this.handleTierChange}>
+                                            <p>Select a Teir</p>
+                                            <select className="dropdown" defaultValue={1} onChange={this.handleTierChange} passive="true">
                                                 <option value={0}>Budget</option>
                                                 <option value={1}>Standard</option>
                                                 <option value={2}>Premium</option>
@@ -156,18 +160,23 @@ class Tickets extends Component {
                                     ) : console.log()
                                 }
                                 <div className="selector">
-                                    <h3>
-                                        <label onClick={() => { this.handleSizeChange('decr') }}>-</label>
-                                        <span className="actual-number">{this.state.data.number}</span>
-                                        <label onClick={() => { this.handleSizeChange('incr') }}>+</label>
-                                    </h3>
-                                </div>
-                                <div className="pricing">
-                                    <div className="pricing-display">
-                                        <p>Price</p>
-                                        <h3>{this.state.data.amount}</h3>
+                                    <p>Select a Number</p>
+
+                                    <div className="number">
+                                        <h3 className="actual-number">{this.state.data.number + ' ' + (this.state.data.number>1 ? 'Tickets' : 'Ticket')}</h3>
+                                        
+                                        <div className="buttons">
+                                            <label id="decr" onClick={() => { this.handleSizeChange('decr') }}>-</label>
+                                            <label id="incr" onClick={() => { this.handleSizeChange('incr') }}>+</label>
+                                        </div>
                                     </div>
                                 </div>
+                                <div className="pricing">
+                                    <p id="trP">{'Rs ' + this.state.tierPricing + ' per ticket'}</p>
+                                    <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                    <h3>{'Total: Rs ' + this.state.data.amount}</h3>
+                                </div>
+                                <input type="text" className="textbox" onChange={this.handleChange} id="specialRequests" placeholder="Special Requests (if any)"/>
                             </div>
                         </div>
                         <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>                     

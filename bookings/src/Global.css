@@ -237,6 +237,7 @@ em {
 
 .dropdown {
     margin: 1em;
+    max-width: 20em;
     padding: 1em;
     font-size: 0.85em;
     background-color: #fff;
