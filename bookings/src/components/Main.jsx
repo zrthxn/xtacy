@@ -21,6 +21,7 @@ class Main extends Component {
 
     componentDidMount() {
         if (this.props.intent!=='gen')
+            // DEBUG ---------------------------------------- //
             this.setState({
                 intent: 'tic',
                 event: 'dastan',
@@ -32,7 +33,7 @@ class Main extends Component {
                     "metadata": {
                         "time": "1:00 PM",
                         "paid": true,
-                        "price": [
+                        "price":  [
                             100, 150, 250
                         ],
                         "teams": false,
@@ -44,6 +45,7 @@ class Main extends Component {
                 },
                 loaded: true
             })
+            // ============================================== //
             // Booking.getEventData(this.props.event)
             //     .then((eventData)=>{
             //         this.setState({

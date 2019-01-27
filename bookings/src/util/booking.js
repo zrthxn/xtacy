@@ -16,18 +16,13 @@ exports.generalRegister = (data, hash) => {
         const genReq = new XMLHttpRequest();
         genReq.open('POST', 'http://xtacy.org:3000/_register/gen/', true);
         genReq.setRequestHeader('Content-Type', 'application/json');
-        genReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash}));
+        genReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
         genReq.onreadystatechange = () => {
             if(genReq.readyState===4 && genReq.status===200) {
                 let genRes = JSON.parse(genReq.response);
-                
                 let responseHashSequence = JSON.stringify({ validation: genRes.validation, rgn: genRes.rgn })
-                console.log(genRes)
                 let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
-
-                // let responseHashSequence = JSON.parse(genReq.response).rgn + config.clientKey + data.regName
-                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
                 if (genRes.hash===responseHmac)
                     resolve(genRes);
                 else
@@ -37,7 +32,7 @@ exports.generalRegister = (data, hash) => {
     });
 }
 
-exports.competeFreeRegister = (data, hash) => {
+exports.competeRegister = (data, hash) => {
     let csrf = {
         key: localStorage.getItem(config.csrfTokenNameKey),
         token: localStorage.getItem(config.csrfTokenName + 
@@ -48,33 +43,49 @@ exports.competeFreeRegister = (data, hash) => {
         const comReq = new XMLHttpRequest();
         comReq.open('POST', 'http://xtacy.org:3000/_register/com/', true);
         comReq.setRequestHeader('Content-Type', 'application/json');
-        comReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash}));
+        comReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
         comReq.onreadystatechange = () => {
             if(comReq.readyState===4 && comReq.status===200) {
                 let comRes = JSON.parse(comReq.response);
-                
                 let responseHashSequence = JSON.stringify({ validation: comRes.validation, rgn: comRes.rgn })
-                console.log(comRes.rgn)
                 let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
-
-                // let responseHashSequence = JSON.parse(genReq.response).rgn + config.clientKey + data.regName
-                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
                 if (comRes.hash===responseHmac)
                     resolve(comRes);
                 else
                     reject('HASH_MISMATCH');
-
-                // let responseHashSequence = JSON.parse(comReq.response).rgn + config.clientKey + data.regTeamName
-                // let responseHash = crypto.createHash('sha256').update(responseHashSequence).digest('hex')
-                // if (JSON.parse(comReq.response).hash===responseHash)
-                //     resolve(JSON.parse(comReq.response));
-                // else
-                //     reject('HASH_MISMATCH');
             }
         }
     });
 }
+
+exports.ticketRegister = (data, hash) => {
+    let csrf = {
+        key: localStorage.getItem(config.csrfTokenNameKey),
+        token: localStorage.getItem(config.csrfTokenName + 
+            localStorage.getItem(config.csrfTokenNameKey))
+    };
+
+    return new Promise((resolve,reject)=>{
+        const ticReq = new XMLHttpRequest();
+        ticReq.open('POST', 'http://xtacy.org:3000/_register/tic/', true);
+        ticReq.setRequestHeader('Content-Type', 'application/json');
+        ticReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
+
+        ticReq.onreadystatechange = () => {
+            if(ticReq.readyState===4 && ticReq.status===200) {
+                let ticRes = JSON.parse(ticReq.response);
+                let responseHashSequence = JSON.stringify({ validation: ticRes.validation, rgn: ticRes.rgn })
+                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
+                if (ticRes.hash===responseHmac)
+                    resolve(ticRes);
+                else
+                    reject('HASH_MISMATCH');
+            }
+        }
+    });
+}
+
 
 //----------------------------------------------------------
 
@@ -97,4 +108,25 @@ exports.getEventData = (eventId) => {
             }
         }
     });
+}
+
+exports.calcTaxInclAmount = (amt) => {
+    /**
+     * Calculates the net amout to be paid 
+     * such that the amount recieved after deductions is
+     * equal to the fee of the event
+    */
+    // Flat transaction fee in Rupees
+    const flatFee = 3
+
+    // Transaction fee in percent
+    const txnFeePct = 2.5
+    
+    // Applicable GST in percent
+    const gstPct = 18
+    
+    return parseFloat(
+        (amt + flatFee) / 
+        (1 - txnFeePct/100 - ((gstPct/100) * (txnFeePct/100)) ))
+        .toFixed(2)
 }

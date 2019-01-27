@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import Payments from './Payments';
 import SuccessPage from './SuccessPage';
 
+import Booking from '../util/booking';
 import './css/Tickets.css';
 import '../Global.css'; 
+
+const config = require('../util/config.json');
 
 class Tickets extends Component {
     constructor() {
@@ -17,6 +20,7 @@ class Tickets extends Component {
                 regEmail: null,
                 regPhone: null,
                 regInst: null,
+                specialRequests: null,
                 tier: null,
                 number: 0,
                 amount: 0
@@ -36,7 +40,7 @@ class Tickets extends Component {
 
         _data.number = 1
         _data.tier = 'Standard'
-        _data.amount = trP * _data.number * 1.04
+        _data.amount = Booking.calcTaxInclAmount(trP * _data.number)
         this.setState({
             tierPricing: trP,
             data: _data
@@ -58,7 +62,7 @@ class Tickets extends Component {
 
     handleTierChange = (event) => {
         let _data = this.state.data, _trP = this.props.eventData.metadata.price[ event.target.value ]
-        _data.amount = _trP * _data.number * 1.04
+        _data.amount = Booking.calcTaxInclAmount(_trP * _data.number)
         switch (event.target.value) {
             case '0':
                 _data.tier = 'Budget';
@@ -85,7 +89,7 @@ class Tickets extends Component {
             _data.number++
         else if(action==='decr' && _data.number!==1)
             _data.number--
-        let amt = this.state.tierPricing * _data.number * 1.04
+        let amt = Booking.calcTaxInclAmount(this.state.tierPricing * _data.number)
         _data.amount = amt
         this.setState({
             data: _data,
@@ -101,7 +105,15 @@ class Tickets extends Component {
     }
 
     success = () => {
-        
+        let hashSequence = JSON.stringify(this.state.data)
+        let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+        Booking.ticketRegister(this.state.data, hmac)
+            .then((res)=>{
+                if (res.validation)
+                    this.setState({ paymentReady: true, completion: true })
+            }).catch(()=>{
+                alert('Error')
+            })
     }
 
     render() {
@@ -115,7 +127,7 @@ class Tickets extends Component {
                             email={this.state.data.regEmail}
                             phone={this.state.data.regPhone}
                             amount={this.state.data.amount}
-                            calcTax={false}
+                            calcTaxInclAmount={false}
                             info={this.props.eventData.title}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
@@ -141,11 +153,17 @@ class Tickets extends Component {
                                 </div>
                             </div>
                         </div>
+                        <br/><br/>
                         <h3><span className="highlight">Book Tickets</span></h3>
+                        <br/><br/>
                         <div className="Seats">
-                            <div className="display container">
-                                <img src="/static/img/thumb.jpg" alt="seating"/>
-                            </div>
+                            {
+                                typeof this.props.eventData.metadata.price === 'object' ? (
+                                    <div className="display container">
+                                        <img src="/static/img/thumb.jpg" alt="seating"/>
+                                    </div>
+                                ) : console.log()
+                            }
                             <div className="controls container">
                                 {
                                     typeof this.props.eventData.metadata.price === 'object' ? (
@@ -172,9 +190,9 @@ class Tickets extends Component {
                                     </div>
                                 </div>
                                 <div className="pricing">
-                                    <p id="trP">{'Rs ' + this.state.tierPricing + ' per ticket'}</p>
+                                    <p id="trP">{'\u20B9 ' + this.state.tierPricing + ' per ticket'}</p>
                                     <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                                    <h3>{'Total: Rs ' + this.state.data.amount}</h3>
+                                    <h3>{'Total: \u20B9 ' + this.state.data.amount}</h3>
                                 </div>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="specialRequests" placeholder="Special Requests (if any)"/>
                             </div>

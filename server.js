@@ -275,18 +275,30 @@ homepage.get('/register/_eventData/:eventId/', (req,res)=>{
         })
 });
 
-homepage.post('/_register/gen/', (req,res)=>{
+homepage.post('/_register/:type/', (req,res)=>{
     let hashSequence = JSON.stringify(req.body.data)
     let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+
     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
         .then((csrfRes)=>{
             if (csrfRes) {
                 if ( req.body.checksum === hmac ) {
-                    EventManager.generalRegister(req.body.data).then((rgn)=>{
+                    function registrationSuccessful(rgn) {
                         let responseHashSequence = JSON.stringify({ validation: true, rgn: rgn })
                         let responseHmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
                         res.json({ validation: true, rgn: rgn, hash: responseHmac })
-                    })
+                    }
+
+                    if(req.params.type==='gen') {
+                        EventManager.generalRegister(req.body.data).then( registrationSuccessful(rgn) )
+                    } else if(req.params.type==='com') {
+                        EventManager.competeRegister(req.body.data).then( registrationSuccessful(rgn) )
+                    } else if(req.params.type==='tic') {
+                        EventManager.ticketRegister(req.body.data).then( registrationSuccessful(rgn) )
+                    } else {
+                        res.json({ validation: false })
+                    }
+                    
                 } else {
                     throw "HASH_INVALID"
                 }
@@ -297,34 +309,6 @@ homepage.post('/_register/gen/', (req,res)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
         })
-});
-
-homepage.post('/_register/com/', (req,res)=>{
-    let hashSequence = JSON.stringify(req.body.data)
-    let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
-    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-        .then((csrfRes)=>{
-            if (csrfRes) {
-                if ( req.body.checksum === hmac ) {
-                    EventManager.competeFreeRegister(req.body.data).then((rgn)=>{
-                        let responseHashSequence = JSON.stringify({ validation: true, rgn: rgn })
-                        let responseHmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
-                        res.json({ validation: true, rgn: rgn, hash: responseHmac })
-                    })
-                } else {
-                    throw "HASH_INVALID"
-                }
-            } else {
-                throw "CSRF_INVALID"
-            }
-        }).catch((err)=>{
-            console.log('FAILED VALIDATION ::', err)
-            res.json({ validation: false })
-        })
-});
-
-homepage.post('/_register/tic/', (req,res)=>{
-    
 });
 
 // =============================================================================================

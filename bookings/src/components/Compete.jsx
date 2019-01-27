@@ -22,6 +22,7 @@ class Compete extends Component {
                 regTeamPhone: null,
                 regTeamEmail: null,
                 regTeamInst: null,
+                amount: null,
                 members : []
             },
             required: [
@@ -41,6 +42,7 @@ class Compete extends Component {
         } else if(this.props.eventData.metadata.teamSizeType==='loose') {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamLeader', 'regTeamPhone', 'regTeamSize' ]
         }
+        _data.amount = Booking.calcTaxInclAmount(this.props.eventData.metadata.price)
         
         this.setState({
             data: _data,
@@ -89,7 +91,7 @@ class Compete extends Component {
     success = () => {
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-        Booking.competeFreeRegister(this.state.data, hmac)
+        Booking.competeRegister(this.state.data, hmac)
             .then((res)=>{
                 if (res.validation)
                     this.setState({ paymentReady: true, completion: true })
@@ -108,7 +110,7 @@ class Compete extends Component {
                             name={this.state.data.regTeamName}
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
-                            amount={this.props.eventData.metadata.price}
+                            amount={this.state.data.amount}
                             calcTax={true}
                             info={this.props.eventData.title}
                             back={ () => this.setState({ paymentReady: false }) }
@@ -151,7 +153,7 @@ class Compete extends Component {
                                     {
                                         this.props.eventData.metadata.teamSizeType==='loose' ? (
                                             <input type="number" className="textbox" onChange={this.handleChange} id="regTeamSize" placeholder="Team Size"
-                                                max={this.props.eventData.metadata.teamSize}/>
+                                                max={this.props.eventData.metadata.teamSize} min={0}/>
                                         ) : console.log()
                                     }
 

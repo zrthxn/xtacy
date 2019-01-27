@@ -38,7 +38,7 @@ class Payments extends Component {
 
     async componentDidMount() {
         let txnid = await this.generateTxnID()
-        let amount =  this.props.calcTax ? parseFloat(this.props.amount * 1.04) : this.props.amount
+        let amount =  this.props.calcTax ? this.calcTax(this.props.amount * 1.04) : this.props.amount
         let hashSequence = `${config.payments.key}|${txnid}|${amount}|${this.props.info}|` +
         `${this.props.name}|${this.props.email}|${''}|${''}|${''}|${''}|${''}|${''}|||||${config.payments.salt}`
         let hash = crypto.createHash('sha512').update(hashSequence).digest('hex')

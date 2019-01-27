@@ -2,7 +2,9 @@ const fs = require('fs');
 const Gmailer = require('./Gmailer');
 const GSheets = require('./GSheets');
 const ServerConfig = require('../config.json');
+const ContentDelivery = require('./ContentDelivery');
 const database = require('./Database');
+const barcodeGenerator = require('bwip-js');
 
 exports.getEventData = (__eventId) => {
     const eventLookup = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
@@ -53,7 +55,7 @@ exports.generalRegister = (data) => {
     });
 }
 
-exports.competeFreeRegister = (data) => {
+exports.competeRegister = (data) => {
     var rgnId = generateRegistrationID(data.eventId, data.members.length)
 
     return new Promise((resolve,reject)=>{
@@ -87,12 +89,6 @@ exports.competeFreeRegister = (data) => {
             reject(err);
         });
     });
-}
-
-// -----------------------------
-
-exports.addNewEvent = () => {
-    // Add new event to eventRegistry
 }
 
 exports.findEventById = (__eventId) => {
@@ -192,5 +188,10 @@ function generateRegistrationID(__eventId, nH) {
 }
 
 function generateHashedBarcode(data, type) {
-
+    barcodeGenerator.arguments()
+    return ContentDelivery.Upload(barcode, rgn, 'root/registrations/barcodes', 'image/png', {
+            "date" : (new Date()).getDate()
+        }).then((ref)=>{
+            return ({ url: 'cdn.xtacy.org/d/' + ref })
+        })
 }

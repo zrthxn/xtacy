@@ -36,20 +36,16 @@ class Bookings extends Component {
     }
 
     componentDidMount() {
-        let params = this.getParams(window.location), verified = false
+        // DEBUG ---------------------------------------- //
+        let params = this.getParams(window.location)
         if (params.intent==='gen') params.event = 'any'
-
-        let hashSequence = params.intent + config.clientKey + params.event
-        let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-        if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
-
         this.setState({
             intent: params.intent,
             event: params.event,
-            hash: hash,
             ref: params.ref,
             verified: true
         })
+        // ============================================== //
         // Secu.validateToken().then((result)=>{
         //     if (result==='CSR_TOKEN_VALID' || result==='CSR_TOKEN_GEN' || result==='CSR_TOKEN_GEN' ||
         //             result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
