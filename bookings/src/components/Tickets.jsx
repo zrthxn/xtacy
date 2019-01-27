@@ -16,10 +16,10 @@ class Tickets extends Component {
             completion: false,
             tierPricing: null,
             data : {
+                eventId: null,
                 regName: null,
                 regEmail: null,
                 regPhone: null,
-                regInst: null,
                 specialRequests: null,
                 tier: null,
                 number: 0,
@@ -33,6 +33,7 @@ class Tickets extends Component {
 
     componentDidMount() {
         let trP, _data = this.state.data;
+        _data.eventId = this.props.eventData.eventId
         if( typeof this.props.eventData.metadata.price === 'number' )
             trP = this.props.eventData.metadata.price
         else if( typeof this.props.eventData.metadata.price === 'object' )
@@ -160,7 +161,7 @@ class Tickets extends Component {
                             {
                                 typeof this.props.eventData.metadata.price === 'object' ? (
                                     <div className="display container">
-                                        <img src="/static/img/thumb.jpg" alt="seating"/>
+                                        <img src="https://xtacy.org/static/img/seatingTiers.png" alt="seating"/>
                                     </div>
                                 ) : console.log()
                             }

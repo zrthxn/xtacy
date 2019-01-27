@@ -17,7 +17,7 @@
             }
         }
     },
-    "registrationRefNumber": "0x000E",
+    "registrationRefNumber": "0x0000",
     "events": [
         {
             "title": "Hackathon",
@@ -46,7 +46,7 @@
                 "price": 0,
                 "teams": true,
                 "teamSize": 2,
-                "teamSizeType": "loose",
+                "teamSizeType": "strict",
                 "collectTeamGit": false,
                 "conductedBy": "Omair"
             }

@@ -19,14 +19,14 @@ class Compete extends Component {
             data : {
                 eventId: null,
                 regTeamName: null,
-                regTeamPhone: null,
                 regTeamEmail: null,
+                regTeamPhone: null,
                 regTeamInst: null,
                 amount: null,
                 members : []
             },
             required: [
-                'regTeamName', 'regTeamEmail'
+                'regTeamName', 'regTeamEmail', 'regTeamPhone'
             ]
         }
     }
@@ -38,9 +38,9 @@ class Compete extends Component {
         if(this.props.eventData.metadata.teamSizeType==='strict') {
             for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
                 _data.members.push({ index: i, name: null, email: null })
-            req = [ 'regTeamName', 'regTeamEmail', 'members/name', 'members/email' ]
+            req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'members/name', 'members/email' ]
         } else if(this.props.eventData.metadata.teamSizeType==='loose') {
-            req = [ 'regTeamName', 'regTeamEmail', 'regTeamLeader', 'regTeamPhone', 'regTeamSize' ]
+            req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
         _data.amount = Booking.calcTaxInclAmount(this.props.eventData.metadata.price)
         
@@ -134,6 +134,7 @@ class Compete extends Component {
                                 <div className="container fit">
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regTeamName" placeholder="Team Name"/>
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regTeamEmail" placeholder="Team Email"/>
+                                    <input type="text" className="textbox" onChange={this.handleChange} id="regTeamPhone" placeholder="Phone Number"/>
                                     {
                                         this.props.eventData.metadata.collectTeamGit ? (
                                             <input type="text" className="textbox" onChange={this.handleChange} id="regTeamGit"
@@ -143,11 +144,6 @@ class Compete extends Component {
                                     {
                                         this.props.eventData.metadata.teamSizeType==='loose' ? (
                                             <input type="text" className="textbox" onChange={this.handleChange} id="regTeamLeader" placeholder="Team Leader Name"/>
-                                        ) : console.log()
-                                    }
-                                    {
-                                        this.props.eventData.metadata.teamSizeType==='loose' ? (
-                                            <input type="text" className="textbox" onChange={this.handleChange} id="regTeamPhone" placeholder="Phone Number"/>
                                         ) : console.log()
                                     }
                                     {

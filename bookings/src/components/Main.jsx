@@ -23,24 +23,22 @@ class Main extends Component {
         if (this.props.intent!=='gen')
             // DEBUG ---------------------------------------- //
             this.setState({
-                intent: 'tic',
-                event: 'dastan',
+                intent: 'com',
+                event: 'nerdwd',
                 eventData: {
-                    "title": "Mehmood Bhai",
-                    "eventId": "dastan",
-                    "dates": "16",
-                    "type": "tic",
+                    "title": "Nerd Words",
+                    "eventId": "nerdwd",
+                    "dates": "15",
+                    "type": "com",
                     "metadata": {
                         "time": "1:00 PM",
-                        "paid": true,
-                        "price":  [
-                            100, 150, 250
-                        ],
-                        "teams": false,
-                        "teamSize": null,
-                        "teamSizeType": null,
+                        "paid": false,
+                        "price": 0,
+                        "teams": true,
+                        "teamSize": 2,
+                        "teamSizeType": "loose",
                         "collectTeamGit": false,
-                        "conductedBy": "Daniyal"
+                        "conductedBy": "Omair"
                     }
                 },
                 loaded: true

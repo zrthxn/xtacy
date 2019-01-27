@@ -4,6 +4,7 @@ const GSheets = require('./GSheets');
 const ServerConfig = require('../config.json');
 const ContentDelivery = require('./ContentDelivery');
 const database = require('./Database');
+const crypto = require('crypto');
 const barcodeGenerator = require('bwip-js');
 
 exports.getEventData = (__eventId) => {
@@ -24,34 +25,36 @@ exports.generalRegister = (data) => {
     var rgnId = generateRegistrationID('gen', 1)
 
     return new Promise((resolve,reject)=>{
-        GSheets.AppendToSpreadsheet([
-            {
-                ssId: ServerConfig.Sheets.spreadsheets.registrations,
-                sheet: 'GEN',
-                values: [
-                    rgnId, data.regName, data.regEmail, data.regPhone, data.regInst
-                ]
-            }
-        ]).then(()=>{
-            Gmailer.SingleDataDelivery(
+            GSheets.AppendToSpreadsheet([
                 {
-                    to: data.regEmail,
-                    from: 'hello@xtacy.org',
-                    subject: 'Registration Confirmation | Team Xtacy',
-                }, 
-                'Registration Acknowledgement Email :: $regName$ $regPhone$ $regInst$',
-                [
-                    { id: 'regName', data: data.regName },
-                    { id: 'regPhone', data: data.regPhone },
-                    { id: 'regInst', data: data.regInst }
-                ]
-            ).then(()=>{
-                console.log('New Registration :', rgnId)
-                resolve(rgnId)
-            })
-        }).catch((err)=>{
-            reject(err);
-        });
+                    ssId: ServerConfig.Sheets.spreadsheets.registrations,
+                    sheet: 'GEN',
+                    values: [
+                        rgnId, data.regName, data.regEmail, data.regPhone, data.regInst
+                    ]
+                }
+            ]).then(()=>{
+                generateHashedBarcode(rgnId, 'pdf417').then((url)=>{
+                    Gmailer.SingleDataDelivery(
+                        {
+                            to: data.regEmail,
+                            from: 'hello@xtacy.org',
+                            subject: 'Registration Confirmation | Team Xtacy',
+                        }, 
+                        fs.readFileSync('./mail/templates/generalRegConfirmation.html'),
+                        [
+                            { id: 'regName', data: data.regName },
+                            { id: 'rgn', data: rgnId },
+                            { id: 'url', data: url }
+                        ]
+                    ).then(()=>{
+                        console.log('New Registration', rgnId)
+                        resolve(rgnId)
+                    })                
+                }).catch((err)=> console.error(err))
+            }).catch((err)=>{
+                reject(err);
+            });
     });
 }
 
@@ -59,32 +62,77 @@ exports.competeRegister = (data) => {
     var rgnId = generateRegistrationID(data.eventId, data.members.length)
 
     return new Promise((resolve,reject)=>{
+        let teamLeader = data.regTeamLeader===null ? data.members[0].name : data.regTeamLeader
         GSheets.AppendToSpreadsheet([
             {
                 ssId: ServerConfig.Sheets.spreadsheets.registrations,
                 sheet: data.eventId.toUpperCase(),
                 values: [
-                    rgnId, data.regTeamName, data.regTeamEmail, data.regTeamInst,
-                    //...data.members
+                    rgnId, data.regTeamName, data.regTeamEmail, data.regTeamPhone, data.regTeamInst,
+                    data.regTeamGit, teamLeader, data.regTeamSize, 
+                    ...data.members
                 ]
             }
         ]).then(()=>{
-            Gmailer.SingleDataDelivery(
-                {
-                    to: data.regTeamEmail,
-                    from: 'hello@xtacy.org',
-                    subject: 'Registration Confirmation | Team Xtacy',
-                }, 
-                'Registration Acknowledgement Email :: $regTeamName$ $regTeamInst$ $rgn$',
-                [
-                    { id: 'regTeamName', data: data.regTeamName },
-                    { id: 'regTeamInst', data: data.regTeamInst },
-                    { id: 'rgn', data: rgnId }
+            generateHashedBarcode(rgnId, 'pdf417').then((url)=>{
+                Gmailer.SingleDataDelivery(
+                    {
+                        to: data.regTeamEmail,
+                        from: 'hello@xtacy.org',
+                        subject: 'Registration Confirmation | Team Xtacy',
+                    }, 
+                    fs.readFileSync('./mail/templates/competeRegConfirmation.html'),
+                    [
+                        { id: 'regTeamName', data: data.regTeamName },
+                        { id: 'teamLeader', data: teamLeader },
+                        { id: 'rgn', data: rgnId },
+                        { id: 'url', data: url }
+                    ]
+                ).then(()=>{
+                    console.log('New Registration', rgnId)
+                    resolve(rgnId)
+                })
+            }).catch((err)=> console.error(err))
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+exports.ticketRegister = (data) => {
+    var rgnId = generateRegistrationID(data.eventId, data.number)
+
+    return new Promise((resolve,reject)=>{
+        GSheets.AppendToSpreadsheet([
+            {
+                ssId: ServerConfig.Sheets.spreadsheets.registrations,
+                sheet: data.eventId.toUpperCase(),
+                values: [
+                    rgnId, data.regName, data.regEmail, data.regPhone, data.regInst, 
+                    data.number, data.tier, data.specialRequests
                 ]
-            ).then(()=>{
-                console.log('New Registration :', rgnId)
-                resolve(rgnId)
-            })
+            }
+        ]).then(()=>{
+            generateHashedBarcode(rgnId, 'pdf417').then((url)=>{
+                Gmailer.SingleDataDelivery(
+                    {
+                        to: data.regTeamEmail,
+                        from: 'hello@xtacy.org',
+                        subject: 'Registration Confirmation | Team Xtacy',
+                    }, 
+                    fs.readFileSync('./mail/templates/ticketRegConfirmation.html'),
+                    [
+                        { id: 'regName', data: data.regName },
+                        { id: 'tier', data: data.tier },
+                        { id: 'number', data: data.number },
+                        { id: 'rgn', data: rgnId },
+                        { id: 'url', data: url }
+                    ]
+                ).then(()=>{
+                    console.log('New Registration', rgnId)
+                    resolve(rgnId)
+                })
+            }).catch((err)=> console.error(err))
         }).catch((err)=>{
             reject(err);
         });
@@ -187,11 +235,20 @@ function generateRegistrationID(__eventId, nH) {
     return regId
 }
 
-function generateHashedBarcode(data, type) {
-    barcodeGenerator.arguments()
-    return ContentDelivery.Upload(barcode, rgn, 'root/registrations/barcodes', 'image/png', {
-            "date" : (new Date()).getDate()
-        }).then((ref)=>{
-            return ({ url: 'cdn.xtacy.org/d/' + ref })
-        })
+function generateHashedBarcode(rgn, type) {
+    return new Promise((resolve,reject)=>{
+        text = rgn + crypto.createHash('md5').update(rgn).digest('hex')
+        barcodeGenerator.toBuffer({ bcid: type, text: text }, (err, barcode) => {
+            if (err) reject(err)
+            else {
+                ContentDelivery.Upload(barcode, rgn + '.png', 'root/registrations/barcodes', 'image/png', {
+                    "unixTime": (new Date()).getTime(),
+                    "rgn": rgn
+                }).then((ref)=>{
+                    console.log('Barcode Generated', type, rgn)
+                    resolve('cdn.xtacy.org/d/' + ref)
+                })
+            }
+        });
+    })    
 }

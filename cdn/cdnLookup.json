@@ -1,6 +1,4 @@
 {
-    "writeLock": false,
-    "fileRefNumber": 1,
     "$schema": [
         {
             "fileRef": "base36",
@@ -15,6 +13,8 @@
             }
         }
     ],
+    "writeLock": false,
+    "fileRefNumber": 6,
     "files": [
         {
             "fileRef": "0t01",
@@ -30,7 +30,7 @@
             "filename": "JMI Logo.png",
             "contentType": "image/png",
             "filepath": "root",
-            "metadata" : {}
+            "metadata": {}
         },
         {
             "fileRef": "5p03",
@@ -38,7 +38,7 @@
             "filename": "thumb.png",
             "contentType": "image/png",
             "filepath": "root",
-            "metadata" : {}
+            "metadata": {}
         },
         {
             "fileRef": "5p04",
@@ -46,7 +46,7 @@
             "filename": "title.png",
             "contentType": "image/png",
             "filepath": "root",
-            "metadata" : {}
+            "metadata": {}
         },
         {
             "fileRef": "5p05",
@@ -54,7 +54,7 @@
             "filename": "xtacy.png",
             "contentType": "image/png",
             "filepath": "root",
-            "metadata" : {}
+            "metadata": {}
         },
         {
             "fileRef": "5p06",
@@ -62,8 +62,7 @@
             "filename": "About.docx",
             "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "filepath": "root",
-            "metadata" : {}
+            "metadata": {}
         }
     ]
 }
-

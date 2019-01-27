@@ -38,20 +38,7 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
     return new Promise((resolve,reject)=>{
         let lookup = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
         let files = lookup.files
-        let insertIndex = 0;
-        for(let i = 0; i < files.length; i++) {
-            if (files[i].fileId < genFileId) continue
-            else {
-                insertIndex = i
-                break
-            }
-        }
-        files.push({})
-        for (let j = files.length - 1; j > insertIndex; j++) {
-            files[j] = files[j-1]
-            files[j-1] = {}
-        }
-        files[insertIndex] = {
+        files[ files.length ] = {
             "fileRef": genFileRef,
             "fileId": genFileId,
             "filename": filename,
@@ -59,6 +46,13 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
             "filepath": filepath,
             "metadata": metadata
         }
+        
+        /**
+         * @author zrthxn
+         * * IMPORTANT *
+         * ADD sorting algorithm to the array 'files'
+         */
+
         lookup.files = files
         fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 4))
 

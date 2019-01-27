@@ -158,16 +158,6 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 //         })
 // })
 
-// homepage.get('/_secu/firebase/:ckey/:mode/', (req,res)=>{
-//     // == GET Firebase Credentials == //
-//     var ckey = Buffer.from(req.params.ckey, 'base64').toString('ascii')
-//     if(req.params.mode==='GET' && ckey===require('./config.json').clientKey){
-//         res.json({ config: ServerConfig.firebase, apiKey: ServerConfig.firebaseClientAPIKey})
-//     } else {
-//         res.sendStatus(500)
-//     }
-// });
-
 homepage.get('/_secu/csrtoken/', (req,res)=>{
     // == Webpage CSRF Token Generation == //
     if(req.headers.host.match(/xtacy[.]org*/i)) {
@@ -209,19 +199,16 @@ homepage.post('/_contact/send/', (req,res)=>{
         .then((result) => {
             if (result) {
                 Gmailer.SingleDelivery({
-                    to: formEmail,
-                    from: 'hello@xtacy.org',
+                    to: formEmail, from: 'hello@xtacy.org',
                     subject: 'Hi! Team Xtacy',
-                    body: 'Contact Acknowledgement Email'
+                    body: fs.readFileSync('./mail/templates/contactAcknowledgement.html')
                 })
             } else
                 res.sendStatus(403)
         }).then(()=>{
             Gmailer.SingleDelivery({
-                to: 'webparastorage@xtacy.org',
-                from: 'noreply@xtacy.org',
-                replyTo: formEmail,
-                subject: 'Contact Form | ' + formName,
+                to: 'webparastorage@xtacy.org', from: 'noreply@xtacy.org',
+                replyTo: formEmail, subject: 'Contact Form | ' + formName,
                 body: `
                     <b>---------------- Contact Form Message ----------------</b> <br><br>
                      Name: ${formName} <br> Email: ${formEmail}<br><br>
@@ -290,11 +277,11 @@ homepage.post('/_register/:type/', (req,res)=>{
                     }
 
                     if(req.params.type==='gen') {
-                        EventManager.generalRegister(req.body.data).then( registrationSuccessful(rgn) )
+                        EventManager.generalRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
                     } else if(req.params.type==='com') {
-                        EventManager.competeRegister(req.body.data).then( registrationSuccessful(rgn) )
+                        EventManager.competeRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
                     } else if(req.params.type==='tic') {
-                        EventManager.ticketRegister(req.body.data).then( registrationSuccessful(rgn) )
+                        EventManager.ticketRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
                     } else {
                         res.json({ validation: false })
                     }
