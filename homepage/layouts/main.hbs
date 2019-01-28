@@ -22,7 +22,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Global.css" />
     <link rel="shortcut icon" type="image/png" href="/static/img/favicon.png"/>
-    <link rel="shortcut icon" type="image/png" href="http://cdn.xtacy.org:3000/p/faviconpng/"/>
+    <link rel="shortcut icon" type="image/png" href="https://cdn.xtacy.org/p/faviconpng/"/>
 
     <script src="/static/js/secu.js"></script>
     <script src="/static/js/config.js"></script>
@@ -42,14 +42,14 @@
                     generateSecurityFluff(4);
                 }).catch((e)=>{
                     console.log(e);
-                    if (e==='CSR_TOKEN_INVALID') window.location = 'http://xtacy.org/';
+                    if (e==='CSR_TOKEN_INVALID') window.location = 'https://xtacy.org/';
                 });
         })()
 
         function getEventData(_eventId) {
             if (_eventId===undefined) throw 'EVTID_INVALID';
             const eventReq = new XMLHttpRequest();
-            eventReq.open('GET', 'http://xtacy.org:3000/register/_eventData/' + _eventId + '/', false);
+            eventReq.open('GET', 'https://xtacy.org/register/_eventData/' + _eventId + '/', false);
             eventReq.send();
 
             if(eventReq.readyState===4 && eventReq.status===200) {
@@ -67,7 +67,7 @@
 
         function getEventHash(type, eventId) {
             const hashReq = new XMLHttpRequest();
-            hashReq.open('POST', 'http://xtacy.org:3000/register/_checksum/', false);
+            hashReq.open('POST', 'https://xtacy.org/register/_checksum/', false);
             hashReq.setRequestHeader('Content-Type', 'application/json');
             hashReq.send(JSON.stringify({ "data": 
                 btoa(JSON.stringify({

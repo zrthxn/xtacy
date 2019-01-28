@@ -37,39 +37,39 @@ class Bookings extends Component {
 
     componentDidMount() {
         // DEBUG ---------------------------------------- //
-        let params = this.getParams(window.location)
-        if (params.intent==='gen') params.event = 'any'
-        this.setState({
-            intent: params.intent,
-            event: params.event,
-            ref: params.ref,
-            verified: true
-        })
+        // let params = this.getParams(window.location)
+        // if (params.intent==='gen') params.event = 'any'
+        // this.setState({
+        //     intent: params.intent,
+        //     event: params.event,
+        //     ref: params.ref,
+        //     verified: true
+        // })
         // ============================================== //
-        // Secu.validateToken().then((result)=>{
-        //     if (result==='CSR_TOKEN_VALID' || result==='CSR_TOKEN_GEN' || result==='CSR_TOKEN_GEN' ||
-        //             result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
-        //         console.log('SR Tokens Verified')
-        //         Secu.generateSecurityFluff(4);
+        Secu.validateToken().then((result)=>{
+            if (result==='CSR_TOKEN_VALID' || result==='CSR_TOKEN_GEN' || result==='CSR_TOKEN_GEN' ||
+                    result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
+                console.log('SR Tokens Verified')
+                Secu.generateSecurityFluff(4);
 
-        //         let params = this.getParams(window.location), verified = false
-        //         if (params.intent==='gen') params.event = 'any'
+                let params = this.getParams(window.location), verified = false
+                if (params.intent==='gen') params.event = 'any'
         
-        //         let hashSequence = params.intent + config.clientKey + params.event
-        //         let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-        //         if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+                let hashSequence = params.intent + config.clientKey + params.event
+                let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+                if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
         
-        //         this.setState({
-        //             intent: params.intent,
-        //             event: params.event,
-        //             hash: hash,
-        //             ref: params.ref,
-        //             verified: verified
-        //         })
-        //     }
-        // }).catch((err)=>{
-        //     console.error(err)
-        // });
+                this.setState({
+                    intent: params.intent,
+                    event: params.event,
+                    hash: hash,
+                    ref: params.ref,
+                    verified: verified
+                })
+            }
+        }).catch((err)=>{
+            console.error(err)
+        });
     }
 
     render() {

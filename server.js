@@ -10,6 +10,7 @@ const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const request = require('request');
 const fileUpload = require('express-fileupload');
 
 const xtacy = express();
@@ -296,6 +297,81 @@ homepage.post('/_register/:type/', (req,res)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
         })
+});
+
+homepage.post('/_payment/authorize/', (req,res)=>{
+    const PAYPAL_API = 'https://api.sandbox.paypal.com'
+    const CLIENT = 'AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_'
+    const SECRET = 'EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp'
+    request.post(PAYPAL_API + '/v1/payments/payment',
+    {
+        auth: {
+            user: CLIENT,
+            pass: SECRET
+        },
+        body: {
+            intent: 'sale',
+            payer: {
+                payment_method: 'paypal'
+            },
+            transactions: [
+                {
+                    amount:
+                    {
+                        total: '5.99',
+                        currency: 'USD'
+                    }
+                }
+            ]
+        },
+        json: true
+    }, function(err, response)
+        {
+        if (err) {
+            console.error(err);
+            return res.sendStatus(500);
+        }
+        res.json({
+            id: response.body.id,
+            txnid: 'XTACY1234567890',
+            CLIENT_ID: CLIENT
+        });
+    });
+});
+
+homepage.post('/_payment/execute/', (req,res)=>{
+    const PAYPAL_API = 'https://api.sandbox.paypal.com'
+    var paymentID = req.body.paymentID;
+    var payerID = req.body.payerID;
+    // 3. Call /v1/payments/payment/PAY-XXX/execute to finalize the payment.
+    request.post(PAYPAL_API + '/v1/payments/payment/' + paymentID + '/execute',
+    {
+        auth: {
+          user: CLIENT,
+          pass: SECRET
+        },
+        body: {
+            payer_id: payerID,
+            transactions: [
+                {
+                    amount:
+                    {
+                        total: '5.99',
+                        currency: 'USD'
+                    }
+                }
+            ]
+        },
+        json: true
+    }, function(err, response) {
+        if (err) {
+          console.error(err);
+          return res.sendStatus(500);
+        }
+        res.json({
+          status: 'success'
+        });
+    });
 });
 
 // =============================================================================================

@@ -22,39 +22,39 @@ class Main extends Component {
     componentDidMount() {
         if (this.props.intent!=='gen')
             // DEBUG ---------------------------------------- //
-            this.setState({
-                intent: 'com',
-                event: 'nerdwd',
-                eventData: {
-                    "title": "Nerd Words",
-                    "eventId": "nerdwd",
-                    "dates": "15",
-                    "type": "com",
-                    "metadata": {
-                        "time": "1:00 PM",
-                        "paid": false,
-                        "price": 0,
-                        "teams": true,
-                        "teamSize": 2,
-                        "teamSizeType": "loose",
-                        "collectTeamGit": false,
-                        "conductedBy": "Omair"
-                    }
-                },
-                loaded: true
-            })
+            // this.setState({
+            //     intent: 'com',
+            //     event: 'nerdwd',
+            //     eventData: {
+            //         "title": "Nerd Words",
+            //         "eventId": "nerdwd",
+            //         "dates": "15",
+            //         "type": "com",
+            //         "metadata": {
+            //             "time": "1:00 PM",
+            //             "paid": false,
+            //             "price": 0,
+            //             "teams": true,
+            //             "teamSize": 2,
+            //             "teamSizeType": "loose",
+            //             "collectTeamGit": false,
+            //             "conductedBy": "Omair"
+            //         }
+            //     },
+            //     loaded: true
+            // })
             // ============================================== //
-            // Booking.getEventData(this.props.event)
-            //     .then((eventData)=>{
-            //         this.setState({
-            //             intent: this.props.intent,
-            //             event: this.props.event,
-            //             eventData: eventData.data,
-            //             loaded: true
-            //         })
-            //     }).catch((err)=>{
-            //         console.log(err)
-            //     })
+            Booking.getEventData(this.props.event)
+                .then((eventData)=>{
+                    this.setState({
+                        intent: this.props.intent,
+                        event: this.props.event,
+                        eventData: eventData.data,
+                        loaded: true
+                    })
+                }).catch((err)=>{
+                    console.log(err)
+                })
         else
             this.setState({
                 intent: this.props.intent,
