@@ -339,6 +339,7 @@ homepage.post('/_payment/authorize/', (req,res)=>{
             console.error(err);
             return res.sendStatus(500);
         }
+        console.log(response)
         res.json({
             id: response.body.id,
             txnid: 'XTACY1234567890',
@@ -378,6 +379,7 @@ homepage.post('/_payment/execute/', (req,res)=>{
           console.error(err);
           return res.sendStatus(500);
         }
+        console.log(response)
         res.json({
           status: 'success'
         });
