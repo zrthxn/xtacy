@@ -312,7 +312,6 @@ homepage.post('/_payment/authorize/', (req,res)=>{
         },
         body: {
             payment: {
-                payer_id: payerID,
                 transactions: [
                     {
                         amount:
