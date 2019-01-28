@@ -52,7 +52,7 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
          * * IMPORTANT *
          * ADD sorting algorithm to the array 'files'
          */
-
+        filesSort(files);
         lookup.files = files
         fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 4))
 
@@ -61,9 +61,28 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
         resolve(genFileRef)
     });
 }
-
 // ============================================================= //
-
+function filesSort (fArray, low, high){
+    // quick sort 
+    if (low < high) { 
+        var pivot = fArray[high].fileId;    
+        var i = low-1;   
+        for (var j = low; j <= high- 1; j++) { 
+            if (fArray[j].fileId <= pivot) { 
+                i++;  
+                let temp=fArray[i];
+                fArray[i]=fArray[j];
+                fArray[j]=temp; 
+            } 
+        }   
+        pi=i+1;
+        let temp=fArray[pi];
+        fArray[pi]=fArray[high];
+        fArray[high]=temp;
+        filesSort(fArray, low, pi - 1); 
+        filesSort(fArray, pi + 1, high);
+    }
+}
 function findFileById(fArray, item, lo, hi){
     // Binary Search Algorithm
     if(hi >= lo) {
