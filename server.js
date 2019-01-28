@@ -312,6 +312,10 @@ homepage.post('/_payment/authorize/', (req,res)=>{
         },
         body: {
             payment: {
+                intent: 'sale',
+                payer: {
+                  payment_method: 'paypal'
+                },
                 transactions: [
                     {
                         amount:
@@ -344,7 +348,10 @@ homepage.post('/_payment/authorize/', (req,res)=>{
 });
 
 homepage.post('/_payment/execute/', (req,res)=>{
+    // alisamar181099-facilitator@gmail.com
     const PAYPAL_API = 'https://api.sandbox.paypal.com'
+    const CLIENT = 'AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_'
+    const SECRET = 'EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp'
     var paymentID = req.body.paymentID;
     var payerID = req.body.payerID;
     // 3. Call /v1/payments/payment/PAY-XXX/execute to finalize the payment.
@@ -356,16 +363,7 @@ homepage.post('/_payment/execute/', (req,res)=>{
         },
         body: {
             payment: {
-                payer_id: payerID,
-                transactions: [
-                    {
-                        amount:
-                        {
-                            total: '5.99',
-                            currency: 'USD'
-                        }
-                    }
-                ]
+                payer_id: payerID
             },
             experience: {
                 input_fields: {
