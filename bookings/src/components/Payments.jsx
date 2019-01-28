@@ -29,7 +29,7 @@ class Payments extends Component {
 
         // let authorizedPayment
         const authReq = new XMLHttpRequest()
-        authReq.open('POST', 'http://xtacy.org/_payment/authorize/', true)
+        authReq.open('POST', 'https://xtacy.org/_payment/authorize/', true)
         authReq.setRequestHeader('Content-Type', 'application/json')
         authReq.send()
         // authReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));

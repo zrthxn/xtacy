@@ -53,7 +53,7 @@ class PaymentPortal extends Component {
         const { authorizedPayment } = this.props
 
         const executePayment = (data, actions) => {
-            return actions.request.post('/_payment/execute/', {
+            return actions.request.post('https://xtacy.org/_payment/execute/', {
                 paymentID: data.paymentID,
                 payerID: data.payerID,
                 csrf: {
