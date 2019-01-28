@@ -42,7 +42,7 @@ class Compete extends Component {
         } else if(this.props.eventData.metadata.teamSizeType==='loose') {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
-        _data.amount = Booking.calcTaxInclAmount(this.props.eventData.metadata.price)
+        _data.amount = (this.props.eventData.metadata.price)
         
         this.setState({
             data: _data,
@@ -81,17 +81,17 @@ class Compete extends Component {
             if(this.props.eventData.metadata.paid) {
                 this.setState({ paymentReady: true })
             } else {
-                this.success()
+                this.success(null)
             }
         } else {
             alert('Please fill in the required fields')
         }
     }
 
-    success = () => {
+    success = (txn) => {
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-        Booking.competeRegister(this.state.data, hmac)
+        Booking.competeRegister(this.state.data, hmac, txn)
             .then((res)=>{
                 if (res.validation)
                     this.setState({ paymentReady: true, completion: true })
@@ -111,7 +111,6 @@ class Compete extends Component {
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.state.data.amount}
-                            calcTaxInclAmount={true}
                             info={this.props.eventData.title}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
@@ -174,7 +173,11 @@ class Compete extends Component {
 
                         {
                             this.props.eventData.metadata.paid ? (
-                                <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                <div className="pricing">
+                                    <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                    <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                    <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                </div>
                             ) : (
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             )

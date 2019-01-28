@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import crypto from 'crypto';
 import scriptLoader from 'react-async-script-loader';
 import Loading from './partials/Loading';
 
@@ -33,55 +34,54 @@ class PaymentPortal extends Component {
     }
 
     render() {
-        // const authorizePayment = (data, actions) => {
-        //     // return actions.request.post('/my-api/create-payment/')
-        //     //     .then((res) => {
-        //     //         return res.id
-        //     //     })
-        //     // paypal.rest.payment.create(this.props.env, this.props.clientId, {
-        //     //         transactions: [
-        //     //             {
-        //     //                 amount: {
-        //     //                     total: '',
-        //     //                     currency: 'INR', //this.props.currency,
-        //     //                 }
-        //     //             },
-        //     //         ],
-        //     // })
-        // }
-
-        const { authorizedPayment } = this.props
+        const authorizedPayment = () => { return this.props.authorizedPayment }
 
         const executePayment = (data, actions) => {
-            return actions.request.post('https://xtacy.org/_payment/execute/', {
-                paymentID: data.paymentID,
-                payerID: data.payerID,
+            let POST_DATA = {
+                paymentID: this.props.authorizedPayment,
+                payerID: ''
+            }
+
+            let hashSequence = JSON.stringify(POST_DATA)
+            let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+            
+            const execReq = new XMLHttpRequest()
+            execReq.open('POST', 'http://xtacy.org:3000/_payment/execute/', true)
+            execReq.setRequestHeader('Content-Type', 'application/json')
+            execReq.send(JSON.stringify({
+                data: POST_DATA, 
                 csrf: {
                     key: localStorage.getItem(config.csrfTokenNameKey),
-                    token: localStorage.getItem(config.csrfTokenName + localStorage.getItem(config.csrfTokenNameKey))
+                    token: localStorage.getItem(config.csrfTokenName + 
+                        localStorage.getItem(config.csrfTokenNameKey))
+                },
+                checksum: hmac
+            }));
+
+            execReq.onreadystatechange = () => {
+                if(execReq.readyState===4 && execReq.status===200) {
+                    let executedPayment = JSON.parse(execReq.response)
+                    let responseHashSequence = JSON.stringify({ id: executedPayment.id, txnid: executedPayment.txnid })
+                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
+                    
+                    if(executedPayment.hash === responseHmac)
+                        this.props.onSuccess({
+                            paid: true,
+                            cancelled: false,
+                            paymentData: data
+                        })
+                    else
+                        this.paymentError('RESPONSE_HASH_MISMATCH')
                 }
-            }).then(() => {
-                this.props.onSuccess({
-                    paid: true,
-                    cancelled: false,
-                    paymentData: data
-                })
-            })
-            // actions.payment.execute().then(() => {
-            //     this.props.onSuccess({
-            //         paid: true,
-            //         cancelled: false,
-            //         paymentData: data
-            //     })
-            // })
+            }
         }
 
         const buttonStyle = {
+            label: 'buynow',
             layout: 'vertical', // horizontal | vertical
             size: 'medium', // medium | large | responsive
             shape: 'rect', // pill | rect
             color: 'blue', // gold | blue | silver | white | black
-            fundingicons: true, // optional
             branding: true // optional
         }
 

@@ -20,6 +20,15 @@
         "apikey": "",
         "senders": {}
     },
+    "payments": {
+        "CLIENT": "AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_",
+        "SECRET": "EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp",
+        "AUTH_CREDS": "QVlVMVdGTzlmaFcyaEtpMGE1cTVJejNrRlJkYnUxbnNQZ24yV0xuQ3d1X0V0S2xFSlFZZFBPeHNhRlpjYUtsa2dsVDZNLV8tcW5zVkhUcV86RU45TFY2T3VlczlyRzIwckpmZ19BMXpMcG14TUFsTTBseHZ6VDB4blhHLXBZUGZ2QlBhb2tHNGZxVUYwd2E3ODB6OWcwTTJQMXhuZ0xEbXA=",
+        "access_token": {
+            "ACCESS_TOKEN": "A21AAG4q553ldNBgf9pcJGd1-DmMw34hnpOkjBhtCUblOcbd7904uIiqOFcIuXIRGGOr0oqQ8B6cn75hb6SULjV9mzXbMw_Mg",
+            "validity": 1548738823868
+        }
+    },
     "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
     "firebaseServerAPIKey": "AIzaSyDvu4G7Z62WqJfb-aMwQa2YGOCGSTUnxtk",
     "firebase": {

@@ -28,6 +28,7 @@ const GSheets = require('./util/GSheets');
 const ConsoleScreen = require('./util/ConsoleScreen');
 const ContentDelivery = require('./util/ContentDelivery');
 const EventManager = require('./util/EventManager');
+const Payments = require('./util/Payments');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
@@ -141,11 +142,11 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 
 // // --------------------------
 // // Remove for production build
-// // homepage.use(function(req, res, next) {
-// //     res.header("Access-Control-Allow-Origin", "*");
-// //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-// //     next();
-// // });
+homepage.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 // // --------------------------
 
 // homepage.post((req, res, next)=>{
@@ -287,12 +288,12 @@ homepage.post('/_register/:type/', (req,res)=>{
                         res.json({ validation: false })
                     }
                     
-                } else {
+                } else 
                     throw "HASH_INVALID"
-                }
-            } else {
+                
+            } else 
                 throw "CSRF_INVALID"
-            }
+            
         }).catch((err)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
@@ -300,90 +301,54 @@ homepage.post('/_register/:type/', (req,res)=>{
 });
 
 homepage.post('/_payment/authorize/', (req,res)=>{
-    // alisamar181099-facilitator@gmail.com
-    const PAYPAL_API = 'https://api.sandbox.paypal.com'
-    const CLIENT = 'AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_'
-    const SECRET = 'EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp'
-    request.post(PAYPAL_API + '/v1/payments/payment',
-    {
-        auth: {
-            user: CLIENT,
-            pass: SECRET
-        },
-        body: {
-            payment: {
-                intent: 'sale',
-                payer: {
-                  payment_method: 'paypal'
-                },
-                transactions: [
-                    {
-                        amount:
-                        {
-                            total: '5.99',
-                            currency: 'USD'
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if(csrfRes) {
+                let hashSequence = JSON.stringify(req.body.data)
+                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                
+                if ( req.body.checksum === hmac ) {
+                    Payments.authorizeNewPayment({
+                        amount: req.body.data.amount,
+                        payer: req.body.data.payer,
+                        eventData: req.body.data.eventData
+                    }).then((payment)=>{
+                        if(payment.success) {
+                            payment['hash'] = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(payment)).digest('hex')
+                            res.json(payment)
                         }
-                    }
-                ]
-            },
-            experience: {
-                input_fields: {
-                    no_shipping: 1
-                }
-            }
-        },
-        json: true
-    }, function(err, response)
-        {
-        if (err) {
-            console.error(err);
-            return res.sendStatus(500);
-        }
-        console.log(response)
-        res.json({
-            id: response.body.id,
-            txnid: 'XTACY1234567890',
-            CLIENT_ID: CLIENT
-        });
-    });
+                    }).catch((err)=>{
+                        res.status(403).send(err)
+                    })
+                } else 
+                    throw "HASH_INVALID"
+            } else
+                throw "CSRF_INVALID"
+        }).catch((err)=>{
+            res.status(403).send(err)
+        })
 });
 
 homepage.post('/_payment/execute/', (req,res)=>{
-    // alisamar181099-facilitator@gmail.com
-    const PAYPAL_API = 'https://api.sandbox.paypal.com'
-    const CLIENT = 'AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_'
-    const SECRET = 'EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp'
-    var paymentID = req.body.paymentID;
-    var payerID = req.body.payerID;
-    // 3. Call /v1/payments/payment/PAY-XXX/execute to finalize the payment.
-    request.post(PAYPAL_API + '/v1/payments/payment/' + paymentID + '/execute',
-    {
-        auth: {
-          user: CLIENT,
-          pass: SECRET
-        },
-        body: {
-            payment: {
-                payer_id: payerID
-            },
-            experience: {
-                input_fields: {
-                    no_shipping: 1
-                }
-            }
-        },
-        json: true
-    }, 
-    function(err, response) {
-        if (err) {
-          console.error(err);
-          return res.sendStatus(500);
-        }
-        console.log(response)
-        res.json({
-          status: 'success'
-        });
-    });
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if(csrfRes) {
+                let hashSequence = JSON.stringify(req.body.data)
+                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                
+                if ( req.body.checksum === hmac ) {
+                    Payments.executePayment(req.body.data).then(()=>{
+
+                    }).catch(()=>{
+                
+                    })
+                } else 
+                    throw "HASH_INVALID"
+            } else
+                throw "CSRF_INVALID"
+        }).catch((err)=>{
+            res.status(500).send(err)
+        })
 });
 
 // =============================================================================================
