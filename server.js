@@ -300,6 +300,7 @@ homepage.post('/_register/:type/', (req,res)=>{
 });
 
 homepage.post('/_payment/authorize/', (req,res)=>{
+    // alisamar181099-facilitator@gmail.com
     const PAYPAL_API = 'https://api.sandbox.paypal.com'
     const CLIENT = 'AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_'
     const SECRET = 'EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp'
@@ -310,19 +311,23 @@ homepage.post('/_payment/authorize/', (req,res)=>{
             pass: SECRET
         },
         body: {
-            intent: 'sale',
-            payer: {
-                payment_method: 'paypal'
-            },
-            transactions: [
-                {
-                    amount:
+            payment: {
+                payer_id: payerID,
+                transactions: [
                     {
-                        total: '5.99',
-                        currency: 'USD'
+                        amount:
+                        {
+                            total: '5.99',
+                            currency: 'USD'
+                        }
                     }
+                ]
+            },
+            experience: {
+                input_fields: {
+                    no_shipping: 1
                 }
-            ]
+            }
         },
         json: true
     }, function(err, response)
@@ -351,19 +356,27 @@ homepage.post('/_payment/execute/', (req,res)=>{
           pass: SECRET
         },
         body: {
-            payer_id: payerID,
-            transactions: [
-                {
-                    amount:
+            payment: {
+                payer_id: payerID,
+                transactions: [
                     {
-                        total: '5.99',
-                        currency: 'USD'
+                        amount:
+                        {
+                            total: '5.99',
+                            currency: 'USD'
+                        }
                     }
+                ]
+            },
+            experience: {
+                input_fields: {
+                    no_shipping: 1
                 }
-            ]
+            }
         },
         json: true
-    }, function(err, response) {
+    }, 
+    function(err, response) {
         if (err) {
           console.error(err);
           return res.sendStatus(500);

@@ -78,9 +78,11 @@ class PaymentPortal extends Component {
 
         const buttonStyle = {
             layout: 'vertical', // horizontal | vertical
-            size: 'large', // medium | large | responsive
+            size: 'medium', // medium | large | responsive
             shape: 'rect', // pill | rect
-            color: 'blue' // gold | blue | silver | white | black
+            color: 'blue', // gold | blue | silver | white | black
+            fundingicons: true, // optional
+            branding: true // optional
         }
 
         return (
@@ -89,6 +91,14 @@ class PaymentPortal extends Component {
                 this.state.showButton ? (
                     <this.state.paypal.Button.react
                         style={ buttonStyle }
+                        funding= {
+                            {
+                                allowed: [
+                                    this.state.paypal.FUNDING.CARD,
+                                    this.state.paypal.FUNDING.CREDIT
+                                ]
+                            }
+                        }
                         env={this.props.env}
                         clientId={this.props.clientId}
                         commit={true}
