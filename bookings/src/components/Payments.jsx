@@ -28,14 +28,15 @@ class Payments extends Component {
             amt = Booking.calcTaxInclAmount(this.props.amount)
 
         // let authorizedPayment
-        const authReq = new XMLHttpRequest();
+        const authReq = new XMLHttpRequest()
         authReq.open('POST', 'http://xtacy.org/_payment/authorize/', true)
         authReq.setRequestHeader('Content-Type', 'application/json')
+        authReq.send()
         // authReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
         authReq.onreadystatechange = () => {
             if(authReq.readyState===4 && authReq.status===200) {
-                let authorizedPayment = JSON.parse(authReq.response);
+                let authorizedPayment = JSON.parse(authReq.response)
                 // let responseHashSequence = JSON.stringify({ validation: authorizedPayment.validation, rgn: authorizedPayment.rgn })
                 // let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
                 this.setState({
