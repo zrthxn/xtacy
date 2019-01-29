@@ -10,6 +10,7 @@ const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const request = require('request');
 const fileUpload = require('express-fileupload');
 
 const xtacy = express();
@@ -27,6 +28,7 @@ const GSheets = require('./util/GSheets');
 const ConsoleScreen = require('./util/ConsoleScreen');
 const ContentDelivery = require('./util/ContentDelivery');
 const EventManager = require('./util/EventManager');
+const Payments = require('./util/Payments');
 
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
@@ -36,7 +38,7 @@ homepage.use(express.static( path.join(__dirname, 'homepage') ))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
-homepage.use('/book/start', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/secure/reg', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -76,9 +78,9 @@ xtacy.listen(PORT, ()=>{
     })
 })
 
-// =============================================================== //
-// ROUTING ----------------------------------------------- ROUTING //
-// =============================================================== //
+  // ========================================================================================= //
+ // ROUTING ------------------------------------------------------------------------- ROUTING //
+// ========================================================================================= //
 
 homepage.get('/', (req,res)=>{
     res.render('index', { 'title' : 'Xtacy' })
@@ -140,11 +142,11 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 
 // // --------------------------
 // // Remove for production build
-// // homepage.use(function(req, res, next) {
-// //     res.header("Access-Control-Allow-Origin", "*");
-// //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-// //     next();
-// // });
+homepage.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 // // --------------------------
 
 // homepage.post((req, res, next)=>{
@@ -285,22 +287,67 @@ homepage.post('/_register/:type/', (req,res)=>{
                     } else {
                         res.json({ validation: false })
                     }
-                    
-                } else {
+                } else 
                     throw "HASH_INVALID"
-                }
-            } else {
+            } else 
                 throw "CSRF_INVALID"
-            }
         }).catch((err)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
         })
 });
 
-// =============================================================================================
+homepage.post('/_payment/authorize/', (req,res)=>{
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if(csrfRes) {
+                let hashSequence = JSON.stringify(req.body.data)
+                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+                if ( req.body.checksum === hmac ) {
+                    Payments.authorizeNewPayment({
+                        amount: req.body.data.amount,
+                        payer: req.body.data.payer,
+                        eventData: req.body.data.eventData
+                    }).then((payment)=>{
+                        if(payment.success) 
+                            res.json(payment)
+                    }).catch((err)=>{
+                        res.status(500).send(err)
+                    })
+                } else 
+                    throw "HASH_INVALID"
+            } else
+                throw "CSRF_INVALID"
+        }).catch((err)=>{
+            res.status(403).send(err)
+        })
+});
 
-// FILE DELIVERY
+homepage.post('/_payment/execute/', (req,res)=>{
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if(csrfRes) {
+                let hashSequence = JSON.stringify(req.body.data)
+                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+                if ( req.body.checksum === hmac ) {
+                    Payments.executePayment(req.body.data).then((payment)=>{
+                        if(payment.success) 
+                            res.json(payment)
+                    }).catch((err)=>{
+                        res.status(500).send(err)
+                    })
+                } else 
+                    throw "HASH_INVALID"
+            } else
+                throw "CSRF_INVALID"
+        }).catch((err)=>{
+            res.status(500).send(err)
+        })
+});
+
+// CONTENT DELIVERY NETWORK --------------------------------------- CDN
+// ====================================================================
+
 cdn.get('/', (req,res)=>{
     res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
 });
@@ -350,7 +397,9 @@ cdn.post('/u/:filepath/:filename/', (req,res)=>{
             res.status(403).send(err)
         })
 });
-// =============================================================================================
+
+// APIs ---------------------------------------------------------- APIs
+// ====================================================================
 
 api.post('/_sheets/:function/:options/', (req,res)=>{
     // == GSheets API == //
