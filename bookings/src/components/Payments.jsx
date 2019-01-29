@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import crypto from 'crypto';
-import TemporaryLoadingScreen from './TemporaryLoadingScreen';
+import LoadingPage from './LoadingPage';
 import PaymentPortal from './PaymentPortal';
 
 import Booking from '../util/booking';
@@ -50,8 +50,7 @@ class Payments extends Component {
             data: POST_DATA, 
             csrf: {
                 key: localStorage.getItem(config.csrfTokenNameKey),
-                token: localStorage.getItem(config.csrfTokenName + 
-                    localStorage.getItem(config.csrfTokenNameKey))
+                token: localStorage.getItem(config.csrfTokenName + localStorage.getItem(config.csrfTokenNameKey))
             }, 
             checksum: hmac
         }));
@@ -71,26 +70,42 @@ class Payments extends Component {
                         paymentId: authorizedPayment.id,
                         txnid: authorizedPayment.txnid,
                         CLIENT: authorizedPayment.client,
+                        data: this.props.data,
                         paymentAuthorized: true
                     })
                 } else
                     this.paymentError('RESPONSE_HASH_MISMATCH')
+            } else if(authReq.readyState===4 && authReq.status===403) {
+                this.paymentError('CSRF_TIMEOUT')
+            } else if(authReq.readyState===4 && authReq.status===500) {
+                this.paymentError('SERVER_ERROR')
             }
         }        
     }
 
     paymentSuccesful = (success) => {
-        console.log('PAYMENT SUCCESSFUL')
-        alert('PAYMENT SUCCESSFUL')
+        console.log('PAYMENT_SUCCESSFUL')
+        // UPDATE firestore ka txn with status: 'SUCCESS'
+        // cleanup
+        this.props.success()
     }
 
-    paymentFailed = (failure) => {
-        console.log('PAYMENT FAILED')
-        alert('PAYMENT FAILED')
+    paymentCancelled = (failure) => {
+        console.log('PAYMENT_FAILED')
+        console.error(failure)
+        // UPDATE firestore ka txn with status: 'CANCELLED'
+        // cleanup
+        localStorage.setItem('payment-fail-data', this.state.data)
+        window.location = '/book/failure'
     }
 
-    paymentError = (err) => {
-        console.log(err)
+    paymentError = (code, err) => {
+        console.log('PAYMENT_FAILED', code)
+        console.error(err)
+        // UPDATE firestore ka txn with status: 'ERROR'
+        // Cleanup
+        localStorage.setItem('payment-error-data', this.state.data)
+        window.location = '/book/error'
     }
 
     render() {
@@ -98,32 +113,34 @@ class Payments extends Component {
 
         return (
             <div className="Payments container fit">
-                <h2>Payments Page</h2>
+            {
+                this.state.paymentAuthorized ? (
+                    <div>
+                        <h2>Payments Page</h2>
 
-                <div className="display">
-                    <div className="amount">
-                        <h3>{ this.state.amount }</h3>
-                        <p>AMOUNT</p>
+                        <div className="pricing">
+                            <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                            <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                        </div>
+
+                        <div className="action container fit">
+                            <button className="button" onClick={ this.props.back.bind(this) }>BACK</button>
+                        </div>
+
+                        <PaymentPortal
+                            env={"sandbox"}
+                            clientId={CLIENT}
+                            authorizedPayment={ this.state.paymentId }
+                            onSuccess={ this.paymentSuccesful }
+                            onCancel={ this.paymentCancelled }
+                            onError={ (err) => this.paymentError('PORTAL_ERROR', err) }
+                        />
                     </div>
-                </div>
-
-                <div className="action container fit">
-                    <button className="button" onClick={ this.props.back.bind(this) }>BACK</button>
-                    {
-                        this.state.paymentAuthorized ? (
-                            <PaymentPortal
-                                env={"sandbox"}
-                                clientId={CLIENT}
-                                authorizedPayment={ this.state.paymentId }
-                                onSuccess={ this.paymentSuccesful }
-                                onCancel={ this.paymentFailed }
-                                onError={ this.paymentFailed }
-                            />
-                        ) : (
-                            <TemporaryLoadingScreen/>
-                        )
-                    }
-                </div>
+                ) : (
+                    <LoadingPage timeOut={5000}/>
+                )
+            }
             </div>
         );
     }

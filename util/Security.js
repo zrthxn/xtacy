@@ -13,6 +13,7 @@ exports.validateCSRFTokens = (key, token) => {
                         resolve(true);
                     } else {
                         database.ref('csrf-tokens/' + key).remove().then(()=>{
+                            console.log('CSR Key Expired', key);
                             resolve(false);
                         })
                     }
@@ -21,7 +22,8 @@ exports.validateCSRFTokens = (key, token) => {
                     reject('TOKEN_MISMATCH');
                 }
             }).catch((err)=>{
-                reject(err);
+                console.log('ERR_DB DatabaseError', err);
+                reject('ERR_DB DatabaseError', err);
             });
     });
 }

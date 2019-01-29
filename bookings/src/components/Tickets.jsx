@@ -128,7 +128,7 @@ class Tickets extends Component {
                             email={this.state.data.regEmail}
                             phone={this.state.data.regPhone}
                             amount={this.state.data.amount}
-                            info={this.props.eventData.title}
+                            data={this.props.eventData}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
                         />

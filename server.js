@@ -305,8 +305,7 @@ homepage.post('/_payment/authorize/', (req,res)=>{
         .then((csrfRes)=>{
             if(csrfRes) {
                 let hashSequence = JSON.stringify(req.body.data)
-                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-                
+                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
                 if ( req.body.checksum === hmac ) {
                     Payments.authorizeNewPayment({
                         amount: req.body.data.amount,
@@ -314,11 +313,12 @@ homepage.post('/_payment/authorize/', (req,res)=>{
                         eventData: req.body.data.eventData
                     }).then((payment)=>{
                         if(payment.success) {
-                            payment['hash'] = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(payment)).digest('hex')
+                            let responseHashSequence = JSON.stringify({ id: payment.id, txnid: payment.txnid })
+                            payment['hash'] = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
                             res.json(payment)
                         }
                     }).catch((err)=>{
-                        res.status(403).send(err)
+                        res.status(500).send(err)
                     })
                 } else 
                     throw "HASH_INVALID"
@@ -335,10 +335,9 @@ homepage.post('/_payment/execute/', (req,res)=>{
             if(csrfRes) {
                 let hashSequence = JSON.stringify(req.body.data)
                 let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-                
                 if ( req.body.checksum === hmac ) {
                     Payments.executePayment(req.body.data).then(()=>{
-
+                        
                     }).catch(()=>{
                 
                     })

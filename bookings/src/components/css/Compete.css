@@ -49,6 +49,29 @@
     padding: 0.5em;
 }
 
+/* Pricing Display */
+.pricing {
+    padding: 1em;
+    max-width: 20em;
+    display: flex;
+    flex-flow: column;
+    text-align: left;
+} .pricing p {
+    margin: 0.25em 0;
+    max-width: 100%;
+} .pricing * {
+    margin: 0.5em 0;
+}
+
+.pricing #trP {
+    font-size: 1em;
+} .pricing #tax {
+    font-size: 0.75em;
+    color: #555;
+} .pricing h3 {
+    font-weight: 600;
+}
+
 @media (min-width: 800px) {
     /* DESKTOP */
     .Compete .Team {

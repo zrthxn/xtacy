@@ -111,7 +111,7 @@ class Compete extends Component {
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.state.data.amount}
-                            info={this.props.eventData.title}
+                            data={this.props.eventData}
                             back={ () => this.setState({ paymentReady: false }) }
                             success={ this.success }
                         />

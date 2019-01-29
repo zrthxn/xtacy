@@ -21,14 +21,13 @@ body {
     from { opacity: 0 }
     to { opacity: 1 }
 }
-::-moz-selection, ::selection {
-    background-color: var(--yellow)
+*::-moz-selection, *::selection {
+    background: #ffee00;
 }
 
 section {
     padding: 1em;
     z-index: 0;
-    /* display: flex; */
 }
 
 .container {
@@ -63,7 +62,7 @@ h1 {
     margin-bottom: 0.5em;
     margin-top: 0;
     font-size: 60px;
-    font-weight: 500;
+    font-weight: 600;
 }
 h2 {
     margin-bottom: 0.5em;
@@ -210,7 +209,8 @@ em {
     color: #d60000;
 }
 
-/* .compound-textbox {
+/* 
+.compound-textbox {
     margin: 1em;
     display: flex;
     background-color: #fff;

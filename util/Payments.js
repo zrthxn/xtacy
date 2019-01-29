@@ -1,7 +1,4 @@
-/**
- * @author zrthxn
- * Payments Module
- */
+/** Payments Module */
 
 const fs = require('fs');
 const request = require('request');
@@ -11,7 +8,7 @@ const DEFAULT_EXP_PROFILE = 'XP-EVCB-2CWP-DA35-MTZN';
 const { CLIENT, SECRET, AUTH_CREDS } = require('../config.json').payments;
 
 exports.authorizeNewPayment = (params) => {
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('../config.json').toString()).payments.access_token
+    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments.access_token
     if((validity - (new Date()).getTime()) < 0)
         ACCESS_TOKEN = getNewAccessToken()
 
@@ -67,7 +64,7 @@ exports.authorizeNewPayment = (params) => {
 }
 
 exports.executePayment = ({ paymentID, payerID }) => {
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('../config.json').toString()).payments.access_token
+    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments.access_token
     if((validity - (new Date()).getTime()) < 0)
         ACCESS_TOKEN = getNewAccessToken()
     
@@ -106,7 +103,7 @@ exports.registerExperienceProfile = (experience) => {
     }
     if(experience===undefined) experience = DEFAULT
 
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('../config.json').toString()).payments.access_token
+    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments.access_token
     if((validity - (new Date()).getTime()) < 0)
         ACCESS_TOKEN = getNewAccessToken()
 
@@ -140,13 +137,13 @@ function getNewAccessToken() {
         if(err) return console.error(err)
         let _validity = (res.body.expires_in*1000) + (new Date()).getTime()
         console.log('WARNING :: Reading Config File')
-        let config = JSON.parse(fs.readFileSync('../config.json').toString())
+        let config = JSON.parse(fs.readFileSync('./config.json').toString())
         config.payments.access_token = {
             ACCESS_TOKEN: res.body.access_token,
             validity: _validity
         }
         console.log('WARNING :: Writing Config File')
-        fs.writeFileSync('../config.json', JSON.stringify(config, null, 4))
+        fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
         console.log('DONE')
         return res.body.access_token
     })
