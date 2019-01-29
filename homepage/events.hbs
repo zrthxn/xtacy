@@ -92,9 +92,9 @@
                 document.getElementById("button_main").onclick = () => {
                     sessionStorage.setItem( config.hashToken, checksum );
                     if(data.type==='gen')
-                        window.location = '/book/start?int=gen';
+                        window.location = '/secure/reg?int=gen';
                     else
-                        window.location = '/book/start?int=' + data.type + '&evt=' + eventId;
+                        window.location = '/secure/reg?int=' + data.type + '&evt=' + eventId;
                 }
                 document.getElementById("button_aux").onclick = () => {
                     window.location = '/event/' + eventId;

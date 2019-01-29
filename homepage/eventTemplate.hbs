@@ -32,9 +32,9 @@
             sessionStorage.setItem( config.hashToken, checksum );
             
             if(__data.type==='gen')
-                window.location = '/book/start?int=gen';
+                window.location = '/secure/reg?int=gen';
             else
-                window.location = '/book/start?int=' + __data.type + '&evt=' + __data.eventId;
+                window.location = '/secure/reg?int=' + __data.type + '&evt=' + __data.eventId;
         }
     }, 100)
 </script>

@@ -57,17 +57,15 @@ class Payments extends Component {
 
         authReq.onreadystatechange = () => {
             if(authReq.readyState===4 && authReq.status===200) {
-                let authorizedPayment = JSON.parse(authReq.response)
-                let responseHashSequence = JSON.stringify({ id: authorizedPayment.id, txnid: authorizedPayment.txnid })
-                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
-                
+                let authorizedPayment = JSON.parse(atob(JSON.parse(authReq.response).data))
+                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(authorizedPayment.payment)).digest('hex')            
                 if(authorizedPayment.hash === responseHmac) {
                     this.setState({
                         amount: {
                             base: base,
                             total: amt
                         },
-                        paymentId: authorizedPayment.id,
+                        paymentId: authorizedPayment.payment.id,
                         txnid: authorizedPayment.txnid,
                         CLIENT: authorizedPayment.client,
                         data: this.props.data,
@@ -87,7 +85,7 @@ class Payments extends Component {
         console.log('PAYMENT_SUCCESSFUL')
         // UPDATE firestore ka txn with status: 'SUCCESS'
         // cleanup
-        this.props.success()
+        // this.props.success()
     }
 
     paymentCancelled = (failure) => {
@@ -96,7 +94,7 @@ class Payments extends Component {
         // UPDATE firestore ka txn with status: 'CANCELLED'
         // cleanup
         localStorage.setItem('payment-fail-data', this.state.data)
-        window.location = '/book/failure'
+        window.location = '/secure/reg/failure'
     }
 
     paymentError = (code, err) => {
@@ -105,7 +103,7 @@ class Payments extends Component {
         // UPDATE firestore ka txn with status: 'ERROR'
         // Cleanup
         localStorage.setItem('payment-error-data', this.state.data)
-        window.location = '/book/error'
+        window.location = '/secure/reg/error'
     }
 
     render() {
@@ -121,7 +119,6 @@ class Payments extends Component {
                         <div className="pricing">
                             <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
                             <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                            <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
                         </div>
 
                         <div className="action container fit">
@@ -132,6 +129,7 @@ class Payments extends Component {
                             env={"sandbox"}
                             clientId={CLIENT}
                             authorizedPayment={ this.state.paymentId }
+                            payerId={ this.state.txnid }
                             onSuccess={ this.paymentSuccesful }
                             onCancel={ this.paymentCancelled }
                             onError={ (err) => this.paymentError('PORTAL_ERROR', err) }

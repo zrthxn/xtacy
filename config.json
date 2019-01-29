@@ -1,5 +1,6 @@
 {
     "PORT": "3000",
+    "env": "dev",
     "ServerState": "NORMAL",
     "domain": "xtacy.org",
     "csrfTokenName": "_xta_srf-tk:",
@@ -21,12 +22,28 @@
         "senders": {}
     },
     "payments": {
-        "CLIENT": "AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_",
-        "SECRET": "EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp",
-        "AUTH_CREDS": "QVlVMVdGTzlmaFcyaEtpMGE1cTVJejNrRlJkYnUxbnNQZ24yV0xuQ3d1X0V0S2xFSlFZZFBPeHNhRlpjYUtsa2dsVDZNLV8tcW5zVkhUcV86RU45TFY2T3VlczlyRzIwckpmZ19BMXpMcG14TUFsTTBseHZ6VDB4blhHLXBZUGZ2QlBhb2tHNGZxVUYwd2E3ODB6OWcwTTJQMXhuZ0xEbXA=",
-        "access_token": {
-            "ACCESS_TOKEN": "A21AAEMAF5thQBs-8vmMDtgwTLP0dcacdaOwfUkAxagTPh2oBdE3nlNb-7gm_BEpOtO_vwwMMUwZEyxU7bHsR77WdzuHeE-cQ",
-            "validity": 1548790591683
+        "env": "sandbox",
+        "sandbox": {
+            "PAYPAL_API": "https://api.sandbox.paypal.com",
+            "CLIENT": "AYU1WFO9fhW2hKi0a5q5Iz3kFRdbu1nsPgn2WLnCwu_EtKlEJQYdPOxsaFZcaKlkglT6M-_-qnsVHTq_",
+            "SECRET": "EN9LV6Oues9rG20rJfg_A1zLpmxMAlM0lxvzT0xnXG-pYPfvBPaokG4fqUF0wa780z9g0M2P1xngLDmp",
+            "AUTH_CREDS": "QVlVMVdGTzlmaFcyaEtpMGE1cTVJejNrRlJkYnUxbnNQZ24yV0xuQ3d1X0V0S2xFSlFZZFBPeHNhRlpjYUtsa2dsVDZNLV8tcW5zVkhUcV86RU45TFY2T3VlczlyRzIwckpmZ19BMXpMcG14TUFsTTBseHZ6VDB4blhHLXBZUGZ2QlBhb2tHNGZxVUYwd2E3ODB6OWcwTTJQMXhuZ0xEbXA=",
+            "access_token": {
+                "ACCESS_TOKEN": "A21AAEMAF5thQBs-8vmMDtgwTLP0dcacdaOwfUkAxagTPh2oBdE3nlNb-7gm_BEpOtO_vwwMMUwZEyxU7bHsR77WdzuHeE-cQ",
+                "validity": 1548790591683
+            },
+            "EXP_PROFILE_ID": "XP-EVCB-2CWP-DA35-MTZN"
+        },
+        "live": {
+            "PAYPAL_API": "https://api.paypal.com",
+            "CLIENT": "AQRhMPhEKDzqUNfcMOZHlmTKQImA0oCmQ6OS8g7LTz8TvBYMFA2BGg2IFr_lQ3b1GI5l_fenL2SisLEu",
+            "SECRET": "EA7psbwA1YzcNPwKtZyJJkoacKXt3gZvp9a0UCuYMGJ50Zx1QttT0HkKwwQfC3CzJbO2YMNReJyjAmcv",
+            "AUTH_CREDS": "QVFSaE1QaEVLRHpxVU5mY01PWkhsbVRLUUltQTBvQ21RNk9TOGc3TFR6OFR2QllNRkEyQkdnMklGcl9sUTNiMUdJNWxfZmVuTDJTaXNMRXU6RUE3cHNid0ExWXpjTlB3S3RaeUpKa29hY0tYdDNnWnZwOWEwVUN1WU1HSjUwWngxUXR0VDBIa0t3d1FmQzNDekpiTzJZTU5SZUp5akFtY3Y=",
+            "access_token": {
+                "ACCESS_TOKEN": "A21AAFJLUhTpuVrmIfOq3K-D7LI5ep9-iXwZTBY-7rr7_ac54WY4bGcZCncA5wbuNktal2PWBavY4RefV8VTofasH-hM98H4Q",
+                "validity": 1548813874016
+            },
+            "EXP_PROFILE_ID": "XP-RRTG-URXV-DAQA-ZJY3"
         }
     },
     "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",

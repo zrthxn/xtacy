@@ -33,7 +33,7 @@ class Main extends Component {
                     "metadata": {
                         "time": "1:00 PM",
                         "paid": true,
-                        "price": 500,
+                        "price": 5,
                         "teams": false,
                         "teamSize": null,
                         "teamSizeType": null,

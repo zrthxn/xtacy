@@ -39,7 +39,7 @@ class PaymentPortal extends Component {
         const executePayment = (data, actions) => {
             let POST_DATA = {
                 paymentID: this.props.authorizedPayment,
-                payerID: ''
+                payerID: this.props.txnid
             }
 
             let hashSequence = JSON.stringify(POST_DATA)
@@ -60,10 +60,8 @@ class PaymentPortal extends Component {
 
             execReq.onreadystatechange = () => {
                 if(execReq.readyState===4 && execReq.status===200) {
-                    let executedPayment = JSON.parse(execReq.response)
-                    let responseHashSequence = JSON.stringify({ id: executedPayment.id, txnid: executedPayment.txnid })
-                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(responseHashSequence).digest('hex')
-                    
+                    let executedPayment = JSON.parse(atob(JSON.parse(execReq.response).data))
+                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(executedPayment.payment)).digest('hex')
                     if(executedPayment.hash === responseHmac)
                         this.props.onSuccess({
                             paid: true,

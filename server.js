@@ -38,7 +38,7 @@ homepage.use(express.static( path.join(__dirname, 'homepage') ))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
-homepage.use('/book/start', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/secure/reg', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -78,9 +78,9 @@ xtacy.listen(PORT, ()=>{
     })
 })
 
-// =============================================================== //
-// ROUTING ----------------------------------------------- ROUTING //
-// =============================================================== //
+  // ========================================================================================= //
+ // ROUTING ------------------------------------------------------------------------- ROUTING //
+// ========================================================================================= //
 
 homepage.get('/', (req,res)=>{
     res.render('index', { 'title' : 'Xtacy' })
@@ -287,13 +287,10 @@ homepage.post('/_register/:type/', (req,res)=>{
                     } else {
                         res.json({ validation: false })
                     }
-                    
                 } else 
                     throw "HASH_INVALID"
-                
             } else 
                 throw "CSRF_INVALID"
-            
         }).catch((err)=>{
             console.log('FAILED VALIDATION :: ' + err)
             res.json({ validation: false })
@@ -312,11 +309,8 @@ homepage.post('/_payment/authorize/', (req,res)=>{
                         payer: req.body.data.payer,
                         eventData: req.body.data.eventData
                     }).then((payment)=>{
-                        if(payment.success) {
-                            let responseHashSequence = JSON.stringify({ id: payment.id, txnid: payment.txnid })
-                            payment['hash'] = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
+                        if(payment.success) 
                             res.json(payment)
-                        }
                     }).catch((err)=>{
                         res.status(500).send(err)
                     })
@@ -334,12 +328,13 @@ homepage.post('/_payment/execute/', (req,res)=>{
         .then((csrfRes)=>{
             if(csrfRes) {
                 let hashSequence = JSON.stringify(req.body.data)
-                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
                 if ( req.body.checksum === hmac ) {
-                    Payments.executePayment(req.body.data).then(()=>{
-                        
-                    }).catch(()=>{
-                
+                    Payments.executePayment(req.body.data).then((payment)=>{
+                        if(payment.success) 
+                            res.json(payment)
+                    }).catch((err)=>{
+                        res.status(500).send(err)
                     })
                 } else 
                     throw "HASH_INVALID"
@@ -350,9 +345,9 @@ homepage.post('/_payment/execute/', (req,res)=>{
         })
 });
 
-// =============================================================================================
+// CONTENT DELIVERY NETWORK --------------------------------------- CDN
+// ====================================================================
 
-// FILE DELIVERY
 cdn.get('/', (req,res)=>{
     res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
 });
@@ -403,7 +398,8 @@ cdn.post('/u/:filepath/:filename/', (req,res)=>{
         })
 });
 
-// =============================================================================================
+// APIs ---------------------------------------------------------- APIs
+// ====================================================================
 
 api.post('/_sheets/:function/:options/', (req,res)=>{
     // == GSheets API == //
