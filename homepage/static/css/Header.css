@@ -72,8 +72,7 @@ header .container {
     opacity: 0;
     z-index: 10000;
     max-width: 300px;
-    /* background: linear-gradient(#ffe75c, #ffc05c); */
-    background-color: #fff;
+    background: linear-gradient(#ffd800, #ff9e00);
     transition: all 0.25s ease;
 } #sidebar-toggle:checked ~ .sidebar {
     opacity: 1;
@@ -89,7 +88,7 @@ header .container {
     left: 0;
     z-index: -1;
     opacity: 0;
-    background-color: var(--yellow);
+    /* background-color: var(--yellow); */
     transition: all 0.75s ease;
 }  #sidebar-toggle:checked ~ .sidebar .accent {
     width: 3.25em;
@@ -133,7 +132,7 @@ header .sidebar-nav {
     font-size: 0.9em;
     list-style: none;
 } header .sidebar-nav li {
-    margin-bottom: 0.75em;
+    margin-bottom: 1em;
     width: fit-content;
 } .sidebar li {
     display: none;
@@ -142,6 +141,29 @@ header .sidebar-nav {
 } #sidebar-toggle:checked ~ .sidebar li {
     display: block;
     opacity: 1;
+}
+
+header ul li a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 600;
+} header a::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 1.5px;
+    top: 50%;
+    transition: all 250ms ease;
+    background-color: #000;
+} @media (min-width:800px) {
+    header a:hover::after {
+        width: 100%;
+    }
+} @media (max-width:800px) {
+    header a::after {
+        display: none;
+    }
 }
 
 /* DESKTOP MENU --------------------- */
@@ -178,28 +200,9 @@ header .sidebar-nav {
         text-align: center;
         position: relative;
         margin: 0 1em 0.25em 1em;
-    }
-}
-
-header ul li a {
-    text-decoration: none;
-    color: #000;
-} header a::after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 0;
-    height: 1.5px;
-    top: 50%;
-    transition: all 250ms ease;
-    background-color: #000;
-} @media (min-width:800px) {
-    header a:hover::after {
-        width: 100%;
-    }
-} @media (max-width:800px) {
-    header a::after {
-        display: none;
+    } header ul li a {
+        text-decoration: none;
+        color: #000;
     }
 }
 
