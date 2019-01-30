@@ -149,17 +149,6 @@ homepage.use(function(req, res, next) {
 });
 // // --------------------------
 
-// homepage.post((req, res, next)=>{
-//     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-//         .then((csrfRes)=>{
-//             if (csrfRes) next()
-//             else throw "CSRF_INVALID"
-//         }).catch((err)=>{
-//             console.log('FAILED VALIDATION ::', err)
-//             res.json({ validation: false })
-//         })
-// })
-
 homepage.get('/_secu/csrtoken/', (req,res)=>{
     // == Webpage CSRF Token Generation == //
     if(req.headers.host.match(/xtacy[.]org*/i)) {
