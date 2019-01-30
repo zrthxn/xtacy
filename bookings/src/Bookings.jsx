@@ -81,9 +81,9 @@ class Bookings extends Component {
                 {
                     this.state.verified ? (
                         <section>
-                            <Router basename={'/book'}>
+                            <Router basename={'/secure'}>
                                 <Switch>
-                                    <Route path={'/start'}>
+                                    <Route path={'/reg'}>
                                         <Main intent={this.state.intent} event={this.state.event}/>
                                     </Route>
 
