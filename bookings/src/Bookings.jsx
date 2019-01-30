@@ -86,7 +86,6 @@ class Bookings extends Component {
                                     <Route path={'/reg'}>
                                         <Main intent={this.state.intent} event={this.state.event}/>
                                     </Route>
-
                                     <Route component={ErrorPage} />
                                 </Switch>
                             </Router>
