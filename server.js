@@ -34,11 +34,10 @@ homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
 homepage.use(express.urlencoded({ extended: true }))
-homepage.use(express.static( path.join(__dirname, 'homepage') ))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
-homepage.use('/book/start', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/register/main', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -57,7 +56,6 @@ cdn.use(bodyParser.urlencoded({ extended: true }))
 cdn.use(express.json())
 cdn.use(express.urlencoded({ extended: true }))
 cdn.use(fileUpload())
-cdn.use(express.static( path.join(__dirname, 'cdn', 'root') ))
 
 // ----------- APIs ----------
 api.use(bodyParser.json())
@@ -142,11 +140,11 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 
 // // --------------------------
 // // Remove for production build
-homepage.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+// homepage.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
 // // --------------------------
 
 homepage.get('/_secu/csrtoken/', (req,res)=>{
