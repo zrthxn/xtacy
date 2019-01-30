@@ -38,7 +38,7 @@ homepage.use(express.static( path.join(__dirname, 'homepage') ))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
-homepage.use('/secure/reg', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/book/start', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
