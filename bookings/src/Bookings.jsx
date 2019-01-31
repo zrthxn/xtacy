@@ -7,9 +7,10 @@ import Footer from './components/partials/Footer';
 import Secu from './util/secu';
 import './Global.css';
 
-import Main from './components/Main';
+import Main from './Main';
 import LoadingPage from './components/LoadingPage';
 import ErrorPage from './components/ErrorPage';
+import SuccessPage from './components/SuccessPage';
 
 const config  = require('./util/config.json');
 
@@ -72,7 +73,7 @@ class Bookings extends Component {
         // });
         // ============================================== //
     }
-
+    
     render() {
         return (
             <div className="Bookings">
@@ -86,7 +87,12 @@ class Bookings extends Component {
                                     <Route path={'/main'}>
                                         <Main intent={this.state.intent} event={this.state.event}/>
                                     </Route>
-                                    <Route component={ErrorPage} />
+                                    
+                                    <Route path={'/success'} component={SuccessPage}/>
+
+                                    <Route path={'/cancel'} component={ErrorPage}/>
+
+                                    <Route component={ErrorPage}/>
                                 </Switch>
                             </Router>
                         </section>

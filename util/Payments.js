@@ -3,11 +3,41 @@
 const fs = require('fs');
 const request = require('request');
 const crypto = require('crypto');
+
+const Database = require('./Database');
 const ServerConfig = require('../config.json');
 
 const env = require('../config.json').payments.env;
 
-const { CLIENT, SECRET, AUTH_CREDS, PAYPAL_API, EXP_PROFILE_ID } = require('../config.json').payments[env];
+const { 
+    CLIENT,
+    SECRET,
+    AUTH_CREDS,
+    PAYPAL_API,
+    EXP_PROFILE_ID
+} = require('../config.json').payments[env];
+
+function registerNewTxn (params) {
+    let txnID = 'TXN'
+    for(let i=0; i<21; i++)
+        txnID += Math.floor( Math.random() * 16 ).toString(16).toUpperCase()
+
+    return new Promise((resolve,reject)=>{
+        // Database.firestore.collection('transactions').doc(this.state.txnID).set({
+        //         status: 'PENDING',
+        //         txnID: txnID,
+        //         addedOn: (new Date()).getTime(),
+        //         payer: params.payer,
+        //         amount: params.amount,
+        //         eventData: params.eventData,
+        //         verified: false
+        //     }).then(()=>{
+                resolve(txnID)
+            // }).catch((err)=>{
+            //     reject('ERR_DB DatabaseError')
+            // })
+    })    
+}
 
 exports.authorizeNewPayment = (params) => {
     var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments[env].access_token
@@ -15,61 +45,64 @@ exports.authorizeNewPayment = (params) => {
         ACCESS_TOKEN = getNewAccessToken()
 
     return new Promise((resolve,reject)=>{
-        request.post(PAYPAL_API + '/v1/payments/payment', {
-            json: true,
-            headers: {
-                Authorization: 'Bearer ' + ACCESS_TOKEN
-            },
-            body: {
-                intent: "sale",
-                payer: {
-                    payment_method: "paypal",
-                    payer_info: {}
+        registerNewTxn(params).then((txnID)=>{
+            request.post(PAYPAL_API + '/v1/payments/payment', {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + ACCESS_TOKEN
                 },
-                transactions: [
-                    {
-                        amount: {
-                            total: params.amount.total,
-                            currency: "INR",
-                            details: {
-                                subtotal: params.amount.base,
-                                tax: params.amount.tax,
-                                shipping: "0",
-                                handling_fee: "0",
-                                shipping_discount: "0",
-                                insurance: "0"
-                            }
-                        },
-                        description: params.eventData.eventDescription,
-                        invoice_number: "XTACY123456",
-                        payment_options: {
-                            allowed_payment_method: "INSTANT_FUNDING_SOURCE"
+                body: {
+                    intent: "sale",
+                    payer: {
+                        payment_method: "paypal",
+                        payer_info: {
+
                         }
-                    }
-                ],
-                redirect_urls: {
-                    return_url: 'https://xtacy.org/succ',
-                    cancel_url: 'https://xtacy.org/fails'
-                },
-                experience_profile_id: EXP_PROFILE_ID
-            }
-        }, function(err, res) {
-            if (err) return reject({ success: false })
-            // console.log(res.body)
-            resolve({
-                success: true,
-                data : Buffer.from(JSON.stringify({
-                    payment: res.body,
-                    txnid: 'XTACY1234567890',
-                    client: CLIENT,
-                    hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
-                }), 'ascii').toString('base64')
+                    },
+                    transactions: [
+                        {
+                            amount: {
+                                total: params.amount.total,
+                                currency: "INR",
+                                details: {
+                                    subtotal: params.amount.base,
+                                    tax: params.amount.tax,
+                                    shipping: "0",
+                                    handling_fee: "0",
+                                    shipping_discount: "0",
+                                    insurance: "0"
+                                }
+                            },
+                            description: params.eventData.eventDescription,
+                            invoice_number: txnID,
+                            payment_options: {
+                                allowed_payment_method: "INSTANT_FUNDING_SOURCE"
+                            }
+                        }
+                    ],
+                    redirect_urls: {
+                        return_url: 'https://xtacy.org/register/success',
+                        cancel_url: 'https://xtacy.org/register/cancel'
+                    },
+                    experience_profile_id: EXP_PROFILE_ID
+                }
+            }, function(err, res) {
+                if (err) return reject({ success: false })
+                resolve({
+                    success: true,
+                    data : Buffer.from(JSON.stringify({
+                        payment: res.body,
+                        txnID: txnID,
+                        client: CLIENT,
+                        hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
+                    }), 'ascii').toString('base64')
+                })
             })
         })
     })
 }
 
-exports.executePayment = ({ paymentID, payerID }) => {
+exports.executePayment = ({ paymentID, payerID, txnID }) => {
     var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments[env].access_token
     if(((validity - (new Date()).getTime()) < 0) || ACCESS_TOKEN===null)
         ACCESS_TOKEN = getNewAccessToken()
@@ -84,15 +117,25 @@ exports.executePayment = ({ paymentID, payerID }) => {
                 payer_id: payerID
             }
         }, function(err, res) {
-            if (err) return reject({ success: false })
-            resolve({
-                success: true,
-                data : Buffer.from(JSON.stringify({
-                    payment: res.body,
-                    txnid: 'XTACY1234567890',
-                    hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
-                }), 'ascii').toString('base64')
-            })
+            if (err) {
+                Database.firestore.collection('transactions').doc(txnID).update({ status: 'ERROR' })
+                return reject({ success: false })
+            }
+            Database.firestore.collection('transactions').doc(txnID).update({
+                    status: 'SUCCESS',
+                    verified: true
+                }).then(()=>{
+                    resolve({
+                        success: true,
+                        data : Buffer.from(JSON.stringify({
+                            payment: res.body,
+                            txnID: txnID,
+                            hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
+                        }), 'ascii').toString('base64')
+                    })
+                }).catch((err)=>{
+                    
+                })
         })
     })    
 }
@@ -147,19 +190,15 @@ function getNewAccessToken() {
         if(res.body.error) return console.error(res.body)
         let _validity = (res.body.expires_in*1000) + (new Date()).getTime()
         console.log(res.body.app_id, 'NEW_ACCESS_TOKEN', res.body.access_token)
+
         let config = JSON.parse(fs.readFileSync('./config.json').toString())
         config.payments[env].access_token = {
             ACCESS_TOKEN: res.body.access_token,
             validity: _validity
         }
+        
         console.log('WARNING :: Writing Config File')
         fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
         return res.body.access_token
     })
-}
-
-function registerTXN() {
-    // add entry to firebase with
-    // payment: { status: 'pending' }
-    // then after success, the server will chnage that to 'success' 
 }

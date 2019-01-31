@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import LoadingPage from './LoadingPage';
 import PaymentPortal from './PaymentPortal';
 
+import Database from '../util/database';
 import Booking from '../util/booking';
 import './css/Payments.css';
 
@@ -14,7 +15,7 @@ class Payments extends Component {
         this.state = {
             paymentAuthorized: false,
             CLIENT: null,
-            txnid: null,
+            txnID: null,
             paymentId: null,
             amount: null,
             data : null,
@@ -44,7 +45,7 @@ class Payments extends Component {
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         
         const authReq = new XMLHttpRequest()
-        authReq.open('POST', 'http://xtacy.org:3000/_payment/authorize/', true)
+        authReq.open('POST', 'http://xtacy.org/_payment/authorize/', true)
         authReq.setRequestHeader('Content-Type', 'application/json')
         authReq.send(JSON.stringify({
             data: POST_DATA, 
@@ -66,7 +67,7 @@ class Payments extends Component {
                             total: amt
                         },
                         paymentId: authorizedPayment.payment.id,
-                        txnid: authorizedPayment.txnid,
+                        txnID: authorizedPayment.txnID,
                         CLIENT: authorizedPayment.client,
                         data: this.props.data,
                         paymentAuthorized: true
@@ -83,27 +84,34 @@ class Payments extends Component {
 
     paymentSuccesful = (success) => {
         console.log('PAYMENT_SUCCESSFUL')
-        // UPDATE firestore ka txn with status: 'SUCCESS'
-        // cleanup
-        // this.props.success()
+        this.props.success(success)
     }
 
-    paymentCancelled = (failure) => {
-        console.log('PAYMENT_FAILED')
-        console.error(failure)
-        // UPDATE firestore ka txn with status: 'CANCELLED'
-        // cleanup
-        localStorage.setItem('payment-fail-data', this.state.data)
-        window.location = '/secure/reg/failure'
+    paymentCancelled = () => {
+        console.log('PAYMENT_CANCELLED')
+        
+        // Database.firestore.collection('transactions').doc(this.state.txnID).update({
+        //         status: 'CANCELLED',
+        //         verified: false
+        //     }).then(()=>{
+                this.props.back()
+        //     }).catch((err)=>{
+        //         this.paymentError()
+        //     })
     }
 
-    paymentError = (code, err) => {
-        console.log('PAYMENT_FAILED', code)
-        console.error(err)
-        // UPDATE firestore ka txn with status: 'ERROR'
-        // Cleanup
-        localStorage.setItem('payment-error-data', this.state.data)
-        window.location = '/secure/reg/error'
+    paymentError = (code) => {
+        console.error('PAYMENT_FAILED', code)
+        localStorage.setItem('payment-error-code', code)
+        
+        // Database.firestore.collection('transactions').doc(this.state.txnID).update({
+        //         status: 'ERROR',
+        //         verified: false
+        //     }).then(()=>{
+                this.setState({ paymentAuthorized: false })
+        //     }).catch((err)=>{
+        //         console.error(err)
+        //     })
     }
 
     render() {
@@ -116,23 +124,24 @@ class Payments extends Component {
                     <div>
                         <h2>Payments Page</h2>
 
-                        <div className="pricing">
-                            <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
-                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                        </div>
-
                         <div className="action container fit">
                             <button className="button" onClick={ this.props.back.bind(this) }>BACK</button>
+                        </div>
+
+                        <div className="pricing">
+                            <p>Total</p>
+                            <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
+                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                         </div>
 
                         <PaymentPortal
                             env={"sandbox"}
                             clientId={CLIENT}
                             authorizedPayment={ this.state.paymentId }
-                            payerId={ this.state.txnid }
+                            payerId={ this.state.txnID }
                             onSuccess={ this.paymentSuccesful }
                             onCancel={ this.paymentCancelled }
-                            onError={ (err) => this.paymentError('PORTAL_ERROR', err) }
+                            onError={ () => this.paymentError('PORTAL_ERROR') }
                         />
                     </div>
                 ) : (

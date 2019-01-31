@@ -1,10 +1,9 @@
-// const firebase = require('firebase');
 const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
 require('firebase/firestore');
 
-let credentials = require('./config.json').firebase;
+const credentials = require('./config.json').firebase;
 
 if (firebase.apps.length===0)
     firebase.initializeApp(credentials);
@@ -19,9 +18,9 @@ exports.firestore = firebase.firestore().settings({ timestampsInSnapshots: true 
 * Standard Firebase/Firestore Export
 * ---------------------------------
 * Import the object by either
-*   const db = require('./Database')
+*   const db = require('./database')
 * or
-*   import db from './Database';
+*   import db from './database';
 * 
 * Use the object to get a database
 * namespace by 'db.firebase.database()'

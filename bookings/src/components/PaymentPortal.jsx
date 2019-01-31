@@ -39,14 +39,15 @@ class PaymentPortal extends Component {
         const executePayment = (data, actions) => {
             let POST_DATA = {
                 paymentID: this.props.authorizedPayment,
-                payerID: this.props.txnid
+                payerID: '',
+                txnID: this.props.txnid
             }
 
             let hashSequence = JSON.stringify(POST_DATA)
             let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
             
             const execReq = new XMLHttpRequest()
-            execReq.open('POST', 'http://xtacy.org:3000/_payment/execute/', true)
+            execReq.open('POST', 'http://xtacy.org/_payment/execute/', true)
             execReq.setRequestHeader('Content-Type', 'application/json')
             execReq.send(JSON.stringify({
                 data: POST_DATA, 
@@ -73,22 +74,20 @@ class PaymentPortal extends Component {
                 }
             }
         }
-
-        const buttonStyle = {
-            label: 'buynow',
-            layout: 'vertical', // horizontal | vertical
-            size: 'medium', // medium | large | responsive
-            shape: 'rect', // pill | rect
-            color: 'blue', // gold | blue | silver | white | black
-            branding: true // optional
-        }
-
+        
         return (
             <div>
             {
                 this.state.showButton ? (
                     <this.state.paypal.Button.react
-                        style={ buttonStyle }
+                        style={{
+                            label: 'buynow',
+                            layout: 'vertical',
+                            size: 'responsive',
+                            shape: 'rect',
+                            color: 'blue',
+                            branding: true
+                        }}
                         funding= {
                             {
                                 allowed: [

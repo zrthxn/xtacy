@@ -122,11 +122,14 @@ exports.calcTaxInclAmount = (amt) => {
     // Transaction fee in percent
     const txnFeePct = 2.5
     
-    // Applicable GST in percent
-    const gstPct = 18
+    // Applicable TAX in percent
+    // Note: TAX is applied on the transaction fee only
+    const taxPct = 18
     
-    return parseFloat(
-        (amt + flatFee) / 
-        (1 - txnFeePct/100 - ((gstPct/100) * (txnFeePct/100)) ))
-        .toFixed(2)
+    return (
+        parseFloat(
+            (amt + flatFee) / 
+            (1 - txnFeePct/100 - ((taxPct/100) * (txnFeePct/100)))            
+        ).toFixed(2)
+    )
 }

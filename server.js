@@ -37,7 +37,10 @@ homepage.use(express.urlencoded({ extended: true }))
 
 // Static Served Directories
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
+homepage.use('/register', express.static( path.join(__dirname, 'bookings', 'build') ))
 homepage.use('/register/main', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/register/success', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/register/cancel', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
 homepage.set('view engine', 'hbs')
@@ -50,20 +53,20 @@ homepage.engine('hbs', hbs({
     ]
 }))
 
-// ----------- File Delivery ----------
+// Content Delivery ------------------ //
 cdn.use(bodyParser.json())
 cdn.use(bodyParser.urlencoded({ extended: true }))
 cdn.use(express.json())
 cdn.use(express.urlencoded({ extended: true }))
 cdn.use(fileUpload())
 
-// ----------- APIs ----------
+// APIs ------------------------------ //
 api.use(bodyParser.json())
 api.use(bodyParser.urlencoded({ extended: true }))
 api.use(express.json())
 api.use(express.urlencoded({ extended: true }))
 
-// ----------- Virtual Host ----------
+// Virtual Host ---------------------- //
 xtacy.use(vhost(__domain, homepage))
 xtacy.use(vhost('www.' +  __domain, homepage))
 xtacy.use(vhost('cdn.' +  __domain, cdn))
@@ -92,7 +95,7 @@ homepage.get('/contact', (req,res)=>{
 homepage.get('/events', (req,res)=>{
     res.render('events', { 'title' : 'Events' })
 });
-homepage.get('/register', (req,res)=>{
+homepage.get('/signup', (req,res)=>{
     res.render('register', { 'title' : 'Register' })
 });
 homepage.get('/terms', (req,res)=>{
@@ -139,12 +142,12 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 });
 
 // // --------------------------
-// // Remove for production build
-// homepage.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-// });
+// Remove for production build
+homepage.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 // // --------------------------
 
 homepage.get('/_secu/csrtoken/', (req,res)=>{

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Payments from './Payments';
 import SuccessPage from './SuccessPage';
 
+import { firestore } from '../util/database';
 import Booking from '../util/booking';
 import './css/Tickets.css';
 import '../Global.css'; 
@@ -105,12 +106,12 @@ class Tickets extends Component {
         }
     }
 
-    success = () => {
+    success = (success) => {
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         Booking.ticketRegister(this.state.data, hmac)
             .then((res)=>{
-                if (res.validation)
+                if (res.validation) 
                     this.setState({ paymentReady: true, completion: true })
             }).catch(()=>{
                 alert('Error')

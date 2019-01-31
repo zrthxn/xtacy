@@ -47,19 +47,37 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
             "metadata": metadata
         }
         
-        /**
-         * @author zrthxn
-         * * IMPORTANT *
-         * ADD sorting algorithm to the array 'files'
-         */
-
+        files = sortFileArrayById (files, 0, files.length-1)
         lookup.files = files
-        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 4))
 
+        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 4))
         fs.writeFileSync('./cdn/' + filepath + '/' + filename, file)
 
         resolve(genFileRef)
     });
+}
+
+function sortFileArrayById (files, low, high){
+    // Quick Sort Algorithm with pivot at end
+    if (low < high) { 
+        var pivot = files[high].fileId    
+        var i = low - 1   
+        for (var j=low; j<=high-1; j++)
+            if (files[j].fileId <= pivot) { 
+                i++  
+                let temp=files[i]
+                files[i]=files[j]
+                files[j]=temp 
+            } 
+
+        pi=i+1
+        let temp=files[pi]
+        files[pi]=files[high]
+        files[high]=temp
+        sortFileArrayById(files, low, pi - 1) 
+        sortFileArrayById(files, pi + 1, high)
+    }
+    return files
 }
 
 // ============================================================= //
