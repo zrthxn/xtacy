@@ -45,7 +45,7 @@ class Payments extends Component {
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         
         const authReq = new XMLHttpRequest()
-        authReq.open('POST', 'http://xtacy.org/_payment/authorize/', true)
+        authReq.open('POST', 'http://xtacy.org:3000/_payment/authorize/', true)
         authReq.setRequestHeader('Content-Type', 'application/json')
         authReq.send(JSON.stringify({
             data: POST_DATA, 

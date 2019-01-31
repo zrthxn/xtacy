@@ -193,7 +193,7 @@ class Tickets extends Component {
                                 <div className="pricing">
                                     <p id="trP">{'\u20B9 ' + this.state.tierPricing + ' per ticket'}</p>
                                     <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                                    <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                    <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
                                 </div>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="specialRequests" placeholder="Special Requests (if any)"/>
                             </div>
