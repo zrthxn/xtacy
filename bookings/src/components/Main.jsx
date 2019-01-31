@@ -30,6 +30,7 @@ class Main extends Component {
                     "eventId": "dastan",
                     "dates": "16",
                     "type": "tic",
+                    "published": true,
                     "metadata": {
                         "time": "1:00 PM",
                         "paid": true,
@@ -68,18 +69,24 @@ class Main extends Component {
             <div className="Main">
             {
                 this.state.loaded ? (
-                    this.state.intent!== 'gen' ? (
-                        this.state.intent!=='com' ? (
-                            this.state.intent!=='tic' ? (
-                                <ErrorPage/>
+                    this.state.eventData.published ? (
+                        this.state.intent!== 'gen' ? (
+                            this.state.intent!=='com' ? (
+                                this.state.intent!=='tic' ? (
+                                    <ErrorPage/>
+                                ) : (
+                                    <Tickets eventData={this.state.eventData}/>
+                                )
                             ) : (
-                                <Tickets eventData={this.state.eventData}/>
+                                <Compete eventData={this.state.eventData}/>
                             )
                         ) : (
-                            <Compete eventData={this.state.eventData}/>
+                            <Register eventData={this.state.eventData}/>
                         )
                     ) : (
-                        <Register/>
+                        <div>
+                            <h2>Not Published</h2>
+                        </div>
                     )
                 ) : (
                     <LoadingPage timeOut={2500}/>

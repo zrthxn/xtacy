@@ -5,6 +5,7 @@
             "eventId": "6 byte ID",
             "dates": "",
             "type": "gen / com / tic",
+            "published": true,
             "metadata": {
                 "time": "",
                 "paid": "",
@@ -24,6 +25,7 @@
             "eventId": "hackhl",
             "dates": "15/16",
             "type": "com",
+            "published": true,
             "metadata": {
                 "time": "1:00 PM",
                 "paid": true,
@@ -40,6 +42,7 @@
             "eventId": "nerdwd",
             "dates": "15",
             "type": "com",
+            "published": true,
             "metadata": {
                 "time": "1:00 PM",
                 "paid": false,
@@ -56,6 +59,7 @@
             "eventId": "dastan",
             "dates": "16",
             "type": "tic",
+            "published": true,
             "metadata": {
                 "time": "1:00 PM",
                 "paid": true,
