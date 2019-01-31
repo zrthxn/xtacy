@@ -84,7 +84,7 @@ class Main extends Component {
                             <Register eventData={this.state.eventData}/>
                         )
                     ) : (
-                        <div>
+                        <div className="container">
                             <h2>Not Published</h2>
                         </div>
                     )

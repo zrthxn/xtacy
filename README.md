@@ -52,6 +52,7 @@ Follow the steps and test the event before publishing
    - '*com*' for competitive (paid and non paid)
    - '*tic*' for non-competitive paid (ticketed)
    - '*gen*' for general
+   
    After deciding the event type, fill in all the fields and decide an event ID
    - The event ID can be anything, but it is recommended to keep a 6 byte **descriptive** ID
    - The event ID MUST be lowercase in the event lookup file
