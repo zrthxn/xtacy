@@ -135,7 +135,7 @@
 
 .drawer .close {
     position: absolute;
-    top: 1em;
+    top: 2em;
     right: 1em;
     display: block;
     margin: auto 0 auto auto;
@@ -176,7 +176,7 @@
 /* ----------------- DRAWER CONTENT ----------------- */
 
 .drawer-content {
-    height: 75vh;
+    height: 85vh;
     position: relative;
     margin-top: 4em;
 }
