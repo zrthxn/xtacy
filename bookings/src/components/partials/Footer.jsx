@@ -5,9 +5,17 @@ class Footer extends Component {
 	render() {
 		return (
 			<footer>
-				<div className="container">
-				
-				<p className="dev">Developed with <span role="img" aria-label="love">💛</span> by NAMAK</p>
+				<div className="base container">
+					<div className="collab">
+						<div>
+							<span className="base-title">xtacy</span><br/>
+							The annual techno-cultural extravaganza organized by Faculty of Engineering, Jamia Millia Islamia
+						</div>
+						<div className="collab-imgs">
+							<img src="http://xtacy.org:3000/static/img/collaborators.png" alt=""/>
+						</div>
+					</div>
+					<p className="dev">Developed with <span role="img" aria-label="love">💛</span> by NAMAK</p>
 				</div>
 			</footer>
 		);

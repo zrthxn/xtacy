@@ -22,7 +22,7 @@ exports.validateCSRFTokens = (key, token) => {
                     reject('TOKEN_MISMATCH');
                 }
             }).catch((err)=>{
-                console.log('ERR_DB DatabaseError', err);
+                console.log('ERR_DB DatabaseError');
                 reject('ERR_DB DatabaseError', err);
             });
     });

@@ -4,28 +4,27 @@ import Loading from './partials/Loading';
 import './css/Snippets.css';
 import '../Global.css';
 
-const SuccessPage = () => {
+const SuccessPage = (props) => {
     return (
         <div className="SuccessPage">
-            <div className="container">
+            <div className="container fit">
                 <Loading/>
                 <h3>Success!</h3>
 
                 <div>
-                    <p className="center">
-                        Your registration was successfully recieved.<br/><br/>
-                        Your registration number is { this.props.rgn }
+                    <b>Your registration was successful</b><br/><br/>
+                    
+                    Your registration number is
+                    <div className="rgn">{ props.rgn }</div>
+                    <br/>
 
-                        We have sent you a confirmation email. If you don't recieve 
+                    <p className="center">
+                        We have sent a confirmation message on the email you entered. If you don't recieve 
                         it in the next few minutes, please contact us 
                         at <a href="mailto:support@xtacy.org">support@xtacy.org</a>
-
-                        <h3>Welcome to xtacy</h3>
-
-                        Please read the terms and conditions.
-
-                        Home
                     </p>
+
+                    <span><a href="/terms">Terms</a> | <a href="/">Home</a></span>
                 </div>
                 
             </div>

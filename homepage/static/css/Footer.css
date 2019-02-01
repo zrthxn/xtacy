@@ -1,39 +1,53 @@
 footer {
-    /* position: relative;
+    position: relative;
     background-color: #000;
-    padding: 2em; */
-    height: fit-content;
-    background-color: #222;
+    color: #fff;
+    padding: 2em;
 }
-footer .footer-wrapper {
-    margin: 0;
+footer .container {
     max-width: 800px;
 }
 
-footer .dev {
-    font-size: 0.6em;
-    font-weight: 400;
+footer .base {
+    font-size: 0.75em;
+    font-weight: 200;
     text-align: left;
-    margin: 2em 1em;
-    bottom: 0;
-    color: #fff;
 }
-
-footer .container {
+footer .base-title {
+    font-size: 1.5em;
+}
+footer .collab {
     display: flex;
-    flex-direction: column;
-    margin: auto;
-    margin-bottom: 2em;
+    flex-flow: column;
+} footer .collab-imgs {
+    width: 100%;
+    height: 2em;
+    margin: 1.5em 0;
+} footer .collab-imgs img {
+    height: 100%;
+    float: left;
+} 
+@media (min-width: 600px) {
+    footer .collab {
+        flex-flow: row;
+    } footer .collab-imgs {
+        width: 50%;
+        height: 3em;
+        margin: 0 1.5em;
+    } footer .collab-imgs img {
+        float: right;
+    }
 }
-
-footer .footer-links {
-    margin-top: 2em;
-    margin-bottom: 2em;
+footer .dev {
+    font-size: 0.75em;
+    font-weight: 200;
+    margin: 2em 0;
+    bottom: 0;
 }
 
 footer ul {
     margin: 0;
-    margin-right: 4em;
+    margin-right: 1.5em;
     padding: 0;
     list-style: none;
     text-align: left;
@@ -71,10 +85,6 @@ footer .social li:first-of-type::before {
 footer .footer-links {
     display: flex;
     flex-direction: row;
-}
-footer .images {
-    height: fit-content;
-    margin: auto auto;
-} footer .images img {
-    max-height: 4em;
+    margin-top: 2em;
+    margin-bottom: 2em;
 }

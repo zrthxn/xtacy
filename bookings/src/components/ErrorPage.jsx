@@ -30,11 +30,11 @@ const ErrorPage = () => {
         <section className="ErrorPage">
             <div className="container">
                 <Loading/>
-                <h3>that doesnt<br/>look right</h3>
+                <h3>that doesn't<br/>look right</h3>
 
                 <p className="center">
                     <b>{ errorContent }</b><br/><br/>
-                    Try to reload the page or go back. If the issue persists, tell us about it at <a href="mailto:tech@xtacy.org">tech@xtacy.org</a>
+                    Try to reload the page or go back. If the issue persists, tell us about it at <a href="mailto:support@xtacy.org">support@xtacy.org</a>
                 </p>
             </div>
         </section>

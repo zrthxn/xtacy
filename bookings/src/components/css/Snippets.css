@@ -23,3 +23,15 @@
 .SuccessPage {
     padding: 4em 1em;
 }
+
+.SuccessPage .rgn {
+    margin: 0 1em;
+    font-weight: 400;
+    font-size: 1.25em;
+}
+
+.SuccessPage a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 600;
+}
