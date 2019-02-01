@@ -1,5 +1,5 @@
 # XTACY Website
-### v0.0.1
+### v0.1.0 Beta
 
 ### How to Run
 1. Install Node (from nodejs.org).
