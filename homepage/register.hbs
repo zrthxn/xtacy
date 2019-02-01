@@ -28,6 +28,6 @@
     document.getElementById("login").onclick = () => {
         let checksum = getEventHash('gen', 'any');
         sessionStorage.setItem( config.hashToken, checksum );
-        window.location = '/book/start?int=gen';
+        window.location = '/register/main?int=gen';
     }
 </script>
