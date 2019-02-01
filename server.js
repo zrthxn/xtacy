@@ -98,6 +98,9 @@ homepage.get('/events', (req,res)=>{
 homepage.get('/signup', (req,res)=>{
     res.render('register', { 'title' : 'Register' })
 });
+homepage.get('/sponsors', (req,res)=>{
+    res.render('sponsors', { 'title' : 'Sponsors' })
+});
 homepage.get('/terms', (req,res)=>{
     res.render('terms', { 'title' : 'Terms' })
 });
