@@ -112,7 +112,7 @@ class Tickets extends Component {
         Booking.ticketRegister(this.state.data, hmac)
             .then((res)=>{
                 if (res.validation) 
-                    this.setState({ paymentReady: true, completion: true })
+                    this.setState({ paymentReady: true, completion: true, rgn: res.rgn })
             }).catch(()=>{
                 alert('Error')
             })
@@ -123,7 +123,7 @@ class Tickets extends Component {
             <div>
             {
                 this.state.paymentReady ? (
-                    this.state.completion ? <SuccessPage/> : (
+                    this.state.completion ? <SuccessPage rgn={this.state.rgn}/> : (
                         <Payments
                             name={this.state.data.regName}
                             email={this.state.data.regEmail}

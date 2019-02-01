@@ -94,7 +94,7 @@ class Compete extends Component {
         Booking.competeRegister(this.state.data, hmac, txn)
             .then((res)=>{
                 if (res.validation)
-                    this.setState({ paymentReady: true, completion: true })
+                    this.setState({ paymentReady: true, completion: true, rgn: res.rgn })
             }).catch(()=>{
                 alert('Error')
             })
@@ -116,7 +116,7 @@ class Compete extends Component {
                             success={ this.success }
                         />
                     ) : (
-                        this.state.completion ? <SuccessPage/> : console.log()
+                        this.state.completion ? <SuccessPage rgn={this.state.rgn}/> : console.log()
                     )
                 ) : (
                     <div className="Compete container fit">

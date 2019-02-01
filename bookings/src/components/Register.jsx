@@ -46,7 +46,7 @@ class Register extends Component {
             Booking.generalRegister(this.state.data, hmac)
                 .then((res)=>{
                     if (res.validation)
-                        this.setState({ completion: true })
+                        this.setState({ completion: true, rgn: res.rgn })
                 }).catch(()=>{
                     alert('Error')
                 })
@@ -60,7 +60,7 @@ class Register extends Component {
             <div>
             {
                 this.state.completion ? (
-                    <SuccessPage/>
+                    <SuccessPage rgn={this.state.rgn}/>
                 ) : (
                     <div className="Register container fit">
                         <div className="fluff">
