@@ -18,9 +18,21 @@ const {
 } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
-    let txnID = 'TXN'
-    for(let i=0; i<21; i++)
-        txnID += Math.floor( Math.random() * 16 ).toString(16).toUpperCase()
+    let txnID = 'TXN', sum=0
+    let pos = Math.floor( Math.random()*20 )
+    for(let i=0; i<20; i++) {
+        let digit = Math.floor( Math.random()*10 )
+        if(i===pos)
+            digit = '__'
+        else
+            sum += digit
+
+        txnID += digit
+    }
+    
+    let mod = 11 - (sum % 11)
+    digit = Math.floor( Math.random()*mod )
+    txnID = txnID.replace(/__/, digit.toString() + (mod-digit).toString())
 
     return new Promise((resolve,reject)=>{
         // Database.firestore.collection('transactions').doc(this.state.txnID).set({

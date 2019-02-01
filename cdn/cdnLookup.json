@@ -14,13 +14,21 @@
         }
     ],
     "writeLock": false,
-    "fileRefNumber": 6,
+    "fileRefNumber": 7,
     "files": [
         {
             "fileRef": "0t01",
             "fileId": 37585,
             "filename": "Logo.png",
             "contentType": "image/png",
+            "filepath": "root",
+            "metadata": {}
+        },
+        {
+            "fileRef": "0u07",
+            "fileId": 38887,
+            "filename": "Brochure.pdf",
+            "contentType": "application/pdf",
             "filepath": "root",
             "metadata": {}
         },
