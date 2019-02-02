@@ -46,20 +46,20 @@
                 });
         })()
 
-        function getEventData(_eventId) {
+        function getEventData(_eventId, callback) {
             if (_eventId===undefined) throw 'EVTID_INVALID';
             const eventReq = new XMLHttpRequest();
             eventReq.open('GET', '/register/_eventData/' + _eventId + '/', true);
             eventReq.send();
 
-            return eventReq.onreadystatechange = () => {
+            eventReq.onreadystatechange = () => {
                 if(eventReq.readyState===4 && eventReq.status===200) {
                     let eventRes = JSON.parse(eventReq.response);
                     if(eventRes.validation) {
                         for (let i = 0; i < eventRes.arb; i++) 
                             eventRes.data = atob(eventRes.data)
                         eventRes.data = JSON.parse(eventRes.data)
-                        return eventRes.data;
+                        callback(eventRes.data);
                     } else {
                         throw 'CSRF_INVALID';
                     }
@@ -67,7 +67,7 @@
             }
         }
 
-        function getEventHash(type, eventId) {
+        function getEventHash(type, eventId, callback) {
             const hashReq = new XMLHttpRequest();
             hashReq.open('POST', '/register/_checksum/', true);
             hashReq.setRequestHeader('Content-Type', 'application/json');
@@ -78,9 +78,9 @@
                 }))
             }));
             
-            return hashReq.onreadystatechange = () => {
+            hashReq.onreadystatechange = () => {
                 if(hashReq.readyState===4 && hashReq.status===200) {
-                    return JSON.parse(hashReq.response).checksum;
+                    callback(JSON.parse(hashReq.response).checksum);
                 }
             }
         }
