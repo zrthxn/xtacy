@@ -1,11 +1,11 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/PromoStyle.css">
 {{!------ ==== PAGE ==== ------}}
 
 <script>
     var __data;
     window.onload = () => {
-        __data = document.getElementById("__data").innerHTML;
+        __data = JSON.parse(document.getElementById("__data").innerHTML);
+        initializeInfo();
     }
 </script>
 
@@ -14,14 +14,18 @@
     {{#with page}}
         <article class="promo">
             <div class="container">
-                <div class="banner small">
-                    <a href="#">
-                        <img class="desktop" src="/static/img/thumb.png" alt="">
-                        <img class="mobile" src="/static/img/JMI Logo.png" alt="">
-                    </a>
-                </div>
+                <h2 class="title" id="title">Event Title</h2>
+                {{!-- <div class="banner small">
+                    <img class="desktop" src="/static/img/thumb.png" alt="">
+                    <img class="mobile" src="/static/img/JMI Logo.png" alt="">
+                </div> --}}
 
-                <div id="metadata" class="metadata">{{ data }}</div>
+                <div id="metadata" class="metadata container">
+                    <p class="eventType" id="eventType">General</p>
+                    <p class="dateTime" id="dateTime"></p>
+                    <p id="team" class="team"></p>
+                    <p class="pricing"><span class="paid" id="paid">FREE</span> <span id="fee"></span></p>
+                </div>
 
                 <div class="content">{{{ content }}}</div>
             </div>
@@ -30,4 +34,93 @@
         <div id="__data" hidden="true">{{ data }}</div>
     {{/with}}
 </section>
+
+<style>
+    .promo {
+        max-width: 800px;
+        margin: 1em auto;
+    }
+
+    .promo * {
+        padding: 0;
+    } .promo .banner {
+        margin: 0;
+        margin-bottom: 1em;
+    }
+
+    /* Main Text Content */
+    .promo .content p {
+        max-width: none;
+    }
+    .promo .content p[class~="dropcap"]:first-of-type::first-letter {
+        float: left;
+        font-size: 45px;
+        line-height: 1;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    .promo .metadata {
+        margin: 1em 0;
+        height: fit-content;
+        font-size: 0.75em;
+        color: #777;
+        text-align: left;
+    } .promo .title {
+        font-weight: 600;
+    } .promo .metadata * {
+        margin: 0;
+    } .promo .metadata .eventType {
+        font-weight: 600;
+    } .promo .metadata .paid {
+        padding: 0 0.25em;
+        margin-right: 0.5em;
+        background-color: #00d351;
+        color: #fff;
+        font-weight: 400;
+    }
+</style>
 {{!-- END PAGE CONTENT --}}
+
+<script>
+    function initializeInfo() {
+        // Event Title
+        document.getElementById("title").innerHTML = __data.title
+
+        // Event Type Initialization
+        let typeDef = 'General'
+        switch(__data.type) {
+            case 'gen':
+                break;
+            case 'com':
+                typeDef = 'Competitive'
+                break;
+            case 'tic':
+                typeDef = 'Ticketed'
+                break;
+        }
+        document.getElementById("eventType").innerHTML = typeDef;
+
+        // Event Date Initialization
+        let dateTimeDef = '';
+        __data.dates.split('/').forEach(date => { dateTimeDef += (date + 'th, ') })
+        dateTimeDef = dateTimeDef.substring(0, dateTimeDef.length - 2) + (' March at ' + __data.metadata.time);
+        document.getElementById("dateTime").innerHTML = dateTimeDef;
+
+        // Team Size Initialization
+        if(__data.metadata.teams) {
+            if(__data.metadata.teamSizeType==='strict') {
+                document.getElementById("team").innerHTML = 'Teams of ' + __data.metadata.teamSize;
+            } else {
+                document.getElementById("team").innerHTML = 'Max. team size ' + __data.metadata.teamSize;
+            }
+        }
+        
+        // Event Pricing Initialization
+        __data.metadata.paid ? document.getElementById("paid").innerHTML = 'PAID' : console.log()
+        if(__data.metadata.paid) {
+            document.getElementById("fee").innerHTML = '&#x20B9; ' + __data.metadata.price;
+            document.getElementById("paid").style = "background-color: #0084ff;"
+        }        
+    }
+</script>

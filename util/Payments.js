@@ -210,7 +210,7 @@ function getNewAccessToken() {
         }
         
         console.log('WARNING :: Writing Config File')
-        fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
+        fs.writeFileSync('./config.json', JSON.stringify(config, null, 2))
         return res.body.access_token
     })
 }

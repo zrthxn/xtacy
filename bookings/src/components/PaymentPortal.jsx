@@ -47,7 +47,7 @@ class PaymentPortal extends Component {
             let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
             
             const execReq = new XMLHttpRequest()
-            execReq.open('POST', 'https://xtacy.org/_payment/execute/', true)
+            execReq.open('POST', '/_payment/execute/', true)
             execReq.setRequestHeader('Content-Type', 'application/json')
             execReq.send(JSON.stringify({
                 data: POST_DATA, 
