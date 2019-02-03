@@ -35,20 +35,20 @@ function registerNewTxn (params) {
     txnID = txnID.replace(/__/, digit.toString() + (mod-digit).toString())
 
     return new Promise((resolve,reject)=>{
-        // Database.firestore.collection('transactions').doc(this.state.txnID).set({
-        //         status: 'PENDING',
-        //         txnID: txnID,
-        //         addedOn: (new Date()).getTime(),
-        //         payer: params.payer,
-        //         amount: params.amount,
-        //         eventData: params.eventData,
-        //         verified: false
-        //     }).then(()=>{
+        Database.firestore.collection('transactions').doc(this.state.txnID).set({
+                status: 'PENDING',
+                txnID: txnID,
+                addedOn: (new Date()).getTime(),
+                payer: params.payer,
+                amount: params.amount,
+                eventData: params.eventData,
+                verified: false
+            }).then(()=>{
                 resolve(txnID)
-            // }).catch((err)=>{
-            //     reject('ERR_DB DatabaseError')
-            // })
-    })    
+            }).catch((err)=>{
+                reject('ERR_DB DatabaseError')
+            })
+    })
 }
 
 exports.authorizeNewPayment = (params) => {
