@@ -246,7 +246,7 @@ function generateHashedBarcode(rgn, type) {
                     "rgn": rgn
                 }).then((ref)=>{
                     console.log('Barcode Generated', type, rgn)
-                    resolve('cdn.xtacy.org/d/' + ref)
+                    resolve('https://cdn.xtacy.org/d/' + ref)
                 })
             }
         });
