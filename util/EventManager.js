@@ -41,7 +41,7 @@ exports.generalRegister = (data) => {
                             from: 'hello@xtacy.org',
                             subject: 'Registration Confirmation | Team Xtacy',
                         }, 
-                        fs.readFileSync('./mail/templates/generalRegConfirmation.html'),
+                        fs.readFileSync('./mail/templates/generalRegConfirmation.html').toString(),
                         [
                             { id: 'regName', data: data.regName },
                             { id: 'rgn', data: rgnId },
@@ -81,7 +81,7 @@ exports.competeRegister = (data) => {
                         from: 'hello@xtacy.org',
                         subject: 'Registration Confirmation | Team Xtacy',
                     }, 
-                    fs.readFileSync('./mail/templates/competeRegConfirmation.html'),
+                    fs.readFileSync('./mail/templates/competeRegConfirmation.html').toString(),
                     [
                         { id: 'regTeamName', data: data.regTeamName },
                         { id: 'teamLeader', data: teamLeader },
@@ -120,7 +120,7 @@ exports.ticketRegister = (data) => {
                         from: 'hello@xtacy.org',
                         subject: 'Registration Confirmation | Team Xtacy',
                     }, 
-                    fs.readFileSync('./mail/templates/ticketRegConfirmation.html'),
+                    fs.readFileSync('./mail/templates/ticketRegConfirmation.html').toString(),
                     [
                         { id: 'regName', data: data.regName },
                         { id: 'tier', data: data.tier },
