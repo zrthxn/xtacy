@@ -45,7 +45,7 @@ class Payments extends Component {
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         
         const authReq = new XMLHttpRequest()
-        authReq.open('POST', '/_payment/authorize/', true)
+        authReq.open('POST', 'http://xtacy.org/_payment/authorize/', true)
         authReq.setRequestHeader('Content-Type', 'application/json')
         authReq.send(JSON.stringify({
             data: POST_DATA, 
@@ -81,37 +81,39 @@ class Payments extends Component {
             }
         }        
     }
-
     paymentSuccesful = (success) => {
         console.log('PAYMENT_SUCCESSFUL')
+        Database.firestore.collection('transactions').doc(this.state.txnID).update({
+            status: 'SUCCESS',
+            verified: true
+        }).then(()=>{
         this.props.success(success)
+        }).catch((err)=>{
+            console.error(err);
+        })
     }
 
     paymentCancelled = () => {
         console.log('PAYMENT_CANCELLED')
-        
-        // Database.firestore.collection('transactions').doc(this.state.txnID).update({
-        //         status: 'CANCELLED',
-        //         verified: false
-        //     }).then(()=>{
+        Database.firestore.collection('transactions').doc(this.state.txnID).update({
+            status: 'CANCELLED',
+        }).then(()=>{
                 this.props.back()
-        //     }).catch((err)=>{
-        //         this.paymentError()
-        //     })
+             }).catch((err)=>{
+                 this.paymentError()
+             })
     }
 
     paymentError = (code) => {
         console.error('PAYMENT_FAILED', code)
         localStorage.setItem('payment-error-code', code)
-        
-        // Database.firestore.collection('transactions').doc(this.state.txnID).update({
-        //         status: 'ERROR',
-        //         verified: false
-        //     }).then(()=>{
+        Database.firestore.collection('transactions').doc(this.state.txnID).update({
+            status: 'FAILED',
+        }).then(()=>{
                 this.setState({ paymentAuthorized: false })
-        //     }).catch((err)=>{
-        //         console.error(err)
-        //     })
+            }).catch((err)=>{
+                 console.error(err)
+            })
     }
 
     render() {
