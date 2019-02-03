@@ -6,12 +6,12 @@ process.on('message', (order)=>{
         setTimeout(function(){
             Gmailer.DatasetDelivery(order.payload.mail, order.payload.content, order.payload.data)
                 .then(()=>{
-                    process.send({ pid: order.pid, complete: true, errors: [] });
+                    process.send({ pid: order.pid, complete: true, errors: [] })
                 })
                 .catch((err)=>{
-                    process.send({ pid : order.pid, complete : true, errors: [err]});
+                    process.send({ pid : order.pid, complete : true, errors: [err]})
                 });
-        }, order.delay);
+        }, order.delay)
     }
-    startInstance();
+    startInstance()
 });

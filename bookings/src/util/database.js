@@ -8,9 +8,14 @@ const credentials = require('./config.json').firebase;
 if (firebase.apps.length===0)
     firebase.initializeApp(credentials);
 
-exports.firebase = firebase;
-exports.database = firebase.database();
-exports.firestore = firebase.firestore().settings({ timestampsInSnapshots: true });
+exports.firebase = firebase
+
+const database = firebase.database()
+exports.database = database
+
+const firestore = firebase.firestore()
+firestore.settings({ timestampsInSnapshots: true })
+exports.firestore = firestore
 
 /**
 * @author Alisamar Husain

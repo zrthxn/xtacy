@@ -7,7 +7,7 @@
 .Compete .Team {
     display: flex;
     flex-flow: column;
-    margin-bottom: 4em;
+    margin-bottom: 2em;
 }
 
 .Compete .Team .fluff {
@@ -22,10 +22,12 @@
 
 .Compete .Team .form {
     width: fit-content;
+} .Compete .Team .form .container {
+    padding: 1em 0.5em;
 }
 
 .Compete #reg {
-    margin: 5em auto;
+    margin: 2em auto;
 }
 
 .MemberData {
@@ -41,8 +43,9 @@
     font-size: 1em;
 }
 .Member .team-leader-text {
-    background: #ff9e00;
-    margin: 0 0.75em;
+    background: #000;
+    color: #fff;
+    margin: 0 0.5em;
     font-size: 0.75em;
     float: right;
 } .Member .team-leader-text span {
@@ -52,6 +55,7 @@
 /* Pricing Display */
 .pricing {
     padding: 1em;
+    margin: auto;
     max-width: 20em;
     display: flex;
     flex-flow: column;

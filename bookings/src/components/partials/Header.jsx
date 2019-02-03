@@ -28,7 +28,9 @@ class Header extends Component {
                         </nav>
                         <div className="accent"></div>
                     </div>
-                    <div className="sidebar-shadow" id="sidebar-shadow"></div>
+                    <div className="sidebar-shadow" id="sidebar-shadow" onClick={() => {
+                        document.getElementById("sidebar-toggle").checked = false;
+                    }}></div>
                     
                     <nav className="desktop-nav">
                         <ul>

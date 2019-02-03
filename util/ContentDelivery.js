@@ -22,9 +22,9 @@ exports.Lookup = (fileRef) => {
             if(index !== -1)
                 resolve(files[index])
 
-            reject("FILE_NOT_FOUND"); 
+            reject("FILE_NOT_FOUND") 
         })
-    });
+    })
 }
 
 exports.Upload = (file, filename, filepath, contentType, metadata) => {
@@ -54,7 +54,7 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
         fs.writeFileSync('./cdn/' + filepath + '/' + filename, file)
 
         resolve(genFileRef)
-    });
+    })
 }
 
 function sortFileArrayById (files, low, high){

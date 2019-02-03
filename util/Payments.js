@@ -4,7 +4,7 @@ const fs = require('fs');
 const request = require('request');
 const crypto = require('crypto');
 
-const Database = require('./Database');
+const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
 const env = require('../config.json').payments.env;
@@ -35,12 +35,16 @@ function registerNewTxn (params) {
     txnID = txnID.replace(/__/, digit.toString() + (mod-digit).toString())
 
     return new Promise((resolve,reject)=>{
-        Database.firestore.collection('transactions').doc(this.state.txnID).set({
-                status: 'PENDING',
+        Database.collection('transactions').doc(txnID).set({
+                status: 'CREATED',
                 txnID: txnID,
                 addedOn: (new Date()).getTime(),
                 payer: params.payer,
-                amount: params.amount,
+                amount: {
+                    base: params.amount.base,
+                    tax: parseFloat(params.amount.tax),
+                    total: parseFloat(params.amount.total)
+                },
                 eventData: params.eventData,
                 verified: false
             }).then(()=>{
@@ -85,7 +89,7 @@ exports.authorizeNewPayment = (params) => {
                                     insurance: "0"
                                 }
                             },
-                            description: params.eventData.eventDescription,
+                            description: params.eventData.title,
                             invoice_number: txnID,
                             payment_options: {
                                 allowed_payment_method: "INSTANT_FUNDING_SOURCE"
@@ -100,15 +104,23 @@ exports.authorizeNewPayment = (params) => {
                 }
             }, function(err, res) {
                 if (err) return reject({ success: false })
-                resolve({
-                    success: true,
-                    data : Buffer.from(JSON.stringify({
-                        payment: res.body,
-                        txnID: txnID,
-                        client: CLIENT,
-                        hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
-                    }), 'ascii').toString('base64')
-                })
+                if(res.body.id!==null) {
+                    Database.collection('transactions').doc(txnID).update({
+                        status: 'PENDING'
+                    }).then(()=>{
+                        resolve({
+                            success: true,
+                            data : Buffer.from(JSON.stringify({
+                                payment: res.body,
+                                txnID: txnID,
+                                client: CLIENT,
+                                hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
+                            }), 'ascii').toString('base64')
+                        })
+                    }).catch(()=> reject({ success: false }) )
+                } else {
+                    reject({ success: false })
+                }
             })
         })
     })

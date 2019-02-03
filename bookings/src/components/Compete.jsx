@@ -89,6 +89,7 @@ class Compete extends Component {
     }
 
     success = (txn) => {
+        if(!this.props.eventData.metadata.paid) txn = 'NON_PAID'
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         Booking.competeRegister(this.state.data, hmac, txn)
@@ -130,7 +131,7 @@ class Compete extends Component {
                             </div>
 
                             <div className="form">
-                                <div className="container fit">
+                                <div className="container">
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regTeamName" placeholder="Team Name"/>
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regTeamEmail" placeholder="Team Email"/>
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regTeamPhone" placeholder="Phone Number"/>
@@ -174,7 +175,8 @@ class Compete extends Component {
                         {
                             this.props.eventData.metadata.paid ? (
                                 <div className="pricing">
-                                    <h3>{'Total: \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                    <p id="trP">{'\u20B9 ' + this.state.data.amount + ' per team'}</p>
+                                    <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
                                     <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                                     <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
                                 </div>

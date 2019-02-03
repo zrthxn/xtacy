@@ -32,7 +32,7 @@ exports.generalRegister = (data, hash) => {
     });
 }
 
-exports.competeRegister = (data, hash) => {
+exports.competeRegister = (data, hash, txn) => {
     let csrf = {
         key: localStorage.getItem(config.csrfTokenNameKey),
         token: localStorage.getItem(config.csrfTokenName + 
@@ -43,7 +43,7 @@ exports.competeRegister = (data, hash) => {
         const comReq = new XMLHttpRequest();
         comReq.open('POST', '/_register/com/', true);
         comReq.setRequestHeader('Content-Type', 'application/json');
-        comReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
+        comReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash, "txn": txn }));
 
         comReq.onreadystatechange = () => {
             if(comReq.readyState===4 && comReq.status===200) {
@@ -59,7 +59,7 @@ exports.competeRegister = (data, hash) => {
     });
 }
 
-exports.ticketRegister = (data, hash) => {
+exports.ticketRegister = (data, hash, txn) => {
     let csrf = {
         key: localStorage.getItem(config.csrfTokenNameKey),
         token: localStorage.getItem(config.csrfTokenName + 
@@ -70,7 +70,7 @@ exports.ticketRegister = (data, hash) => {
         const ticReq = new XMLHttpRequest();
         ticReq.open('POST', '/_register/tic/', true);
         ticReq.setRequestHeader('Content-Type', 'application/json');
-        ticReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
+        ticReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash, "txn": txn }));
 
         ticReq.onreadystatechange = () => {
             if(ticReq.readyState===4 && ticReq.status===200) {

@@ -265,20 +265,21 @@ homepage.post('/_register/:type/', (req,res)=>{
         .then((csrfRes)=>{
             if (csrfRes) {
                 if ( req.body.checksum === hmac ) {
+                    let { data, txn } = req.body
+                    if(req.params.type==='gen') {
+                        EventManager.generalRegister(data).then((rgn) => registrationSuccessful(rgn) )
+                    } else if(req.params.type==='com') {
+                        EventManager.competeRegister(data, txn).then((rgn) => registrationSuccessful(rgn) )
+                    } else if(req.params.type==='tic') {
+                        EventManager.ticketRegister(data, txn).then((rgn) => registrationSuccessful(rgn) )
+                    } else {
+                        res.json({ validation: false })
+                    }
+
                     function registrationSuccessful(rgn) {
                         let responseHashSequence = JSON.stringify({ validation: true, rgn: rgn })
                         let responseHmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(responseHashSequence).digest('hex')
                         res.json({ validation: true, rgn: rgn, hash: responseHmac })
-                    }
-
-                    if(req.params.type==='gen') {
-                        EventManager.generalRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
-                    } else if(req.params.type==='com') {
-                        EventManager.competeRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
-                    } else if(req.params.type==='tic') {
-                        EventManager.ticketRegister(req.body.data).then((rgn) => registrationSuccessful(rgn) )
-                    } else {
-                        res.json({ validation: false })
                     }
                 } else 
                     throw "HASH_INVALID"

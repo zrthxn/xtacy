@@ -106,10 +106,10 @@ class Tickets extends Component {
         }
     }
 
-    success = (success) => {
+    success = (txn) => {
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-        Booking.ticketRegister(this.state.data, hmac)
+        Booking.ticketRegister(this.state.data, hmac, txn)
             .then((res)=>{
                 if (res.validation) 
                     this.setState({ paymentReady: true, completion: true, rgn: res.rgn })

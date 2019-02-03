@@ -11,21 +11,21 @@ exports.SendSMS = (otp, phone, sender) => {
         "headers": {
           "content-type": "application/x-www-form-urlencoded"
         }
-    };
+    }
 
     return new Promise((resolve,reject)=>{
         var req = http.request(options, function (res) {
-            var chunks = [];
-            res.on("data", function (chunk) { chunks.push(chunk) });
+            var chunks = []
+            res.on("data", function (chunk) { chunks.push(chunk) })
             
             res.on("end", function () {
-                var body = Buffer.concat(chunks);
-                console.log(body.toString());
-            });
-        });
+                var body = Buffer.concat(chunks)
+                console.log(body.toString())
+            })
+        })
         
-        req.write(qs.stringify({}));
-        req.end();
-        resolve();
-    });
+        req.write(qs.stringify({}))
+        req.end()
+        resolve()
+    })
 }

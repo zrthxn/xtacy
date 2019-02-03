@@ -64,11 +64,7 @@ class PaymentPortal extends Component {
                     let executedPayment = JSON.parse(atob(JSON.parse(execReq.response).data))
                     let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(executedPayment.payment)).digest('hex')
                     if(executedPayment.hash === responseHmac)
-                        this.props.onSuccess({
-                            paid: true,
-                            cancelled: false,
-                            paymentData: data
-                        })
+                        this.props.onSuccess({ paymentData: data })
                     else
                         this.paymentError('RESPONSE_HASH_MISMATCH')
                 }

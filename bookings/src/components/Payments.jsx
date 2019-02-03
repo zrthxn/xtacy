@@ -36,9 +36,7 @@ class Payments extends Component {
                 email: this.props.email,
                 phone: this.props.phone,
             },
-            eventData: {
-                eventDescription: this.props.info
-            }
+            eventData: this.props.data
         }
         
         let hashSequence = JSON.stringify(POST_DATA)
@@ -87,7 +85,7 @@ class Payments extends Component {
             status: 'SUCCESS',
             verified: true
         }).then(()=>{
-        this.props.success(success)
+            this.props.success({ data: success.paymentData, txnID: this.state.txnID })
         }).catch((err)=>{
             console.error(err);
         })
@@ -98,10 +96,8 @@ class Payments extends Component {
         Database.firestore.collection('transactions').doc(this.state.txnID).update({
             status: 'CANCELLED',
         }).then(()=>{
-                this.props.back()
-             }).catch((err)=>{
-                 this.paymentError()
-             })
+            this.props.back()
+        }).catch((err) => console.error(err))
     }
 
     paymentError = (code) => {
@@ -110,10 +106,8 @@ class Payments extends Component {
         Database.firestore.collection('transactions').doc(this.state.txnID).update({
             status: 'FAILED',
         }).then(()=>{
-                this.setState({ paymentAuthorized: false })
-            }).catch((err)=>{
-                 console.error(err)
-            })
+            this.setState({ paymentAuthorized: false })
+        }).catch((err) => console.error(err))
     }
 
     render() {
