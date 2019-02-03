@@ -112,7 +112,7 @@ img[class~="mobile"] {
         max-width: 500px;
         padding: 1em;
         grid-template-columns: 2fr 1fr;
-        grid-template-rows: 3fr 1fr 1fr;
+        /* grid-template-rows: 3fr 1fr 1fr; */
     }
 
     .grid .hero .Alex {

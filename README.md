@@ -1,5 +1,5 @@
 # XTACY Website
-### v0.1.0 Beta
+### v0.1.2 Beta
 
 ### How to Run
 1. Install Node (from nodejs.org).
@@ -41,7 +41,7 @@ Add the following lines there
 One line for each subdomain being used. Save the file and go to http://xtacy.org:3000
 
 ## File Types
-### ALL IMAGE FILES IN PNG, NO EXCEPTIONS
+ALL IMAGE FILES IN PNG, NO EXCEPTIONS
 
 ## Events
 ### How to add an event
@@ -62,18 +62,16 @@ Follow the steps and test the event before publishing
    - The file must be an HTML file
    - *Promo* files should not contain any action elements
 
-3. Add the event to the events page as a banner and the link to "#eventId" where event ID is the event's ID
-4. A developer must be consulted before publishing an event
-5. Commit, push and send a pull request.
+3. Add the event to the events page as a banner and set the href to "#eventId" where eventId is the event's ID
+4. Add a sheet to the registrations spreadsheet with the sheet name equal to the event ID in ALL CAPS
+5. A developer must be consulted before publishing an event
+6. Commit, push and send a pull request.
    
 
 ## Security
 #### CSRF Tokens
-We are using Express Handlebars here. If you dont know what that is, please read about it. It's basically a very very basic version of React.
-Now, every page is programmed to generate a CSRF key-token pair and this key-token pair is sent to the database. Then the server is told that
-this action has been performed and the server **validates** the tokens sent by the webpage against those in the DB. If they match, the user is
-allowed to continue. If not, they are given a warning about this.
-
-Every page is programmed to send the tokens (stored in Local Storage) for verification when it opens.
+Every time a page is opened it sends a GET request to the server, which programmed to generate a CSRF key-token pair and this key-token pair 
+is sent to the database. Every time a POST request is made, this key token pair should be sent along with it. The server **validates** the tokens 
+sent by the webpage against those in the DB. If they match, the user is allowed to continue. If not, a 403 (Forbidden) response is sent.
 
 Also, there are a few extra "fake" tokens generated to prevent an attacker from immidiately seeing which values are the CSRF tokens.

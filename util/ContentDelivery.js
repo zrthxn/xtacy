@@ -50,7 +50,7 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
         files = sortFileArrayById (files, 0, files.length-1)
         lookup.files = files
 
-        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 4))
+        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
         fs.writeFileSync('./cdn/' + filepath + '/' + filename, file)
 
         resolve(genFileRef)
@@ -148,7 +148,7 @@ function generateFileRef() {
     for (let i=0; i<k; i++)
         flRef = '0' + flRef
 
-    fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 4))
+    fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 2))
     fileRef =  dateDesgn + flRef
 
     return fileRef

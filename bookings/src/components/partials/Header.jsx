@@ -23,7 +23,7 @@ class Header extends Component {
                                 <li><a href="/about">about</a></li>
                                 <li><a href="/events">events</a></li>
                                 <li><a href="/contact">contact</a></li>
-                                <li><a href="/register">register</a></li>
+                                <li><a href="/signup">register</a></li>
                             </ul>
                         </nav>
                         <div className="accent"></div>
@@ -36,7 +36,7 @@ class Header extends Component {
                             <li><a href="/about">about</a></li>
                             <li><a href="/events">events</a></li>
                             <li><a href="/contact">contact</a></li>
-                            <li className="highlight"><a href="/register" className="highlight">register</a></li>
+                            <li className="highlight"><a href="/signup" className="highlight">register</a></li>
                         </ul>
                     </nav>
                 </div>

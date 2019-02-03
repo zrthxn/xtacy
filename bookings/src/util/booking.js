@@ -14,7 +14,7 @@ exports.generalRegister = (data, hash) => {
 
     return new Promise((resolve,reject)=>{
         const genReq = new XMLHttpRequest();
-        genReq.open('POST', 'https://xtacy.org/_register/gen/', true);
+        genReq.open('POST', '/_register/gen/', true);
         genReq.setRequestHeader('Content-Type', 'application/json');
         genReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
@@ -41,7 +41,7 @@ exports.competeRegister = (data, hash) => {
 
     return new Promise((resolve,reject)=>{
         const comReq = new XMLHttpRequest();
-        comReq.open('POST', 'https://xtacy.org/_register/com/', true);
+        comReq.open('POST', '/_register/com/', true);
         comReq.setRequestHeader('Content-Type', 'application/json');
         comReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
@@ -68,7 +68,7 @@ exports.ticketRegister = (data, hash) => {
 
     return new Promise((resolve,reject)=>{
         const ticReq = new XMLHttpRequest();
-        ticReq.open('POST', 'https://xtacy.org/_register/tic/', true);
+        ticReq.open('POST', '/_register/tic/', true);
         ticReq.setRequestHeader('Content-Type', 'application/json');
         ticReq.send(JSON.stringify({ "data": data, "csrf": csrf, "checksum": hash }));
 
@@ -92,7 +92,7 @@ exports.ticketRegister = (data, hash) => {
 exports.getEventData = (eventId) => {
     return new Promise((resolve,reject)=>{
         const eventReq = new XMLHttpRequest();
-        eventReq.open('GET', 'https://xtacy.org/register/_eventData/' + eventId + '/', true);
+        eventReq.open('GET', '/register/_eventData/' + eventId + '/', true);
         eventReq.send();
         eventReq.onreadystatechange = () => {
             if(eventReq.readyState===4 && eventReq.status===200) {

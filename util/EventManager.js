@@ -230,7 +230,7 @@ function generateRegistrationID(__eventId, nH) {
     regId = desgn + day + month + nH + regRef
 
     registry.registrationRefNumber = '0x' + regRef
-    fs.writeFileSync('./eventRegistry/eventLookup.json', JSON.stringify(registry, null, 4))
+    fs.writeFileSync('./eventRegistry/eventLookup.json', JSON.stringify(registry, null, 2))
 
     return regId
 }
