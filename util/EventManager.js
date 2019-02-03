@@ -263,7 +263,7 @@ function generateRegistrationID(__eventId, nH) {
 
 function generateHashedBarcode(rgn, type) {
     return new Promise((resolve,reject)=>{
-        text = rgn + crypto.createHash('md5').update(rgn).digest('hex')
+        text = rgn + crypto.createHash('md5').update(rgn).digest('hex').toUpperCase()
         barcodeGenerator.toBuffer({ bcid: type, text: text }, (err, barcode) => {
             if (err) reject(err)
             else {
