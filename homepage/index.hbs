@@ -10,7 +10,7 @@
 <section class="grid">
     {{!-- Front Page - Above Fold --}}
     <div class="hero">
-        <div class="embelishments">
+        <div class="embelishments" id="embelishments">
             <div class="particles" id="particles" data-parallaxify-range-x="50" data-parallaxify-range-y="50"></div>
             <div id="moon" data-parallaxify-range-x="150" data-parallaxify-range-y="150">
                 <img src="/static/img/Moon.png" alt="moon">
@@ -128,6 +128,14 @@
 {{> footer }}
 
 <script>
+    particlesJS.load('particles', '/static/js/particleConfig.json', ()=>{});
+</script>
+
+<script>
+    $.parallaxify(parallaxConfig);
+</script>
+
+<script>
     var slides = [
         document.getElementById("sl-1"),
         document.getElementById("sl-2"),
@@ -146,12 +154,22 @@
             nextSlide();
         }, 5000);
     })()
-</script>
 
-<script>
-    particlesJS.load('particles', '/static/js/particleConfig.json', ()=>{});
-</script>
-
-<script>
-    $.parallaxify(parallaxConfig);
+    window.onscroll = () => {
+        // Disable parallax when the div is out of view
+        // This will save processing power on mobile phones
+        var { bottom } = document.getElementById("embelishments").getBoundingClientRect();
+        if (bottom >= 0) {
+            parallaxConfig.horizontalParallax = true;
+            parallaxConfig.verticalParallax = true;
+            $.parallaxify(parallaxConfig);
+            console.log('In the viewport!');
+        } else {
+            parallaxConfig.horizontalParallax = false;
+            parallaxConfig.verticalParallax = false;
+            $.parallaxify(parallaxConfig);
+            console.log('Not in the viewport... whomp whomp');
+        }
+        // Currently not working
+    }
 </script>
