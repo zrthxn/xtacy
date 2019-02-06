@@ -292,51 +292,51 @@ homepage.post('/_register/:type/', (req,res)=>{
 });
 
 homepage.post('/_payment/authorize/', (req,res)=>{
-    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-        .then((csrfRes)=>{
-            if(csrfRes) {
-                let hashSequence = JSON.stringify(req.body.data)
-                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
-                if ( req.body.checksum === hmac ) {
-                    Payments.authorizeNewPayment({
-                        amount: req.body.data.amount,
-                        payer: req.body.data.payer,
-                        eventData: req.body.data.eventData
-                    }).then((payment)=>{
-                        if(payment.success) 
-                            res.json(payment)
-                    }).catch((err)=>{
-                        res.status(500).send(err)
-                    })
-                } else 
-                    throw "HASH_INVALID"
-            } else
-                throw "CSRF_INVALID"
-        }).catch((err)=>{
-            res.status(403).send(err)
-        })
+    // Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+    //     .then((csrfRes)=>{
+    //         if(csrfRes) {
+    //             let hashSequence = JSON.stringify(req.body.data)
+    //             let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+    //             if ( req.body.checksum === hmac ) {
+    //                 Payments.authorizeNewPayment({
+    //                     amount: req.body.data.amount,
+    //                     payer: req.body.data.payer,
+    //                     eventData: req.body.data.eventData
+    //                 }).then((payment)=>{
+    //                     if(payment.success) 
+    //                         res.json(payment)
+    //                 }).catch((err)=>{
+    //                     res.status(500).send(err)
+    //                 })
+    //             } else 
+    //                 throw "HASH_INVALID"
+    //         } else
+    //             throw "CSRF_INVALID"
+    //     }).catch((err)=>{
+    //         res.status(403).send(err)
+    //     })
 });
 
 homepage.post('/_payment/execute/', (req,res)=>{
-    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-        .then((csrfRes)=>{
-            if(csrfRes) {
-                let hashSequence = JSON.stringify(req.body.data)
-                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
-                if ( req.body.checksum === hmac ) {
-                    Payments.executePayment(req.body.data).then((payment)=>{
-                        if(payment.success) 
-                            res.json(payment)
-                    }).catch((err)=>{
-                        res.status(500).send(err)
-                    })
-                } else 
-                    throw "HASH_INVALID"
-            } else
-                throw "CSRF_INVALID"
-        }).catch((err)=>{
-            res.status(500).send(err)
-        })
+    // Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+    //     .then((csrfRes)=>{
+    //         if(csrfRes) {
+    //             let hashSequence = JSON.stringify(req.body.data)
+    //             let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+    //             if ( req.body.checksum === hmac ) {
+    //                 Payments.executePayment(req.body.data).then((payment)=>{
+    //                     if(payment.success) 
+    //                         res.json(payment)
+    //                 }).catch((err)=>{
+    //                     res.status(500).send(err)
+    //                 })
+    //             } else 
+    //                 throw "HASH_INVALID"
+    //         } else
+    //             throw "CSRF_INVALID"
+    //     }).catch((err)=>{
+    //         res.status(500).send(err)
+    //     })
 });
 
 // CONTENT DELIVERY NETWORK --------------------------------------- CDN
