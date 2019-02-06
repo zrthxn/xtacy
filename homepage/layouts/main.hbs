@@ -109,11 +109,11 @@
                 useGyroscope: true,
                 
                 // use a Low Pass Filter to smooth sensor readings (1 = no filter)
-                alphaFilter: 0.9,
+                alphaFilter: 0.75,
                 
                 // set which motion type algorithm is to be used
                 // options include 'natural', 'linear', 'gaussian', or 'performance'
-                motionType: 'natural',
+                motionType: 'performance',
                 mouseMotionType: 'gaussian',
                 
                 // define which sensor input has priority over the other
@@ -122,8 +122,8 @@
                 
                 // define the delta angle (0 < motionAngle < 90) 
                 // that is used to render max parallax in this direction
-                motionAngleX: 30,
-                motionAngleY: 30,
+                motionAngleX: 60,
+                motionAngleY: 60,
                 
                 // enable of adjustment of base position (using a Low Pass Filter)
                 // (adapting to device usage while plugin is running)
