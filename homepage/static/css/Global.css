@@ -16,6 +16,7 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     animation: body 750ms ease;
 } @keyframes body {
     from { opacity: 0 }

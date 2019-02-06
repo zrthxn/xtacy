@@ -41,6 +41,7 @@ img[class~="mobile"] {
     margin: auto;
     padding: 1em 5em;
     display: grid;
+    z-index: 100;
     grid-template-columns: 1fr 3fr 2fr;
     grid-template-rows: 3fr 1fr 1fr 1fr;
 } 
@@ -49,7 +50,7 @@ img[class~="mobile"] {
     grid-column: 2/3;
     grid-row: 1/5;
 
-    z-index: 0;
+    z-index: 100;
     position: relative;
     height: 100%;
     width: 65%;
@@ -134,9 +135,9 @@ img[class~="mobile"] {
         grid-row: 4/5;
 
         text-align: left;
-    } .grid .hero .Info {
+        max-width: 75%;
         font-size: 0.7em;
-        margin-left: 4em;
+        margin-left: 0;
         margin-right: 2em;
     }
 
@@ -158,13 +159,14 @@ img[class~="mobile"] {
     max-height: 85vh;
     margin: auto;
     padding: 1em 5em;
+    z-index: 1100;
     display: flex;
     flex-direction: row;
 } 
 
 .nogrid .hero .Alex {
     z-index: 0;
-    position: relative;
+    position: relat100;
     height: 100%;
     width: 25%;
     margin: auto;
@@ -272,16 +274,37 @@ img[class~="mobile"] {
         display: block;
     }
 }
+
 .embelishments {
+    position: absolute;
+    /* width: 100%; */
+    height: 100%;
+    left: -1em;
+    right: -1em;
+    overflow: hidden;
+    background-color: #fff;
+}
+.particles {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #fff;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: 50% 50%;
 }
-
+#moon {
+    position: absolute;
+    right: 1em;
+    top: 7.5em;
+    width: 350px;
+    z-index: 50;
+} #moon img {
+    width: 100%;
+    height: 100%;
+} @media(max-width: 600px) {
+    #moon {
+        right: 1em;
+        top: 6em;
+        width: 200px;
+    }
+}
 /* ============================================== */
 
 .about {

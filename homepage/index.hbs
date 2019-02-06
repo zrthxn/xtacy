@@ -1,9 +1,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Homepage.css">
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/Events.css">
 <script src="/static/js/particles.min.js"></script>
-<script>
-    particlesJS.load('embelishments', '/static/js/particleConfig.json', ()=>{});
-</script>
+<script src="/static/js/jquery.parallaxify.min.js"></script>
 {{!------ ==== PAGE ==== ------}}
 
 {{> header }}
@@ -12,23 +10,28 @@
 <section class="grid">
     {{!-- Front Page - Above Fold --}}
     <div class="hero">
-        <div class="embelishments" id="embelishments">
-            {{!-- Position Absolute Embelishments --}}
-        </div>
-
+        <div class="embelishments">
+            <div class="particles" id="particles" data-parallaxify-range-x="50" data-parallaxify-range-y="50"></div>
+            <div id="moon" data-parallaxify-range-x="150" data-parallaxify-range-y="150">
+                <img src="/static/img/Moon.png" alt="moon">
+            </div>
+        </div>        
+        
         <div class="Dates">
             <h3>25<span class="noLeading">----</span>27</h3>
             <h3>March</h3>
         </div>
 
-        <div class="Alex">
+        <div class="Alex" 
+        data-parallaxify-range-x="25" 
+        data-parallaxify-range-y="25">
             <img src="/static/img/AlexM.png" class="mobile" alt="alex">
             <img src="/static/img/AlexD.png" class="desktop" alt="alex">
         </div>
         
         <h1 class="Title">xtacy</h1>  
         <div class="Info">
-            <p>The annual techno-cultural extravaganza organized by 
+            <p>The annual techno-cultural extravaganza organized by the 
                 Faculty of Engineering and Technology, Jamia Millia Islamia</p>
         </div>
     </div>    
@@ -55,7 +58,7 @@
             </div>
  
             <div class="Info">
-                <p>The annual techno-cultural roller coaster festival organized by 
+                <p>The annual techno-cultural roller coaster festival organized by the 
                     Faculty of Engineering and Technology, Jamia Millia Islamia</p>
             </div>
         </div>        
@@ -142,4 +145,12 @@
             nextSlide();
         }, 5000);
     })()
+</script>
+
+<script>
+    particlesJS.load('particles', '/static/js/particleConfig.json', ()=>{});
+</script>
+
+<script>
+    $.parallaxify(parallaxConfig);
 </script>
