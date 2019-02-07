@@ -300,9 +300,10 @@ img[class~="mobile"] {
     height: 100%;
 } @media(max-width: 600px) {
     #moon {
-        right: -7.5em;
+        display: none;
+        /* right: -7.5em;
         top: 15em;
-        width: 200px;
+        width: 200px; */
     }
 }
 /* ============================================== */
