@@ -15,7 +15,7 @@
             <div id="moon" data-parallaxify-range="150">
                 <img src="/static/img/Moon.png" alt="moon">
             </div>
-        </div>        
+        </div>
         
         <div class="Dates">
             <h3>25<span class="noKerning">----</span>27</h3>
@@ -152,21 +152,21 @@
         }, 5000);
     })()    
 
-    window.addEventListener("scroll", ()=>{
-        // Disable parallax when the div is out of view
-        // This will save processing power on mobile phones
-        var { bottom } = document.getElementById("embelishments").getBoundingClientRect();
-        if (bottom >= 0) {
-            document.getElementById("moon").setAttribute("data-parallaxify-range", "100");
-            document.getElementById("Alex").setAttribute("data-parallaxify-range", "100");
-            document.getElementById("particles").setAttribute("data-parallaxify-range", "100");
-            console.log('In the viewport!');
-        } else {
-            document.getElementById("moon").setAttribute("data-parallaxify-range", "0");
-            document.getElementById("Alex").setAttribute("data-parallaxify-range", "0");
-            document.getElementById("particles").setAttribute("data-parallaxify-range", "0");
-            console.log('Not in the viewport... whomp whomp');
-        }
-        // Currently not working
-    });
+    // window.addEventListener("scroll", ()=>{
+    //     // Disable parallax when the div is out of view
+    //     // This will save processing power on mobile phones
+    //     var { bottom } = document.getElementById("embelishments").getBoundingClientRect();
+    //     if (bottom >= 0) {
+    //         document.getElementById("moon").setAttribute("data-parallaxify-range", "100");
+    //         document.getElementById("Alex").setAttribute("data-parallaxify-range", "100");
+    //         document.getElementById("particles").setAttribute("data-parallaxify-range", "100");
+    //         console.log('In the viewport!');
+    //     } else {
+    //         document.getElementById("moon").setAttribute("data-parallaxify-range", "0");
+    //         document.getElementById("Alex").setAttribute("data-parallaxify-range", "0");
+    //         document.getElementById("particles").setAttribute("data-parallaxify-range", "0");
+    //         console.log('Not in the viewport... whomp whomp');
+    //     }
+    //     // Currently not working
+    // });
 </script>
