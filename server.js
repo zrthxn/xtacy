@@ -104,6 +104,9 @@ homepage.get('/sponsors', (req,res)=>{
 homepage.get('/terms', (req,res)=>{
     res.render('terms', { 'title' : 'Terms' })
 });
+homepage.get('/reach', (req,res)=>{
+    res.render('reach', { 'title' : 'How to Reach' })
+});
 
 homepage.get('/event/:eventId/', (req,res)=>{
     EventManager.findEventById(req.params.eventId)
