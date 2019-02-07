@@ -11,25 +11,23 @@
     {{!-- Front Page - Above Fold --}}
     <div class="hero">
         <div class="embelishments" id="embelishments">
-            <div class="particles" id="particles" data-parallaxify-range-x="50" data-parallaxify-range-y="50"></div>
-            <div id="moon" data-parallaxify-range-x="150" data-parallaxify-range-y="150">
+            <div class="particles" id="particles" data-parallaxify-range="50"></div>
+            <div id="moon" data-parallaxify-range="150">
                 <img src="/static/img/Moon.png" alt="moon">
             </div>
-        </div>        
+        </div>
         
         <div class="Dates">
-            <h3>25<span class="noLeading">----</span>27</h3>
+            <h3>25<span class="noKerning">----</span>27</h3>
             <h3>March</h3>
         </div>
 
-        <div class="Alex" 
-        data-parallaxify-range-x="25" 
-        data-parallaxify-range-y="25">
+        <div class="Alex" id="Alex" data-parallaxify-range="0">
             <img src="/static/img/AlexM.png" class="mobile" alt="alex">
             <img src="/static/img/AlexD.png" class="desktop" alt="alex">
         </div>
         
-        <h1 class="Title">xtacy</h1>  
+        <h1 class="Title">xtacy</h1>
         <div class="Info">
             <p>The annual techno-cultural extravaganza organized by the 
                 Faculty of Engineering and Technology, Jamia Millia Islamia</p>
@@ -100,12 +98,7 @@
     {{!-- Slideshow of Title and Co-Sponsors --}}
     <div class="sponsors">
         <marquee behavior="scrolling" direction="left">
-            <img src="/static/img/JMI Logo.png">
-            <img src="/static/img/JMI Logo.png">
-            <img src="/static/img/JMI Logo.png">
-            <img src="/static/img/JMI Logo.png">
-            <img src="/static/img/JMI Logo.png">
-            <img src="/static/img/JMI Logo.png">
+            <img src="/static/img/sponsors/collaborators.png">
         </marquee>
     </div>
 </section>
@@ -135,7 +128,11 @@
 </script>
 
 <script>
-    $.parallaxify(parallaxConfig);
+    window.addEventListener("load", () => {
+        if(window.innerWidth <= 600)
+            document.getElementById("Alex").setAttribute("data-parallaxify-range", "100");
+        $.parallaxify(parallaxConfig);
+    });
 </script>
 
 <script>
@@ -156,23 +153,23 @@
             slides[i].style = 'display: flex';
             nextSlide();
         }, 5000);
-    })()
+    })()    
 
-    window.onscroll = () => {
-        // Disable parallax when the div is out of view
-        // This will save processing power on mobile phones
-        var { bottom } = document.getElementById("embelishments").getBoundingClientRect();
-        if (bottom >= 0) {
-            parallaxConfig.horizontalParallax = true;
-            parallaxConfig.verticalParallax = true;
-            $.parallaxify(parallaxConfig);
-            console.log('In the viewport!');
-        } else {
-            parallaxConfig.horizontalParallax = false;
-            parallaxConfig.verticalParallax = false;
-            $.parallaxify(parallaxConfig);
-            console.log('Not in the viewport... whomp whomp');
-        }
-        // Currently not working
-    }
+    // window.addEventListener("scroll", ()=>{
+    //     // Disable parallax when the div is out of view
+    //     // This will save processing power on mobile phones
+    //     var { bottom } = document.getElementById("embelishments").getBoundingClientRect();
+    //     if (bottom >= 0) {
+    //         document.getElementById("moon").setAttribute("data-parallaxify-range", "100");
+    //         document.getElementById("Alex").setAttribute("data-parallaxify-range", "100");
+    //         document.getElementById("particles").setAttribute("data-parallaxify-range", "100");
+    //         console.log('In the viewport!');
+    //     } else {
+    //         document.getElementById("moon").setAttribute("data-parallaxify-range", "0");
+    //         document.getElementById("Alex").setAttribute("data-parallaxify-range", "0");
+    //         document.getElementById("particles").setAttribute("data-parallaxify-range", "0");
+    //         console.log('Not in the viewport... whomp whomp');
+    //     }
+    //     // Currently not working
+    // });
 </script>
