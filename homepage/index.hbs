@@ -11,6 +11,7 @@
     {{!-- Front Page - Above Fold --}}
     <div class="hero">
         <div class="embelishments" id="embelishments">
+            <div id="invert-filter"></div>
             <div class="particles" id="particles" data-parallaxify-range="50"></div>
             <div id="moon" data-parallaxify-range="150">
                 <img src="/static/img/Moon.png" alt="moon">
@@ -22,7 +23,7 @@
             <h3>March</h3>
         </div>
 
-        <div class="Alex" id="Alex" data-parallaxify-range="0">
+        <div class="Alex" id="Alex">
             <img src="/static/img/AlexM.png" class="mobile" alt="alex">
             <img src="/static/img/AlexD.png" class="desktop" alt="alex">
         </div>
@@ -125,11 +126,7 @@
 </script>
 
 <script>
-    window.addEventListener("load", () => {
-        if(window.innerWidth <= 600)
-            document.getElementById("Alex").setAttribute("data-parallaxify-range", "100");
-        $.parallaxify(parallaxConfig);
-    });
+    $.parallaxify(parallaxConfig);
 </script>
 
 <script>
@@ -150,7 +147,17 @@
             slides[i].style = 'display: flex';
             nextSlide();
         }, 5000);
-    })()    
+    })()
+
+    // var j = 0;
+    // (function invert() {
+    //     setTimeout(function(){
+    //         document.getElementById("Alex").style = "filter: invert(" + j + "%);";
+    //         if(j===100) j = 0;
+    //         else j++;
+    //         invert();
+    //     }, 100)
+    // })()
 
     // window.addEventListener("scroll", ()=>{
     //     // Disable parallax when the div is out of view
