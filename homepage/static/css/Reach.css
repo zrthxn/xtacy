@@ -1,0 +1,31 @@
+.map > *{
+    margin-left:auto;
+    margin-right:auto;
+}
+#map-desktop{
+    width :70%;
+    height:700px;
+}
+#map-mobile{
+    width: 90%;
+    height:400px;
+}
+@media (max-width: 800px)
+{
+    #map-desktop{
+        display:none;
+    }
+    #map-mobile{
+        display:block;
+    }
+}
+
+@media (min-width: 800px)
+{
+    #map-desktop{
+        display:block;
+    }
+    #map-mobile{
+        display:none;
+    }
+}

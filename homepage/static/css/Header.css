@@ -217,6 +217,8 @@ header ul li a {
 }
 
 .logo .logo-text {
+    text-decoration: none;
+    color:#000;
     font-size: 24px;
     font-weight: 500;
     margin: 0 0;
