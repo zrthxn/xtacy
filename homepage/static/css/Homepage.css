@@ -372,18 +372,14 @@ img[class~="mobile"] {
     width: 8em;
     margin: 2em 4em;
 }
-/* ---- MAP ---- */
-.map > *{
-    margin-left:auto;
-    margin-right:auto;
+
+/* ---- Google Map ---- */
+.map-container {
+    padding: 0;
+} .map {
+    margin-bottom: 0;
 }
-@media (min-width:800px)
-{
-    #map-mobile{display:none;}
-    #map-desktop{display:block;}
-}
-@media (max-width:800px)
-{
-    #map-mobile{display:block;}
-    #map-desktop{display:none;}
+.map iframe{
+    border: none;
+    width: 100%;
 }
