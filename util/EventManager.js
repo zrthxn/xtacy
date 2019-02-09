@@ -62,7 +62,7 @@ exports.competeRegister = (data, txn) => {
     var rgnId = generateRegistrationID(data.eventId, data.members.length)
 
     return new Promise((resolve,reject)=>{
-        let teamLeader = data.regTeamLeader===null ? data.members[0].name : data.regTeamLeader
+        let teamLeader = data.regTeamLeader===undefined ? data.members[0].name : data.regTeamLeader
         
         if(txn === 'NON_PAID') txn = ServerConfig.clientKey
         validateTransaction(txn).then((r)=>{            
