@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const vhost = require('vhost');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 const request = require('request');
 const fileUpload = require('express-fileupload');
@@ -30,6 +31,7 @@ const ContentDelivery = require('./util/ContentDelivery');
 const EventManager = require('./util/EventManager');
 const Payments = require('./util/Payments');
 
+homepage.use(cookieParser(ServerConfig.clientKey, {}))
 homepage.use(bodyParser.json())
 homepage.use(bodyParser.urlencoded({ extended: true }))
 homepage.use(express.json())
@@ -54,6 +56,7 @@ homepage.engine('hbs', hbs({
 }))
 
 // Content Delivery ------------------ //
+cdn.use(cookieParser(ServerConfig.clientKey, {}))
 cdn.use(bodyParser.json())
 cdn.use(bodyParser.urlencoded({ extended: true }))
 cdn.use(express.json())
@@ -61,6 +64,7 @@ cdn.use(express.urlencoded({ extended: true }))
 cdn.use(fileUpload())
 
 // APIs ------------------------------ //
+api.use(cookieParser(ServerConfig.clientKey, {}))
 api.use(bodyParser.json())
 api.use(bodyParser.urlencoded({ extended: true }))
 api.use(express.json())
@@ -346,7 +350,28 @@ homepage.post('/_payment/execute/', (req,res)=>{
 // ====================================================================
 
 cdn.get('/', (req,res)=>{
-    res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
+    let _token = 'LOGIN_NOT_VALIDATED'
+    if(req.cookies['_x-key']!==undefined)
+        _token = crypto.createHmac('sha512', ServerConfig.clientKey).update(req.cookies['_x-key']).digest('hex')
+
+    if(req.cookies['_x-cdn']===_token)
+        res.sendFile( path.resolve(__dirname, 'cdn', 'cdn.html') )
+    else if(_token==='LOGIN_NOT_VALIDATED')
+        res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
+});
+
+cdn.get('/login', (req,res)=>{
+    res.sendFile( path.resolve(__dirname, 'cdn', 'login.html') )
+});
+
+cdn.post('/login', (req,res)=>{
+    let key = 'xcdn'
+    for(let i=0; i<12; i++)
+        key += Math.floor( Math.random() * 16 ).toString(16)
+    let token = crypto.createHmac('sha512', ServerConfig.clientKey).update(key).digest('hex')
+    res.cookie( '_x-key', key, { expires: new Date(Date.now() + 900000), httpOnly: true } )
+    res.cookie( '_x-cdn', token, { expires: new Date(Date.now() + 900000), httpOnly: true } )
+    res.redirect('/')
 });
 
 cdn.get('/p/:file/', (req,res)=>{

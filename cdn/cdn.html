@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MAIN PAGE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Global.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Header.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Footer.css">
+</head>
+<body>
+
+    <header>
+        <!-- Page Header -->
+        <div class="container">
+            <div class="logo">
+                <div class="logo-rotor">
+                    <div class="rotary"></div>
+                </div>
+                <p class="logo-text"><a href="/" class = "logo-text">xtacy</a></p>
+            </div>
+    
+            <input type="checkbox" id="sidebar-toggle" hidden="true">
+            <label for="sidebar-toggle" class="hamburger"><span></span></label>
+    
+            <!-- Mobile Navigation Sidebar -->
+            <div class="sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="/">home</a></li>
+                        <li><a href="/about">about</a></li>
+                        <li><a href="/events">events</a></li>
+                        <li><a href="/contact">contact</a></li>
+                        <li><a href="/signup">register</a></li>
+                    </ul>
+                </nav>
+                <div class="accent"></div>
+            </div>
+            <div class="sidebar-shadow" id="sidebar-shadow"></div>
+            
+            <!-- Desktop Navigation Menu -->
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="/">home</a></li>
+                    <li><a href="/about">about</a></li>
+                    <li><a href="/events">events</a></li>
+                    <li><a href="/contact">contact</a></li>
+                    <li class="highlight"><a href="/signup" class="highlight">register</a></li>
+                </ul>
+            </nav>
+        </div>
+    
+        <script>
+            document.getElementById("sidebar-shadow").onclick = () => {
+                document.getElementById("sidebar-toggle").checked = false;
+            }
+        </script>
+        <!-- End Page Header -->
+    </header>
+
+    <!-- ====  MAIN PAGE CONTENT  ==== -->
+
+    <section>
+        <div class="container">
+            <h2>File Upload</h2>
+            <!-- /u/:filepath/:filename/ -->
+            <form action="#" method="POST">
+                <input type="file" name="fileupload">
+            </form>
+        </div>
+    </section>
+
+    <!-- ====  END PAGE CONTENT  ==== -->
+
+    <footer>
+        <!-- Page Footer -->
+        <div class="base container">
+            <div class="collab">
+                <div>
+                    <span class="base-title">xtacy</span><br/>
+                    The annual techno-cultural extravaganza organized by Faculty of Engineering, Jamia Millia Islamia
+                </div>
+                <div class="collab-imgs">
+                    <img src="http://xtacy.org:3000/static/img/collaborators.png" alt=""/>
+                </div>
+            </div>
+            <p class="dev">Developed with <span role="img" aria-label="love">💛</span> by NAMAK</p>
+        </div>
+        <!-- End Page Footer -->
+    </footer>
+
+</body>
+</html>
