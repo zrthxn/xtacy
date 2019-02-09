@@ -3,6 +3,7 @@
  * Content Delivery Library
  */
 const fs = require('fs');
+const realtimeDb = require('./Database').database;
 
 exports.Lookup = (fileRef) => {
     var fileId = parseInt(fileRef, 36)
@@ -28,73 +29,73 @@ exports.Lookup = (fileRef) => {
 }
 
 exports.Upload = (file, filepath, metadata = {}) => {
-    var genFileRef = generateFileRef()
-    var genFileId = parseInt(genFileRef, 36)
     /**
      * @author zrthxn
      * The array called "files" in the lookup table file 
      * has to be sorted each time a new file is added
      */
     return new Promise((resolve,reject)=>{
-        let lookup = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
-        let files = lookup.files
+        loadLookupTable(function (lookup){
+            let files = lookup.files
+            var genFileRef = generateFileRef(lookup)
+            var genFileId = parseInt(genFileRef, 36)
+            var genFileName = generateFileName()
+            var extn = file.name.toString().split('.')
+            extn = extn[extn.length - 1]
+            genFileName += '.' + extn
 
-        var genFileName = generateFileName()
-        var extn = file.name.toString().split('.')
-        extn = extn[extn.length - 1]
-        genFileName += '.' + extn
-
-        files[ files.length ] = {
-            "fileRef": genFileRef,
-            "fileId": genFileId,
-            "filename": genFileName,
-            "originalName": file.name,
-            "contentType": file.mimetype,
-            "checksum": file.md5,
-            "filepath": filepath,
-            "metadata": metadata
-        }
-        
-        files = sortFileArrayById (files, 0, files.length-1)
-        lookup.files = files
-
-        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
-        fs.writeFile('./cdn/' + filepath + '/' + genFileName, file.data,(err)=>{
-            if(err) reject(err)
+            files[ files.length ] = {
+                "fileRef": genFileRef,
+                "fileId": genFileId,
+                "filename": genFileName,
+                "originalName": file.name,
+                "contentType": file.mimetype,
+                "checksum": file.md5,
+                "filepath": filepath,
+                "metadata": metadata
+            }
+            
+            files = sortFileArrayById (files, 0, files.length-1)
+            lookup.files = files
+            lookup.fileRefNumber++
+            realtimeDb.ref('/cdnLookup').set(lookup);
+            fs.writeFile('./cdn/' + filepath + '/' + genFileName, file.data,(err)=>{
+                if(err) reject(err)
             resolve(genFileRef)
+            })
         })
     })
 }
 
 exports.Create = (file, filename, filepath, contentType, metadata = {}) => {
-    var genFileRef = generateFileRef()
-    var genFileId = parseInt(genFileRef, 36)
     /**
      * @author zrthxn
      * The array called "files" in the lookup table file 
      * has to be sorted each time a new file is added
      */
     return new Promise((resolve,reject)=>{
-        let lookup = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
-        let files = lookup.files
-
-        files[ files.length ] = {
-            "fileRef": genFileRef,
-            "fileId": genFileId,
-            "filename": filename,
-            "contentType": contentType,
-            "checksum": file.md5,
-            "filepath": filepath,
-            "metadata": metadata
-        }
-        
-        files = sortFileArrayById (files, 0, files.length-1)
-        lookup.files = files
-
-        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
-        fs.writeFile('./cdn/' + filepath + '/' + filename, file,(err)=>{
-            if(err) reject(err)
+        loadLookupTable(function (lookup){
+            let files = lookup.files
+            var genFileRef = generateFileRef(lookup)
+            var genFileId = parseInt(genFileRef, 36)
+            files[ files.length ] = {
+                "fileRef": genFileRef,
+                "fileId": genFileId,
+                "filename": filename,
+                "contentType": contentType,
+                "checksum": file.md5,
+                "filepath": filepath,
+                "metadata": metadata
+            }
+            
+            files = sortFileArrayById (files, 0, files.length-1)
+            lookup.files = files
+            lookup.fileRefNumber++
+            realtimeDb.ref('/cdnLookup').set(lookup);
+            fs.writeFile('./cdn/' + filepath + '/' + filename, file,(err)=>{
+                if(err) reject(err)
             resolve(genFileRef)
+            })
         })
     })
 }
@@ -138,24 +139,20 @@ function findFileById(fArray, item, lo, hi){
     return -1
 }
 
-function generateFileRef() {
-    let fileRef = '', date = new Date()
-    let lookupTable = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
+function generateFileRef(lookupTable) {
+    var fileRef = '', date = new Date();
     lookupTable.fileRefNumber++
-    
+        
     let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
     let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString()
     let dateDesgn = parseInt(day + month).toString(36).substring(1), l = 2 - dateDesgn.length
     for (let i=0; i<l; i++)
         dateDesgn = '0' + dateDesgn
-
     let flRef = (lookupTable.fileRefNumber).toString(36), k = 2 - flRef.length
     for (let i=0; i<k; i++)
         flRef = '0' + flRef
-
-    fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookupTable, null, 2))
     fileRef =  dateDesgn + flRef
-
+    realtimeDb.ref('/cdnLookup').set(lookupTable);
     return fileRef
 }
 
@@ -164,4 +161,10 @@ function generateFileName() {
     for (let i=0; i<24; i++)
         fileName += Math.floor( Math.random()*36 ).toString(36)
     return fileName
+}
+
+function loadLookupTable(callback){
+    realtimeDb.ref('/cdnLookup').once('value').then(function (snapshot){
+        callback(snapshot.val());
+    })
 }

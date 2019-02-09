@@ -6,18 +6,20 @@ const ContentDelivery = require('./ContentDelivery');
 const Database = require('./Database').firestore;
 const crypto = require('crypto');
 const barcodeGenerator = require('bwip-js');
+const realtimeDb = require('./Database').database;
 
 exports.getEventData = (__eventId) => {
-    const eventLookup = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
     return new Promise((resolve,reject)=>{
-        var eventData = null
-        for(let event of eventLookup.events) {
-            if (event.eventId===__eventId) {
-                eventData = event
-                break
+        loadLookupTable(function(eventLookup){
+            var eventData = null
+            for(let event of eventLookup.events) {
+                if (event.eventId===__eventId) {
+                    eventData = event
+                    break
+                }
             }
-        }
-        resolve(eventData)
+            resolve(eventData)
+        })
     })
 }
 
@@ -149,66 +151,68 @@ exports.ticketRegister = (data, txn) => {
 }
 
 exports.findEventById = (__eventId) => {
-    const eventLookup = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
     return new Promise((resolve,reject)=>{
-        var eventData = null;
-        for(let event of eventLookup.events) {
-            if (event.eventId===__eventId) {
-                eventData = event;
-                break;
-            }
-        }
-        
-        if(eventData!=undefined) {
-            fs.readFile('./eventRegistry/content/' + eventData.eventId + '.html', (err, content)=> {
-                if (err) {
-                    console.log(err)
-                    reject({ errors : err })
-                } else {
-                    content = content.toString()
-                    resolve({
-                        success : true,
-                        title :  eventData.title,
-                        content : content,
-                        data: eventData
-                    })
+        loadLookupTable(function (eventLookup){
+            var eventData = null;
+            for(let event of eventLookup.events) {
+                if (event.eventId===__eventId) {
+                    eventData = event;
+                    break;
                 }
-            })
-        } else {
-            resolve({ success : false })
-        }
+            }
+            
+            if(eventData!=undefined) {
+                fs.readFile('./eventRegistry/content/' + eventData.eventId + '.html', (err, content)=> {
+                    if (err) {
+                        console.log(err)
+                        reject({ errors : err })
+                    } else {
+                        content = content.toString()
+                        resolve({
+                            success : true,
+                            title :  eventData.title,
+                            content : content,
+                            data: eventData
+                        })
+                    }
+                })
+            } else {
+                resolve({ success : false })
+            }
+        })
     })
 }
 
 exports.findEventPromoById = (__eventId) => {
-    const eventLookup = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
     return new Promise((resolve,reject)=>{
-        var eventData = null
-        for(let event of eventLookup.events) {
-            if (event.eventId===__eventId) {
-                eventData = event
-                break
-            }
-        }
-        
-        if(eventData!=undefined) {
-            fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.html', (err, content)=> {
-                if (err) {
-                    console.log(err)
-                    reject({ errors : err })
-                } else {
-                    content = content.toString()
-                    resolve({
-                        success : true,
-                        title :  eventData.title,
-                        content : content,
-                        data : eventData
-                    })
+        loadLookupTable(function(eventLookup){
+            var eventData = null
+            for(let event of eventLookup.events) {
+                if (event.eventId===__eventId) {
+                    eventData = event
+                    break
                 }
-            })
-        } else {
-            resolve({ success : false })
-        }
+            }
+            
+            if(eventData!=undefined) {
+                fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.html', (err, content)=> {
+                    if (err) {
+                        console.log(err)
+                        reject({ errors : err })
+                    } else {
+                        content = content.toString()
+                        resolve({
+                            success : true,
+                            title :  eventData.title,
+                            content : content,
+                            data : eventData
+                        })
+                    }
+                })
+            } else {
+                resolve({ success : false })
+            }
+        })
     })
 }
 
@@ -236,28 +240,28 @@ function generateRegistrationID(__eventId, nH) {
     let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
     let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString() 
 
-    let registry = JSON.parse(fs.readFileSync('./eventRegistry/eventLookup.json').toString())
-    if(__eventId==='gen')
-        desgn = 'GENR3E'
-    else
-        for (const event of registry.events) {
-            if (event.eventId===__eventId) {
-                desgn = event.eventId.toUpperCase()
-                break
+    loadLookupTable(function (registry){
+        if(__eventId==='gen')
+            desgn = 'GENR3E'
+        else
+            for (const event of registry.events) {
+                if (event.eventId===__eventId) {
+                    desgn = event.eventId.toUpperCase()
+                    break
+                }
             }
-        }
-    
-    let regRef = (parseInt(registry.registrationRefNumber) + 1).toString(16).toUpperCase(), k = 4 - regRef.length
-    for (let i=0; i<k; i++)
-        regRef = '0' + regRef
+        
+        let regRef = (parseInt(registry.registrationRefNumber) + 1).toString(16).toUpperCase(), k = 4 - regRef.length
+        for (let i=0; i<k; i++)
+            regRef = '0' + regRef
 
-    nH = (nH>=10) ? nH.toString() : '0' + nH.toString()
+        nH = (nH>=10) ? nH.toString() : '0' + nH.toString()
 
-    regId = desgn + day + month + nH + regRef
+        regId = desgn + day + month + nH + regRef
 
-    registry.registrationRefNumber = '0x' + regRef
-    fs.writeFileSync('./eventRegistry/eventLookup.json', JSON.stringify(registry, null, 2))
-
+        registry.registrationRefNumber = '0x' + regRef
+        realtimeDb.ref('/eventLookup').set(registry);
+    })
     return regId
 }
 
@@ -277,4 +281,10 @@ function generateHashedBarcode(rgn, type) {
             }
         })
     })    
+}
+
+function loadLookupTable(callback){
+    realtimeDb.ref('/eventLookup').once('value').then(function(snapshot){
+        callback(snapshot.val());
+    })
 }
