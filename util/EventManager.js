@@ -267,7 +267,7 @@ function generateHashedBarcode(rgn, type) {
         barcodeGenerator.toBuffer({ bcid: type, text: text }, (err, barcode) => {
             if (err) reject(err)
             else {
-                ContentDelivery.Upload(barcode, rgn + '.png', 'root/registrations/barcodes', 'image/png', {
+                ContentDelivery.Create(barcode, rgn + '.png', 'root/registrations/barcodes', 'image/png', {
                     "unixTime": (new Date()).getTime(),
                     "rgn": rgn
                 }).then((ref)=>{

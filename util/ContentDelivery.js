@@ -66,6 +66,39 @@ exports.Upload = (file, filepath, metadata = {}) => {
     })
 }
 
+exports.Create = (file, filename, filepath, contentType, metadata = {}) => {
+    var genFileRef = generateFileRef()
+    var genFileId = parseInt(genFileRef, 36)
+    /**
+     * @author zrthxn
+     * The array called "files" in the lookup table file 
+     * has to be sorted each time a new file is added
+     */
+    return new Promise((resolve,reject)=>{
+        let lookup = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
+        let files = lookup.files
+
+        files[ files.length ] = {
+            "fileRef": genFileRef,
+            "fileId": genFileId,
+            "filename": filename,
+            "contentType": contentType,
+            "checksum": file.md5,
+            "filepath": filepath,
+            "metadata": metadata
+        }
+        
+        files = sortFileArrayById (files, 0, files.length-1)
+        lookup.files = files
+
+        fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
+        fs.writeFile('./cdn/' + filepath + '/' + genFileName, file.data,(err)=>{
+            if(err) reject(err)
+            resolve(genFileRef)
+        })
+    })
+}
+
 function sortFileArrayById (files, low, high){
     // Quick Sort Algorithm with pivot at end
     if (low < high) { 
