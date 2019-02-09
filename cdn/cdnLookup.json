@@ -14,19 +14,8 @@
     }
   ],
   "writeLock": false,
-  "fileRefNumber": 8,
+  "fileRefNumber": 7,
   "files": [
-    {
-      "fileRef": "0208",
-      "fileId": 2600,
-      "filename": "NERDWD0902020001.png",
-      "contentType": "image/png",
-      "filepath": "root/registrations/barcodes",
-      "metadata": {
-        "unixTime": 1549735832412,
-        "rgn": "NERDWD0902020001"
-      }
-    },
     {
       "fileRef": "0t01",
       "fileId": 37585,
