@@ -92,7 +92,7 @@ exports.Create = (file, filename, filepath, contentType, metadata = {}) => {
         lookup.files = files
 
         fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
-        fs.writeFile('./cdn/' + filepath + '/' + filename, file.data,(err)=>{
+        fs.writeFile('./cdn/' + filepath + '/' + filename, file,(err)=>{
             if(err) reject(err)
             resolve(genFileRef)
         })
