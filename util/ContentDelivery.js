@@ -27,9 +27,8 @@ exports.Lookup = (fileRef) => {
     })
 }
 
-exports.Upload = (file, filepath, contentType, metadata) => {
+exports.Upload = (file, filepath, metadata = {}) => {
     var genFileRef = generateFileRef()
-    var genFileName = generateFileName()
     var genFileId = parseInt(genFileRef, 36)
     /**
      * @author zrthxn
@@ -39,9 +38,15 @@ exports.Upload = (file, filepath, contentType, metadata) => {
     return new Promise((resolve,reject)=>{
         let lookup = JSON.parse(fs.readFileSync('./cdn/cdnLookup.json').toString())
         let files = lookup.files
+
+        var genFileName = generateFileName()
+        var extn = file.name.toString().split('.')
+        extn = extn[extn.length - 1]
+        genFileName += '.' + extn
+
         files[ files.length ] = {
             "fileRef": genFileRef,
-            "fileId": genFileRef,
+            "fileId": genFileId,
             "filename": genFileName,
             "originalName": file.name,
             "contentType": file.mimetype,
@@ -54,11 +59,8 @@ exports.Upload = (file, filepath, contentType, metadata) => {
         lookup.files = files
 
         fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
-        let extn = (file.filename).split('.')
-        extn = '.' + extn[extn.length-1]
-        
-        file.mv('./cdn/' + filepath + '/' + genFileName + etxn, (err)=>{
-            if (err) reject()
+        fs.writeFile('./cdn/' + filepath + '/' + genFileName, file.data,(err)=>{
+            if(err) reject(err)
             resolve(genFileRef)
         })
     })
@@ -101,43 +103,6 @@ function findFileById(fArray, item, lo, hi){
         return findFileById(fArray, item, lo, mid - 1)
     }
     return -1
-}
-
-function findContentType() {
-    // Extension MIME Type
-    // .doc      application/msword
-    // .dot      application/msword
-
-    // .docx     application/vnd.openxmlformats-officedocument.wordprocessingml.document
-    // .dotx     application/vnd.openxmlformats-officedocument.wordprocessingml.template
-    // .docm     application/vnd.ms-word.document.macroEnabled.12
-    // .dotm     application/vnd.ms-word.template.macroEnabled.12
-
-    // .xls      application/vnd.ms-excel
-    // .xlt      application/vnd.ms-excel
-    // .xla      application/vnd.ms-excel
-
-    // .xlsx     application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-    // .xltx     application/vnd.openxmlformats-officedocument.spreadsheetml.template
-    // .xlsm     application/vnd.ms-excel.sheet.macroEnabled.12
-    // .xltm     application/vnd.ms-excel.template.macroEnabled.12
-    // .xlam     application/vnd.ms-excel.addin.macroEnabled.12
-    // .xlsb     application/vnd.ms-excel.sheet.binary.macroEnabled.12
-
-    // .ppt      application/vnd.ms-powerpoint
-    // .pot      application/vnd.ms-powerpoint
-    // .pps      application/vnd.ms-powerpoint
-    // .ppa      application/vnd.ms-powerpoint
-
-    // .pptx     application/vnd.openxmlformats-officedocument.presentationml.presentation
-    // .potx     application/vnd.openxmlformats-officedocument.presentationml.template
-    // .ppsx     application/vnd.openxmlformats-officedocument.presentationml.slideshow
-    // .ppam     application/vnd.ms-powerpoint.addin.macroEnabled.12
-    // .pptm     application/vnd.ms-powerpoint.presentation.macroEnabled.12
-    // .potm     application/vnd.ms-powerpoint.template.macroEnabled.12
-    // .ppsm     application/vnd.ms-powerpoint.slideshow.macroEnabled.12
-
-    // .mdb      application/vnd.ms-access
 }
 
 function generateFileRef() {

@@ -74,9 +74,8 @@
     <section>
         <div class="container">
             <h2>File Upload</h2>
-            <!-- /u/:filepath/:filename/ -->
-            <form action="/_upload" method="POST">
-                <!-- <input type="text" name="filepath"> -->
+            <form action="/_upload" method="POST" encType="multipart/form-data">
+                <input type="text" name="filepath" placeholder="path">
                 <input type="file" name="fileupload">
                 <input type="submit" class="button solid" id="upload" value="UPLOAD"></input>
             </form>

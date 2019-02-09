@@ -411,10 +411,7 @@ cdn.get('/d/:fileRef/', (req,res)=>{
 });
 
 cdn.post('/_upload/', (req,res)=>{
-    if (req.body.filename=='cdnLookup.json') res.sendStatus(403)
-
-    ContentDelivery.Upload(req.files.fileupload, req.body.filepath, 
-            req.body.contentType, req.body.metadata)
+    ContentDelivery.Upload(req.files.fileupload, req.body.filepath, {})
         .then((fileRef)=>{
             res.json({ ref: fileRef })
         }).catch((err)=>{
