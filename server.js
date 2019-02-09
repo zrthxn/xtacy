@@ -61,7 +61,10 @@ cdn.use(bodyParser.json())
 cdn.use(bodyParser.urlencoded({ extended: true }))
 cdn.use(express.json())
 cdn.use(express.urlencoded({ extended: true }))
-cdn.use(fileUpload())
+cdn.use(fileUpload({ 
+    limits: { fileSize: 50 * 1024 * 1024 },
+    tempFileDir: __dirname + '/cdn/temp'
+}))
 
 // APIs ------------------------------ //
 api.use(cookieParser(ServerConfig.clientKey, {}))
@@ -365,13 +368,19 @@ cdn.get('/login', (req,res)=>{
 });
 
 cdn.post('/login', (req,res)=>{
-    let key = 'xcdn'
-    for(let i=0; i<12; i++)
-        key += Math.floor( Math.random() * 16 ).toString(16)
-    let token = crypto.createHmac('sha512', ServerConfig.clientKey).update(key).digest('hex')
-    res.cookie( '_x-key', key, { expires: new Date(Date.now() + 900000), httpOnly: true } )
-    res.cookie( '_x-cdn', token, { expires: new Date(Date.now() + 900000), httpOnly: true } )
-    res.redirect('/')
+    // Login Authorzation
+    let { password } = req.body
+    if(password === 'ohmygodthextacy') {
+        let key = 'xcdn'
+        for(let i=0; i<12; i++)
+            key += Math.floor( Math.random() * 16 ).toString(16)
+        let token = crypto.createHmac('sha512', ServerConfig.clientKey).update(key).digest('hex')
+        res.cookie( '_x-key', key, { expires: new Date(Date.now() + 900000) } )
+        res.cookie( '_x-cdn', token, { expires: new Date(Date.now() + 900000) } )
+        res.redirect('/')
+    } else {
+        res.send(403)
+    }
 });
 
 cdn.get('/p/:file/', (req,res)=>{
@@ -392,7 +401,7 @@ cdn.get('/p/:file/', (req,res)=>{
 
 cdn.get('/d/:fileRef/', (req,res)=>{
     ContentDelivery.Lookup(req.params.fileRef)
-        .then(({ filepath, filename, contentType })=>{
+        .then(({ filepath, filename, originalName, contentType })=>{
             res.type(contentType)
             res.sendFile( path.join(__dirname, 'cdn', filepath, filename) )
         }).catch((result, err)=>{
@@ -401,18 +410,11 @@ cdn.get('/d/:fileRef/', (req,res)=>{
         })
 });
 
-cdn.post('/u/:filepath/:filename/', (req,res)=>{
-    if (req.params.filename=='cdnLookup.json') res.sendStatus(403)
-    let __filepath;
-    try {
-        __filepath = Buffer.from(req.params.filepath, 'base64').toString('ascii')
-    } catch(err) {
-        res.sendStatus(403)
-    }
-    
-    // Upload file
-    ContentDelivery.Upload(req.body.file, rer.params.filename, __filepath, 
-        req.body.contentType, req.body.metadata)
+cdn.post('/_upload/', (req,res)=>{
+    if (req.body.filename=='cdnLookup.json') res.sendStatus(403)
+
+    ContentDelivery.Upload(req.files.fileupload, req.body.filepath, 
+            req.body.contentType, req.body.metadata)
         .then((fileRef)=>{
             res.json({ ref: fileRef })
         }).catch((err)=>{

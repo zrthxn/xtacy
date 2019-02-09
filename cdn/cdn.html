@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>MAIN PAGE</title>
+    <title>CDN Admin Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Global.css">
     <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Header.css">
     <link rel="stylesheet" type="text/css" media="screen" href="http://xtacy.org:3000/static/css/Footer.css">
@@ -59,19 +60,30 @@
         <!-- End Page Header -->
     </header>
 
-    <!-- ====  MAIN PAGE CONTENT  ==== -->
+    <!---------- ====  MAIN PAGE CONTENT  ==== ---------->
+
+    <section>
+        <div class="container upper">
+            <h2><b>Content Server</b></h2>
+            <h3>Admin Panel</h3>
+            
+            <button class="button solid small" id="logout">LOGOUT</button>
+        </div>
+    </section>
 
     <section>
         <div class="container">
             <h2>File Upload</h2>
             <!-- /u/:filepath/:filename/ -->
-            <form action="#" method="POST">
+            <form action="/_upload" method="POST">
+                <!-- <input type="text" name="filepath"> -->
                 <input type="file" name="fileupload">
+                <input type="submit" class="button solid" id="upload" value="UPLOAD"></input>
             </form>
         </div>
     </section>
 
-    <!-- ====  END PAGE CONTENT  ==== -->
+    <!---------- ====  END PAGE CONTENT  ==== ---------->
 
     <footer>
         <!-- Page Footer -->
@@ -82,7 +94,7 @@
                     The annual techno-cultural extravaganza organized by Faculty of Engineering, Jamia Millia Islamia
                 </div>
                 <div class="collab-imgs">
-                    <img src="http://xtacy.org:3000/static/img/collaborators.png" alt=""/>
+                    <img src="https://xtacy.org/static/img/collaborators.png" alt=""/>
                 </div>
             </div>
             <p class="dev">Developed with <span role="img" aria-label="love">💛</span> by NAMAK</p>
@@ -90,5 +102,44 @@
         <!-- End Page Footer -->
     </footer>
 
+    <script>
+        document.getElementById("logout").onclick = () => {
+            document.cookie = "_x-key=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "_x-cdn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location = '/';
+        }
+
+        // document.getElementById("upload").onclick = () => {
+        //     var fileUploadForm = new FormData();
+        //     fileUploadForm.append('fileupload', document.getElementById("fileupload").files[0]);
+
+        //     const upload = new XMLHttpRequest();
+        //     upload.open('POST', '/u/' + btoa('root') + '/' + 'filename.txt', true);
+        //     upload.setRequestHeader('Content-Type','multipart/form-data');
+        //     upload.send(fileUploadForm);
+
+        //     upload.addEventListener('progress', (e) => {
+        //         let done = e.position || e.loaded, total = e.totalSize || e.total;
+        //         console.log('upload progress: ' + (Math.floor(done/total*1000)/10) + '%');
+        //     }, false);
+        //     if ( upload.upload ) {
+        //         upload.upload.onprogress = function(e) {
+        //             var done = e.position || e.loaded, total = e.totalSize || e.total;
+        //             console.log('upload.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+        //         };
+        //     }
+        //     upload.onreadystatechange = (e) => {
+        //         if (upload.readyState===4 && upload.status===200) {
+        //             console.log(['upload upload complete', e]);
+        //         }
+        //     };
+        // }
+    </script>
+
+    <style>
+        .upper {
+            text-align: left;
+        }
+    </style>
 </body>
 </html>

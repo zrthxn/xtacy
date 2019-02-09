@@ -27,8 +27,9 @@ exports.Lookup = (fileRef) => {
     })
 }
 
-exports.Upload = (file, filename, filepath, contentType, metadata) => {
+exports.Upload = (file, filepath, contentType, metadata) => {
     var genFileRef = generateFileRef()
+    var genFileName = generateFileName()
     var genFileId = parseInt(genFileRef, 36)
     /**
      * @author zrthxn
@@ -40,9 +41,11 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
         let files = lookup.files
         files[ files.length ] = {
             "fileRef": genFileRef,
-            "fileId": genFileId,
-            "filename": filename,
-            "contentType": contentType,
+            "fileId": genFileRef,
+            "filename": genFileName,
+            "originalName": file.name,
+            "contentType": file.mimetype,
+            "checksum": file.md5,
             "filepath": filepath,
             "metadata": metadata
         }
@@ -51,9 +54,13 @@ exports.Upload = (file, filename, filepath, contentType, metadata) => {
         lookup.files = files
 
         fs.writeFileSync('./cdn/cdnLookup.json', JSON.stringify(lookup, null, 2))
-        fs.writeFileSync('./cdn/' + filepath + '/' + filename, file)
-
-        resolve(genFileRef)
+        let extn = (file.filename).split('.')
+        extn = '.' + extn[extn.length-1]
+        
+        file.mv('./cdn/' + filepath + '/' + genFileName + etxn, (err)=>{
+            if (err) reject()
+            resolve(genFileRef)
+        })
     })
 }
 
@@ -152,4 +159,11 @@ function generateFileRef() {
     fileRef =  dateDesgn + flRef
 
     return fileRef
+}
+
+function generateFileName() {
+    let fileName = 'upload_'
+    for (let i=0; i<24; i++)
+        fileName += Math.floor( Math.random()*36 ).toString(36)
+    return fileName
 }
