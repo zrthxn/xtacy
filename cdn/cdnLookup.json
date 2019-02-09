@@ -1,4 +1,18 @@
 {
+  "$schema": [
+    {
+      "fileRef": "base36",
+      "fileId": 37585,
+      "filename": "Filename.png",
+      "contentType": "image/png",
+      "filepath": "root",
+      "metadata": {
+        "size": "",
+        "createdOn": "",
+        "authors": "and other small data can be added"
+      }
+    }
+  ],
   "writeLock": false,
   "fileRefNumber": 7,
   "files": [
