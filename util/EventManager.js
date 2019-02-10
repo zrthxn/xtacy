@@ -6,26 +6,17 @@ const ContentDelivery = require('./ContentDelivery');
 const Database = require('./Database').firestore;
 const crypto = require('crypto');
 const barcodeGenerator = require('bwip-js');
-const realtimeDb = require('./Database').database;
+const database = require('./Database').database;
 
 exports.getEventData = (__eventId) => {
     return new Promise((resolve,reject)=>{
-        realtimeDb.ref('/eventLookup/events/'+__eventId).once('value', (snapshot) => {
+        database.ref('/eventLookup/events/'+__eventId).once('value', (snapshot) => {
             resolve(snapshot.val());
         })
-        /*var eventData = null
-        for(let event of eventLookup.events) {
-            if (event.eventId===__eventId) {
-                eventData = event
-                break
-            }
-        }
-        resolve(eventData)  */
     })     
 }
 
 exports.generalRegister = (data) => {
-
     return new Promise((resolve,reject)=>{
         generateRegistrationID('gen',1).then((rgnID) => {  
         GSheets.AppendToSpreadsheet([
@@ -63,7 +54,6 @@ exports.generalRegister = (data) => {
 }
 
 exports.competeRegister = (data, txn) => {
-
     return new Promise((resolve,reject)=>{
     generateRegistrationID(data.eventId, data.members.length).then( (rgnId) => {
         let teamLeader = data.regTeamLeader===undefined ? data.members[0].name : data.regTeamLeader
@@ -111,7 +101,6 @@ exports.competeRegister = (data, txn) => {
 
 
 exports.ticketRegister = (data, txn) => {
-
     return new Promise((resolve,reject)=>{
         generateRegistrationID(data.eventId, data.number).then( (rgnID) => {
             if(txn === 'NON_PAID') txn = ServerConfig.clientKey
@@ -156,9 +145,8 @@ exports.ticketRegister = (data, txn) => {
 }
 
 exports.findEventById = (__eventId) => {
-
     return new Promise((resolve,reject)=>{
-        realtimeDb.ref('/eventLookup/events'+ __eventId).once('value', (snapshot) => {
+        database.ref('/eventLookup/events'+ __eventId).once('value', (snapshot) => {
             eventData = snapshot.val();
             if(eventData!=null) {
                 fs.readFile('./eventRegistry/content/' + eventData.eventId + '.html', (err, content)=> {
@@ -183,9 +171,8 @@ exports.findEventById = (__eventId) => {
 }
 
 exports.findEventPromoById = (__eventId) => {
-
     return new Promise((resolve,reject)=>{
-        realtimeDb.ref('/eventLookup/events/'+ __eventId).once('value', (snapshot) =>{
+        database.ref('/eventLookup/events/'+ __eventId).once('value', (snapshot) =>{
             eventData = snapshot.val();
             if(eventData!=null) {
                 fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.html', (err, content)=> {
@@ -233,7 +220,8 @@ function generateRegistrationID(__eventId, nH) {
         let regId = '', desgn = '', date = new Date()
         let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
         let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString() 
-        realtimeDb.ref('/eventLookup/registrationRefNumber').once('value').then( (snapshot) => {
+
+        database.ref('/eventLookup/registrationRefNumber').once('value').then((snapshot) => {
             registrationRefNumber = snapshot.val();
             if(__eventId==='gen')
                 desgn = 'GENR3E'
@@ -249,9 +237,10 @@ function generateRegistrationID(__eventId, nH) {
             regId = desgn + day + month + nH + regRef
 
             registrationRefNumber = '0x' + regRef
-            realtimeDb.ref('/eventLookup').update({
-                "registrationRefNumber" : registrationRefNumber});
-            resolve(regId);
+            database.ref('/eventLookup').update({ "registrationRefNumber": registrationRefNumber})
+            resolve(regId)
+        }).catch((err)=>{
+            reject(err)
         })
     })
 }
