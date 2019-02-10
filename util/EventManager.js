@@ -10,24 +10,25 @@ const realtimeDb = require('./Database').database;
 
 exports.getEventData = (__eventId) => {
     return new Promise((resolve,reject)=>{
-        loadLookupTable(function(eventLookup){
-            var eventData = null
-            for(let event of eventLookup.events) {
-                if (event.eventId===__eventId) {
-                    eventData = event
-                    break
-                }
-            }
-            resolve(eventData)
+        realtimeDb.ref('/eventLookup/events/'+__eventId).once('value', (snapshot) => {
+            resolve(snapshot.val());
         })
-    })
+        /*var eventData = null
+        for(let event of eventLookup.events) {
+            if (event.eventId===__eventId) {
+                eventData = event
+                break
+            }
+        }
+        resolve(eventData)  */
+    })     
 }
 
 exports.generalRegister = (data) => {
-    var rgnId = generateRegistrationID('gen', 1)
 
     return new Promise((resolve,reject)=>{
-            GSheets.AppendToSpreadsheet([
+        generateRegistrationID('gen',1).then((rgnID) => {  
+        GSheets.AppendToSpreadsheet([
                 {
                     ssId: ServerConfig.Sheets.spreadsheets.registrations,
                     sheet: 'GEN',
@@ -53,17 +54,18 @@ exports.generalRegister = (data) => {
                         console.log('New Registration', rgnId)
                         resolve(rgnId)
                     })                
-                }).catch((err)=> console.error(err))
+                }).catch((err)=> console.error(err))   
             }).catch((err)=>{
                 reject(err)
             })
+        })
     })
 }
 
 exports.competeRegister = (data, txn) => {
-    var rgnId = generateRegistrationID(data.eventId, data.members.length)
 
     return new Promise((resolve,reject)=>{
+    generateRegistrationID(data.eventId, data.members.length).then( (rgnId) => {
         let teamLeader = data.regTeamLeader===undefined ? data.members[0].name : data.regTeamLeader
         
         if(txn === 'NON_PAID') txn = ServerConfig.clientKey
@@ -98,70 +100,67 @@ exports.competeRegister = (data, txn) => {
                         console.log('New Registration', rgnId)
                         resolve(rgnId)
                     })
-                }).catch((err)=> console.error(err))
+                }).catch((err)=> console.error(err))   
             }).catch((err)=>{
                 reject(err)
             })
         })
     })
+})
 }
 
+
 exports.ticketRegister = (data, txn) => {
-    var rgnId = generateRegistrationID(data.eventId, data.number)
 
     return new Promise((resolve,reject)=>{
-        if(txn === 'NON_PAID') txn = ServerConfig.clientKey
-        validateTransaction(txn).then((r)=>{
-            if(!r) reject()
-            GSheets.AppendToSpreadsheet([
-                {
-                    ssId: ServerConfig.Sheets.spreadsheets.registrations,
-                    sheet: data.eventId.toUpperCase(),
-                    values: [
-                        rgnId, data.regName, data.regEmail, data.regPhone, data.regInst, 
-                        data.number, data.tier, data.specialRequests
-                    ]
-                }
-            ]).then(()=>{
-                generateHashedBarcode(rgnId, 'pdf417').then((url)=>{
-                    Gmailer.SingleDataDelivery(
-                        {
-                            to: data.regTeamEmail,
-                            from: 'hello@xtacy.org',
-                            subject: 'Registration Confirmation | Team Xtacy',
-                        }, 
-                        fs.readFileSync('./mail/templates/ticketRegConfirmation.html').toString(),
-                        [
-                            { id: 'regName', data: data.regName },
-                            { id: 'tier', data: data.tier },
-                            { id: 'number', data: data.number },
-                            { id: 'rgn', data: rgnId },
-                            { id: 'url', data: url }
+        generateRegistrationID(data.eventId, data.number).then( (rgnID) => {
+            if(txn === 'NON_PAID') txn = ServerConfig.clientKey
+            validateTransaction(txn).then((r)=>{
+                if(!r) reject()
+                GSheets.AppendToSpreadsheet([
+                    {
+                        ssId: ServerConfig.Sheets.spreadsheets.registrations,
+                        sheet: data.eventId.toUpperCase(),
+                        values: [
+                            rgnId, data.regName, data.regEmail, data.regPhone, data.regInst, 
+                            data.number, data.tier, data.specialRequests
                         ]
-                    ).then(()=>{
-                        console.log('New Registration', rgnId)
-                        resolve(rgnId)
-                    })
-                }).catch((err)=> console.error(err))
-            }).catch((err)=>{
-                reject(err)
+                    }
+                ]).then(()=>{
+                    generateHashedBarcode(rgnId, 'pdf417').then((url)=>{
+                        Gmailer.SingleDataDelivery(
+                            {
+                                to: data.regTeamEmail,
+                                from: 'hello@xtacy.org',
+                                subject: 'Registration Confirmation | Team Xtacy',
+                            }, 
+                            fs.readFileSync('./mail/templates/ticketRegConfirmation.html').toString(),
+                            [
+                                { id: 'regName', data: data.regName },
+                                { id: 'tier', data: data.tier },
+                                { id: 'number', data: data.number },
+                                { id: 'rgn', data: rgnId },
+                                { id: 'url', data: url }
+                            ]
+                        ).then(()=>{
+                            console.log('New Registration', rgnId)
+                            resolve(rgnId)
+                        })
+                    }).catch((err)=> console.error(err))
+                }).catch((err)=>{
+                    reject(err)
+                })
             })
         })  
     })
 }
 
 exports.findEventById = (__eventId) => {
+
     return new Promise((resolve,reject)=>{
-        loadLookupTable(function (eventLookup){
-            var eventData = null;
-            for(let event of eventLookup.events) {
-                if (event.eventId===__eventId) {
-                    eventData = event;
-                    break;
-                }
-            }
-            
-            if(eventData!=undefined) {
+        realtimeDb.ref('/eventLookup/events'+ __eventId).once('value', (snapshot) => {
+            eventData = snapshot.val();
+            if(eventData!=null) {
                 fs.readFile('./eventRegistry/content/' + eventData.eventId + '.html', (err, content)=> {
                     if (err) {
                         console.log(err)
@@ -184,17 +183,11 @@ exports.findEventById = (__eventId) => {
 }
 
 exports.findEventPromoById = (__eventId) => {
+
     return new Promise((resolve,reject)=>{
-        loadLookupTable(function(eventLookup){
-            var eventData = null
-            for(let event of eventLookup.events) {
-                if (event.eventId===__eventId) {
-                    eventData = event
-                    break
-                }
-            }
-            
-            if(eventData!=undefined) {
+        realtimeDb.ref('/eventLookup/events/'+ __eventId).once('value', (snapshot) =>{
+            eventData = snapshot.val();
+            if(eventData!=null) {
                 fs.readFile('./eventRegistry/promos/' + eventData.eventId + '.html', (err, content)=> {
                     if (err) {
                         console.log(err)
@@ -236,33 +229,31 @@ function validateTransaction (txnID) {
 // =========================================== //
 
 function generateRegistrationID(__eventId, nH) {
-    let regId = '', desgn = '', date = new Date()
-    let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
-    let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString() 
+    return new Promise((resolve,reject) => {
+        let regId = '', desgn = '', date = new Date()
+        let day = date.getDate()>=10 ? (date.getDate()).toString() : '0' + (date.getDate()).toString() 
+        let month = date.getMonth()>=9 ? (date.getMonth() + 1).toString() : '0' + (date.getMonth() + 1).toString() 
+        realtimeDb.ref('/eventLookup/registrationRefNumber').once('value').then( (snapshot) => {
+            registrationRefNumber = snapshot.val();
+            if(__eventId==='gen')
+                desgn = 'GENR3E'
+            else
+                desgn = __eventId.toUpperCase();
+            
+            let regRef = (parseInt(registrationRefNumber) + 1).toString(16).toUpperCase(), k = 4 - regRef.length
+            for (let i=0; i<k; i++)
+                regRef = '0' + regRef
 
-    loadLookupTable(function (registry){
-        if(__eventId==='gen')
-            desgn = 'GENR3E'
-        else
-            for (const event of registry.events) {
-                if (event.eventId===__eventId) {
-                    desgn = event.eventId.toUpperCase()
-                    break
-                }
-            }
-        
-        let regRef = (parseInt(registry.registrationRefNumber) + 1).toString(16).toUpperCase(), k = 4 - regRef.length
-        for (let i=0; i<k; i++)
-            regRef = '0' + regRef
+            nH = (nH>=10) ? nH.toString() : '0' + nH.toString()
 
-        nH = (nH>=10) ? nH.toString() : '0' + nH.toString()
+            regId = desgn + day + month + nH + regRef
 
-        regId = desgn + day + month + nH + regRef
-
-        registry.registrationRefNumber = '0x' + regRef
-        realtimeDb.ref('/eventLookup').set(registry);
+            registrationRefNumber = '0x' + regRef
+            realtimeDb.ref('/eventLookup').update({
+                "registrationRefNumber" : registrationRefNumber});
+            resolve(regId);
+        })
     })
-    return regId
 }
 
 function generateHashedBarcode(rgn, type) {
@@ -281,10 +272,4 @@ function generateHashedBarcode(rgn, type) {
             }
         })
     })    
-}
-
-function loadLookupTable(callback){
-    realtimeDb.ref('/eventLookup').once('value').then(function(snapshot){
-        callback(snapshot.val());
-    })
 }
