@@ -50,7 +50,7 @@
 <input type="checkbox" id="drawer-toggle" hidden="true">
 <section class="drawer">
     <div class="container">
-        <div class="container"><label for="drawer-toggle" class="close"><span></span></label></div>
+        <div class="container"><label for="drawer-toggle" class="close" id="drawer_label"><span></span></label></div>
 
         <div class="container drawer-content">
             <div class="strip"></div>
@@ -72,6 +72,7 @@
     let action = document.getElementById("action");
     let loading = document.getElementById("loading");
     let toggle = document.getElementById("drawer-toggle");
+    let label = document.getElementById("drawer-label");
 
     for(let i=0; i<banners.length; i++) {
         banners[i].onclick = () => {
@@ -129,6 +130,14 @@
         $(loading).removeClass("appear");
         $(loading).addClass("disappear");
     }
+
+    label.addEventListener('click', ()=>{
+        $(loading).removeClass("disappear");
+        $(loading).addClass("appear");
+
+        $(iframe).removeClass("appear");
+        $(iframe).addClass("disappear");
+    })
 </script>
 
 {{> footer }}
