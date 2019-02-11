@@ -18,7 +18,7 @@ exports.getEventData = (__eventId) => {
 
 exports.generalRegister = (data) => {
     return new Promise((resolve,reject)=>{
-        generateRegistrationID('gen',1).then((rgnID) => {  
+        generateRegistrationID('gen',1).then((rgnId) => {  
         GSheets.AppendToSpreadsheet([
                 {
                     ssId: ServerConfig.Sheets.spreadsheets.registrations,
@@ -102,7 +102,7 @@ exports.competeRegister = (data, txn) => {
 
 exports.ticketRegister = (data, txn) => {
     return new Promise((resolve,reject)=>{
-        generateRegistrationID(data.eventId, data.number).then( (rgnID) => {
+        generateRegistrationID(data.eventId, data.number).then((rgnId) => {
             if(txn === 'NON_PAID') txn = ServerConfig.clientKey
             validateTransaction(txn).then((r)=>{
                 if(!r) reject()

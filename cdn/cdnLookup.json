@@ -14,7 +14,7 @@
     }
   ],
   "writeLock": false,
-  "fileRefNumber": 7,
+  "fileRefNumber": 10,
   "files": [
     {
       "fileRef": "0t01",
@@ -31,6 +31,39 @@
       "contentType": "application/pdf",
       "filepath": "root",
       "metadata": {}
+    },
+    {
+      "fileRef": "0u08",
+      "fileId": 38888,
+      "filename": "NERDWD100202000C.png",
+      "contentType": "image/png",
+      "filepath": "root/registrations/barcodes",
+      "metadata": {
+        "unixTime": 1549829326078,
+        "rgn": "NERDWD100202000C"
+      }
+    },
+    {
+      "fileRef": "0u09",
+      "fileId": 38889,
+      "filename": "GENR3E100201000D.png",
+      "contentType": "image/png",
+      "filepath": "root/registrations/barcodes",
+      "metadata": {
+        "unixTime": 1549830027523,
+        "rgn": "GENR3E100201000D"
+      }
+    },
+    {
+      "fileRef": "0u0a",
+      "fileId": 38890,
+      "filename": "GENR3E100201000E.png",
+      "contentType": "image/png",
+      "filepath": "root/registrations/barcodes",
+      "metadata": {
+        "unixTime": 1549830481522,
+        "rgn": "GENR3E100201000E"
+      }
     },
     {
       "fileRef": "5p02",
