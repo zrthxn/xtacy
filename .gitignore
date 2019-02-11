@@ -2,7 +2,7 @@
 
 /node_modules
 
-cdn/cdnLookup.json
+/cdn/cdnLookup.json
 package-lock.json
 
 # misc
