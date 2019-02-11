@@ -2,7 +2,7 @@
 
 /node_modules
 
-cdnLookup.json
+cdn/cdnLookup.json
 package-lock.json
 
 # misc
@@ -15,5 +15,4 @@ package-lock.json
 .local
 .env.production
 .local
-
 npm-debug.log
