@@ -1,0 +1,23 @@
+{
+  "$schema": {
+    "eventId": {
+      "name": "",
+      "eventId": "6 byte ID",
+      "dates": "",
+      "type": "gen / com / tic",
+      "published": true,
+      "metadata": {
+        "time": "",
+        "paid": "",
+        "price": "",
+        "teams": "",
+        "teamSize": "",
+        "teamSizeType": "strict / loose",
+        "collectTeamGit": true,
+        "conductedBy": ""
+      }
+    }
+  },
+  "registrationRefNumber": "0x0000",
+  "events": {}
+}

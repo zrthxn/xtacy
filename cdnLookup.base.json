@@ -2,7 +2,7 @@
   "$schema": [
     {
       "fileRef": "base36",
-      "fileId": 37585,
+      "fileId": 683248722,
       "filename": "Filename.png",
       "contentType": "image/png",
       "filepath": "root",
@@ -22,7 +22,9 @@
       "filename": "Logo.png",
       "contentType": "image/png",
       "filepath": "root",
-      "metadata": {}
+      "metadata": {
+        "authors": "zrthxn"
+      }
     },
     {
       "fileRef": "0u07",
