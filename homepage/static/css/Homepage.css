@@ -312,12 +312,29 @@ img[class~="mobile"] {
 }
 /* ============================================== */
 
-.about {
-
+.about-section {
+    padding: 2em;
+    background-color: #ffd600;
+    background-blend-mode: soft-light;
+    background-image: url("../img/hero/8.png");
+    background-attachment: fixed;
+    background-origin: border-box;
+    background-repeat: no-repeat;
+    background-size: cover;
+} .about {
+    display: flex;
+    flex-flow: row;
+}
+.about-text {
+    max-width: 600px;
+    margin: 2em 0;
+    text-align: justify;
 }
 
+/* ============================================= */
+
 /* ----- Slideshow ----- */
-.slideshow-container {
+/* .slideshow-container {
     padding: 0;
 } .slideshow {
 
@@ -348,10 +365,10 @@ img[class~="mobile"] {
     } .slide:hover img {
         transform: scale(1.025);
     }
-}
+} */
 
 /* Adaptive slide Images */
-.slide img[class~="mobile"] {
+/* .slide img[class~="mobile"] {
     display: block;
 } .slide img[class~="desktop"] {
     display: none;
@@ -361,16 +378,26 @@ img[class~="mobile"] {
     } .slide img[class~="desktop"] {
         display: block;
     }
-}
+}  */
 
 /* ----- Sponsors ----- */
 .sponsors {
+    padding: 3em;
 
 } .sponsors marquee {
 
 } .sponsors img {
     width: 8em;
     margin: 2em 4em;
+}
+
+/* ----- Call to Action ----- */
+.cta {
+    padding: 3em;
+    /* max-width: 800px;
+    display: flex;
+    flex-flow: row;
+    flex-basis: 12em; */
 }
 
 /* ---- Google Map ---- */
