@@ -393,11 +393,41 @@ img[class~="mobile"] {
 
 /* ----- Call to Action ----- */
 .cta {
+    position: relative;
     padding: 3em;
-    /* max-width: 800px;
     display: flex;
-    flex-flow: row;
-    flex-basis: 12em; */
+    flex-direction: row;
+    align-items: flex-start;
+} 
+.cta-title {
+    margin: 3em;
+    margin-left: -25em;
+    transform-origin: right;
+    transform: rotateZ(-90deg);
+} .cta-title h2 {
+    font-size: 10em;
+} 
+.cta-banners {
+    max-width: 100%;
+} .cta-banners .event-card {
+    max-width: 50%;
+    margin: 0.5em;
+}
+@media (max-width: 800px) {
+    .cta {
+        padding: 1em;
+        flex-direction: column;
+    } .cta-title {
+        transform-origin: left;
+        transform: rotateZ(-90deg);
+        position: absolute;
+        margin: 0;
+        left: 2.75em;
+        top: 28em;
+    } .cta-title h2 {
+        font-size: 8em;
+        color: #ccc;
+    }
 }
 
 /* ---- Google Map ---- */
