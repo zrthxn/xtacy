@@ -12,8 +12,15 @@ const SuccessPage = (props) => {
                 <h3>Success!</h3>
 
                 <div>
-                    <b>Your registration was successful</b><br/><br/>
+                    {
+                        props.payment ? (
+                            <b>Your payment was successful</b>
+                        ) : (
+                            <b>Your registration was successful</b>
+                        )
+                    }
                     
+                    <br/><br/>
                     Your registration number is
                     <div className="rgn">{ props.rgn }</div>
                     <br/>
@@ -28,7 +35,7 @@ const SuccessPage = (props) => {
                 </div>
                 
             </div>
-        </div>        
+        </div>
     );
 }
 

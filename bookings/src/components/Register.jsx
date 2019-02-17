@@ -60,7 +60,7 @@ class Register extends Component {
             <div>
             {
                 this.state.completion ? (
-                    <SuccessPage rgn={this.state.rgn}/>
+                    <SuccessPage rgn={this.state.rgn} payment={false}/>
                 ) : (
                     <div className="Register container fit">
                         <div className="fluff">
