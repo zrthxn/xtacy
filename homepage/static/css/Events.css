@@ -1,18 +1,15 @@
-.banner-container {
+.events-container {
     padding: 1em;
     margin: auto auto;
     height: fit-content;
     max-width: 1200px;
     display: flex;
-    flex-direction: column;
+    flex-flow: row wrap;
     position: relative;
-} @media (min-width: 600px) {
-    .banner-container {
-        flex-direction: row;
-    }
+    align-items: flex-start;
 }
 
-.event {
+.event-banner {
     position: relative;
     height: fit-content;
     margin: 1em;
@@ -22,15 +19,11 @@
     flex-direction: column;
     align-content: center;
     justify-content: center;
-} .event .banner {
-    margin-left: 0;
-    margin-right: 0;
 } @media (max-width: 600px) {
-    .event {
+    .event-banner {
         margin: 1em 0 1em 0;
     }
 }
-
 .banner {
     position: relative;
     width: 100%;
@@ -42,6 +35,13 @@
     flex-direction: column;
     align-content: center;
     justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 } .banner a {
     position: relative;
     width: 100%;
@@ -59,28 +59,94 @@
     transition: all 0.25s ease;
 } .banner:active img {
     opacity: 0.85;
-} @media (min-width: 600px) {
+} .banner:hover img {
+    transform: scale(1.025);
+} @media (max-width: 600px) {
     .banner {
-        height: 20em;
-        margin: 1em;
-    } .banner:hover img {
-        transform: scale(1.025);
+        height: 16em;
     }
 }
 
-/* Adaptive Banner Images */
-.banner img[class~="mobile"] {
+/*  */
+.event-card {
+    position: relative;
+    height: fit-content;
+    text-align: left;
+    width: 16em;
+    flex: 1 1 12em;
+    margin: 1em;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+} @media (max-width: 600px) {
+    .event-card {
+        flex: 1 1 8em;
+    }
+}
+.event-card h3 {
+    font-size: 1.25em;
+} .event-card h4 {
+    font-size: 0.85em;
+    color: #aaa;
+    margin: 0;
+}
+.card {
+    position: relative;
+    width: 100%;
+    height: 20em;
+    background-color: #000;
+    margin: 1em 0 1em 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+} .card a {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    /* Inherit parent layout for clickable cards */
+    overflow: inherit;
+    display: inherit;
+    flex-direction: inherit;
+    align-content: inherit;
+    justify-content: inherit;
+} .card img {
+    max-height: 100%;
+    object-fit: cover;
+    transition: all 0.25s ease;
+} .card:active img {
+    opacity: 0.85;
+} .card:hover img {
+    transform: scale(1.025);
+} @media (max-width: 600px) {
+    .card {
+        height: 16em;
+    }
+}
+
+/* Adaptive Images */
+img[class~="mobile"] {
     display: block;
-} .banner img[class~="desktop"] {
+} img[class~="desktop"] {
     display: none;
 } @media (min-width: 800px) {
-    .banner img[class~="mobile"] {
+    img[class~="mobile"] {
         display: none;
-    } .banner img[class~="desktop"] {
+    } img[class~="desktop"] {
         display: block;
     }
 }
-
 
 /* ======= Small Banners ======= */
 

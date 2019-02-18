@@ -100,6 +100,8 @@ class Tickets extends Component {
 
     action = () => {
         if(this.state.requiredFulfilled) {
+            localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
+            localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
             this.setState({ paymentReady: true })
         } else {
             alert('Please fill in the required fields')
@@ -123,15 +125,15 @@ class Tickets extends Component {
             <div>
             {
                 this.state.paymentReady ? (
-                    this.state.completion ? <SuccessPage rgn={this.state.rgn}/> : (
+                    this.state.completion ? <SuccessPage rgn={this.state.rgn} payment={false}/> : (
                         <Payments
                             name={this.state.data.regName}
                             email={this.state.data.regEmail}
                             phone={this.state.data.regPhone}
                             amount={this.state.data.amount}
-                            data={this.props.eventData}
+                            eventData={this.props.eventData}
+                            regData={this.state.data}
                             back={ () => this.setState({ paymentReady: false }) }
-                            success={ this.success }
                         />
                     )
                 ) : (

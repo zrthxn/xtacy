@@ -5,43 +5,72 @@
 
 {{!-- START PAGE CONTENT --}}
 <section>
-    <div class="banner-container">
-        <div class="event">
+    <div class="events-container">
+        <div class="event-banner">
             <div class="banner">
                 <a href="#hackhl">
                     <img src="/static/img/thumb.png">
                 </a>
             </div>
-
-            <h3>Event XYZ</h3>
-            <p class="left">Lorem ipsum ist dolor vala</p>
         </div>
     </div>
-    
-    <div class="banner-container">
-        <div class="event">
-            <div class="banner">
-                <a href="#nerdwd">
-                    <img class="mobile" src="/static/img/JMI Logo.png">
-                    <img class="desktop" src="/static/img/thumb.png">
-                </a>
-            </div>
+</section>
 
-            <h3>Event ABCD</h3>
-            <p class="left">Lorem ipsum ist dolor vala</p>
+<section>
+    <div class="events-container">
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
         </div>
-    </div>
 
-    <div class="banner-container">
-        <div class="banner small"><img src="/static/img/thumb.png"></div>
-        <div class="banner small"><a href="#dastan"><img src="/static/img/thumb.png"></a></div>
-        <div class="banner small"><img src="/static/img/thumb.png"></div>
-    </div>
-    <div class="banner-container">
-        <div class="banner small"><a href="#hackhl"><img src="/static/img/thumb.png"></a></div>
-        <div class="banner small"></div>
-        <div class="banner small"></div>
-        <div class="banner small"></div>
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
+
+        <div class="event-card">
+            <div class="card"><a href="#"><img src="/static/img/thumb.png" alt=""></a></div>            
+            <h3>Event Title</h3>
+            <h4>Subtitle</h4>
+        </div>
     </div>
 </section>
 
@@ -68,6 +97,7 @@
 
 <script>
     let banners = document.getElementsByClassName("banner");
+    let cards = document.getElementsByClassName("card");
     let iframe = document.getElementById("drawer-event");
     let action = document.getElementById("action");
     let loading = document.getElementById("loading");
@@ -76,6 +106,13 @@
 
     for(let i=0; i<banners.length; i++) {
         banners[i].onclick = () => {
+            toggle.checked = true;
+            setEventUrl();
+        }
+    }
+    
+    for(let j=0; j<cards.length; j++) {
+        cards[j].onclick = () => {
             toggle.checked = true;
             setEventUrl();
         }

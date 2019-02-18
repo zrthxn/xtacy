@@ -29,6 +29,7 @@ const GSheets = require('./util/GSheets');
 const ConsoleScreen = require('./util/ConsoleScreen');
 const ContentDelivery = require('./util/ContentDelivery');
 const EventManager = require('./util/EventManager');
+const Database = require('./util/Database');
 const Payments = require('./util/Payments');
 
 homepage.use(cookieParser(ServerConfig.clientKey, {}))
@@ -356,11 +357,18 @@ cdn.get('/', (req,res)=>{
     let _token = 'LOGIN_NOT_VALIDATED'
     if(req.cookies['_x-key']!==undefined)
         _token = crypto.createHmac('sha512', ServerConfig.clientKey).update(req.cookies['_x-key']).digest('hex')
+    else res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
 
-    if(req.cookies['_x-cdn']===_token)
-        res.sendFile( path.resolve(__dirname, 'cdn', 'cdn.html') )
-    else if(_token==='LOGIN_NOT_VALIDATED')
+    Database.database.ref('cdn_login/' + req.cookies['_x-key']).once('value', (snap)=>{
+        if(((new Date(Date.now())) - snap.val().valTime) < 300000) {
+            if(req.cookies['_x-cdn']===_token)
+                res.sendFile( path.resolve(__dirname, 'cdn', 'cdn.html') )
+            else throw 'LOGIN_NOT_VALIDATED'
+        } else
+            res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
+    }).catch(()=>{
         res.sendFile( path.resolve(__dirname, 'cdn', 'index.html') )
+    })
 });
 
 cdn.get('/login', (req,res)=>{
@@ -375,8 +383,13 @@ cdn.post('/login', (req,res)=>{
         for(let i=0; i<12; i++)
             key += Math.floor( Math.random() * 16 ).toString(16)
         let token = crypto.createHmac('sha512', ServerConfig.clientKey).update(key).digest('hex')
-        res.cookie( '_x-key', key, { expires: new Date(Date.now() + 900000) } )
-        res.cookie( '_x-cdn', token, { expires: new Date(Date.now() + 900000) } )
+        res.cookie( '_x-key', key, { expires: new Date(Date.now() + 300000) } )
+        res.cookie( '_x-cdn', token, { expires: new Date(Date.now() + 300000) } )
+        Database.database.ref('cdn_login/' + key).set({
+            "key": key,
+            "token": token,
+            "valTime": (new Date(Date.now()))
+        })
         res.redirect('/')
     } else {
         res.send(403)
