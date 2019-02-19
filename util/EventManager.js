@@ -18,7 +18,14 @@ exports.getEventData = (__eventId) => {
 
 exports.generalRegister = (data) => {
     return new Promise((resolve,reject)=>{
-        generateRegistrationID('gen',1).then((rgnId) => {  
+        generateRegistrationID('gen',1).then((rgnId) => {
+        Database.collection('registrations').doc(rgnId).set({
+            "rgnId":rgnId,
+            "regName":data.regName,
+            "regEmail":data.regEmail,
+            "regPhone":data.regPhone,
+            "regInst":data.regInst
+        })  
         GSheets.AppendToSpreadsheet([
                 {
                     ssId: ServerConfig.Sheets.spreadsheets.registrations,
@@ -57,10 +64,24 @@ exports.competeRegister = (data, txn) => {
     return new Promise((resolve,reject)=>{
     generateRegistrationID(data.eventId, data.members.length).then( (rgnId) => {
         let teamLeader = data.regTeamLeader===undefined ? data.members[0].name : data.regTeamLeader
-        
         if(txn === 'NON_PAID') txn = ServerConfig.clientKey
         validateTransaction(txn).then((r)=>{            
             if(!r) reject()
+            if(data.regTeamGit==undefined) data.regTeamGit=null
+            if(data.regTeamSize==undefined) data.regTeamSize=null
+            Database.collection('registrations').doc(rgnId).set({
+                "rgnId":rgnId,
+                "eventId":data.eventId,
+                "txn":txn,
+                "regTeamName":data.regTeamName,
+                "regTeamEmail":data.regTeamEmail,
+                "regTeamPhone":data.regTeamPhone,
+                "regTeamInst":data.regTeamInst,
+                "regTeamGit":data.regTeamGit,
+                "teamLeader":teamLeader,
+                "regTeamSize":data.regTeamSize,
+                "members": [...data.members]
+            })
             GSheets.AppendToSpreadsheet([
                 {
                     ssId: ServerConfig.Sheets.spreadsheets.registrations,
@@ -106,6 +127,18 @@ exports.ticketRegister = (data, txn) => {
             if(txn === 'NON_PAID') txn = ServerConfig.clientKey
             validateTransaction(txn).then((r)=>{
                 if(!r) reject()
+                if(data.regInst == undefined) data.regInst = null
+                Database.collection('registrations').doc('rgnId').set({
+                    "rgnId":data.rngId,
+                    "eventId":data.eventId,
+                    "txn":txn,
+                    "regName":data.regName,
+                    "regEmail": data.regEmail,
+                    "regPhone":data.regPhone,
+                    "regInst":data.regInst,
+                    "tier": data.tier,
+                    "specialRequests":data.specialRequests
+                })
                 GSheets.AppendToSpreadsheet([
                     {
                         ssId: ServerConfig.Sheets.spreadsheets.registrations,
