@@ -60,8 +60,8 @@ exports.CreateNewPayment = (params) => {
                     amount: params.amount.total,
                     phone: params.payer.phone,
                     buyer_name : params.payer.name,
-                    redirect_url: 'http://xtacy.org:3000/register/payment',
-                    webhook: 'http://xtacy.org:3000/_payment/webhook/',
+                    redirect_url: 'https://xtacy.org/register/payment',
+                    webhook: 'https://xtacy.org/_payment/webhook/',
                     email: params.payer.email,
                     allow_repeated_payments: false,
                     // expire_at: 10 mins
