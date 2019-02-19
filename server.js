@@ -332,8 +332,9 @@ homepage.post('/_payment/create/', (req,res)=>{
 homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
     if(webhookData !== null) {
-        Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).get().then((databaseEntry) => {
-            let { txnId } = databaseEntry
+        Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).get()
+        .then((databaseEntry) => {
+            let { txnId } = databaseEntry.data()
             console.log(txnId)
             console.log(webhookData.payment_request_id)
             Database.firestore.collection('transactions').doc(txnId).update({

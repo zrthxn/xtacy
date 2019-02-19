@@ -29,7 +29,6 @@ class Payments extends Component {
         let returnKey = localStorage.getItem('x-return-key')
         let returnPayToken = localStorage.getItem('x-return-pay-token')
         let returnTxnId = localStorage.getItem('x-txn-id')
-        console.log("*************")
         if(returnKey==='PAY_INITIALIZE') {
             // Payment Initiate Process
             let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
@@ -64,14 +63,9 @@ class Payments extends Component {
 
             createReq.onreadystatechange = () => {
                 if(createReq.readyState===4 && createReq.status===200) {
-                    console.log(createReq.response)
-                    console.log(typeof createReq.response)
                     let paymentData = JSON.parse(createReq.response)
-                    console.log(paymentData)
-                    console.log('payments.jsx befoe hmac')
                     let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(paymentData.payment)).digest('hex')            
                     if(paymentData.hash === responseHmac) {
-                        console.log('payments.jsx hmac')
                         localStorage.setItem('x-txn-id', paymentData.txnId)
                         this.setState({
                             amount: {
@@ -85,9 +79,9 @@ class Payments extends Component {
                                 eventData: POST_DATA.eventData,
                                 regData: this.props.regData
                             },
+                            redHotURL: paymentData.payment.longurl,
                             paymentCreated: true
                         })
-                        this.action(paymentData.payment.longurl)
                     } else
                         this.paymentError('RESPONSE_HASH_MISMATCH')
                 } else if(createReq.readyState===4 && createReq.status===403) {
@@ -166,7 +160,7 @@ class Payments extends Component {
         }).catch((err) => console.error(err))
     }
 
-    action = (url) => {
+    action = () => {
         // Redirect to action URL here
         let returnKey = 'KEY'
         for(let i=0;i<24;i++)
@@ -176,7 +170,7 @@ class Payments extends Component {
         localStorage.setItem('x-return-key', returnKey)
         localStorage.setItem('x-return-pay-token', returnPayToken)
 
-        window.location = url
+        window.location = this.state.redHotURL
     }
 
 
@@ -201,7 +195,7 @@ class Payments extends Component {
                                 <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                             </div>
 
-
+                            <button className="button solid green" onClick={this.action}>PAY</button>
                         </div>
                     )
                 ) : (
