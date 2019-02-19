@@ -7,15 +7,7 @@ const crypto = require('crypto');
 const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
-const env = require('../config.json').payments.env;
-
-const { 
-    CLIENT,
-    SECRET,
-    AUTH_CREDS,
-    PAYPAL_API,
-    EXP_PROFILE_ID
-} = require('../config.json').payments[env];
+const PaymentsConfig = require('../config.json').payments;
 
 function registerNewTxn (params) {
     let txnID = 'TXN', sum=0
@@ -54,175 +46,56 @@ function registerNewTxn (params) {
             })
     })
 }
-
-exports.authorizeNewPayment = (params) => {
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments[env].access_token
-    if(((validity - (new Date()).getTime()) < 0) || ACCESS_TOKEN===null)
-        ACCESS_TOKEN = getNewAccessToken()
-
+exports.CreateNewPayment = (params) => {
     return new Promise((resolve,reject)=>{
-        registerNewTxn(params).then((txnID)=>{
-            request.post(PAYPAL_API + '/v1/payments/payment', {
-                json: true,
-                headers: {
-                    Authorization: 'Bearer ' + ACCESS_TOKEN
-                },
-                body: {
-                    intent: "sale",
-                    payer: {
-                        payment_method: "paypal",
-                        payer_info: {
-
-                        }
-                    },
-                    transactions: [
-                        {
-                            amount: {
-                                total: params.amount.total,
-                                currency: "INR",
-                                details: {
-                                    subtotal: params.amount.base,
-                                    tax: params.amount.tax,
-                                    shipping: "0",
-                                    handling_fee: "0",
-                                    shipping_discount: "0",
-                                    insurance: "0"
-                                }
-                            },
-                            description: params.eventData.title,
-                            invoice_number: txnID,
-                            payment_options: {
-                                allowed_payment_method: "INSTANT_FUNDING_SOURCE"
-                            }
-                        }
-                    ],
-                    redirect_urls: {
-                        return_url: 'https://xtacy.org/register/success',
-                        cancel_url: 'https://xtacy.org/register/cancel'
-                    },
-                    experience_profile_id: EXP_PROFILE_ID
-                }
-            }, function(err, res) {
-                if (err) return reject({ success: false })
-                if(res.body.id!==null) {
-                    Database.collection('transactions').doc(txnID).update({
-                        status: 'PENDING'
-                    }).then(()=>{
-                        resolve({
-                            success: true,
-                            data : Buffer.from(JSON.stringify({
-                                payment: res.body,
-                                txnID: txnID,
-                                client: CLIENT,
-                                hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
-                            }), 'ascii').toString('base64')
+        registerNewTxn(params).then((txnId)=>{
+            var headers = {
+                'X-Api-Key': PaymentsConfig.ApiKey,
+                'X-Auth-Token': PaymentsConfig.AuthToken
+            }
+            var payload = {
+                purpose: params.eventData.title,
+                amount: params.amount.total,
+                phone: params.payer.phone,
+                buyer_name : params.payer.name,
+                redirect_url: 'http://xtacy.org:3000/register/payment',
+                webhook: 'http://xtacy.org:3000/_payment/webhook',
+                email: params.payer.email,
+                allow_repeated_payments: false,
+            //    expire_at : 10 mins                
+            }
+            request.post('https://test.instamojo.com/api/1.1/payment-requests/', {
+                form : payload,
+                headers : headers
+                }, function(err, res, body)
+                {          
+                    if(err) reject(err)
+                    if(res.statusCode===201 && body!==null)
+                    {
+                        var responseData = JSON.parse(body)
+                        Database.collection('transacations').doc(txnId).set({
+                            'txnId': txnId,
+                            'paymentId': '',
+                            'paymentRequestId': responseData.payment_request.id,
+                            'amount': responseData.payment_request.amount,
+                            'purpose': responseData.payment_request.purpose,
+                            'name': responseData.payment_request.buyer_name,
+                            'email': responseData.payment_request.email,
+                            'phone': responseData.payment_request.phone,
+                            'status': responseData.payment_request.status,
+                            'createdAt': responseData.payment_request.created_at,
+                            'modifiedAt': responseData.payment_request.modified_at
                         })
-                    }).catch(()=> reject({ success: false }) )
-                } else {
-                    reject({ success: false })
+                        resolve({
+                            hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
+                            'payment': responseData.payment_request,
+                            'txnID': txnId,
+                            'success': responseData.success
+                        }
+                    )
+                    } else reject({'status':false})
                 }
-            })
+            )
         })
-    })
-}
-
-exports.executePayment = ({ paymentID, payerID, txnID }) => {
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments[env].access_token
-    if(((validity - (new Date()).getTime()) < 0) || ACCESS_TOKEN===null)
-        ACCESS_TOKEN = getNewAccessToken()
-    
-    return new Promise((resolve,reject)=>{
-        request.post(PAYPAL_API + '/v1/payments/payment/' + paymentID + '/execute', {
-            json: true,
-            headers: {
-                Authorization: 'Bearer ' + ACCESS_TOKEN
-            },
-            body: {
-                payer_id: payerID
-            }
-        }, function(err, res) {
-            if (err) {
-                Database.firestore.collection('transactions').doc(txnID).update({ status: 'ERROR' })
-                return reject({ success: false })
-            }
-            Database.firestore.collection('transactions').doc(txnID).update({
-                    status: 'SUCCESS',
-                    verified: true
-                }).then(()=>{
-                    resolve({
-                        success: true,
-                        data : Buffer.from(JSON.stringify({
-                            payment: res.body,
-                            txnID: txnID,
-                            hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(res.body)).digest('hex')
-                        }), 'ascii').toString('base64')
-                    })
-                }).catch((err)=>{
-                    
-                })
-        })
-    })    
-}
-
-exports.registerExperienceProfile = (experience) => {
-    const DEFAULT = {
-        name: "xtacyPaymentProfile",
-        input_fields: {
-            no_shipping: 1
-        },
-        flow_config: {
-            landing_page_type: "Billing",
-            user_action: "commit"
-        },
-        presentation: {
-            brand_name: "Xtacy",
-            logo_image: "https://cdn.xtacy.org/d/5p05"
-        }
-    }
-    if(experience===undefined) experience = DEFAULT
-
-    var { ACCESS_TOKEN, validity } = JSON.parse(fs.readFileSync('./config.json').toString()).payments[env].access_token
-    if(((validity - (new Date()).getTime()) < 0) || ACCESS_TOKEN===null)
-        ACCESS_TOKEN = getNewAccessToken()
-
-    return request.post(PAYPAL_API + '/v1/payment-experience/web-profiles/', {
-        json: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + ACCESS_TOKEN
-        },
-        body: experience
-    }, function(err, response) {
-        if (err) return console.error(err)
-        console.log(response.body)
-    })
-}
-
-function getNewAccessToken() {
-    return request.post(PAYPAL_API + '/v1/oauth2/token', {
-        'headers': {
-            'Accept': 'application/json',
-            'Accept-Language': 'en_US',
-            'cache-control': 'no-cache',
-            'Authorization' : 'Basic ' + AUTH_CREDS
-        },
-        'form': {
-            'grant_type': 'client_credentials'
-        },
-        'json': true
-    }, function(err, res) {
-        if(res.body.error) return console.error(res.body)
-        let _validity = (res.body.expires_in*1000) + (new Date()).getTime()
-        console.log(res.body.app_id, 'NEW_ACCESS_TOKEN', res.body.access_token)
-
-        let config = JSON.parse(fs.readFileSync('./config.json').toString())
-        config.payments[env].access_token = {
-            ACCESS_TOKEN: res.body.access_token,
-            validity: _validity
-        }
-        
-        console.log('WARNING :: Writing Config File')
-        fs.writeFileSync('./config.json', JSON.stringify(config, null, 2))
-        return res.body.access_token
     })
 }

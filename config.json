@@ -22,14 +22,12 @@
     "senders": {}
   },
   "payments": {
-    "env": "sandbox",
-    "sandbox": {
-      
-    },
+    "ApiKey": "test_eac399e665246c6d7b6f21dc34a", 
+    "AuthToken": "test_2e9abbeb69a1c515e5eaa6bd1dc" 
+  },
     "live": {
       
-    }
-  },
+    },
   "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
   "firebaseServerAPIKey": "AIzaSyDvu4G7Z62WqJfb-aMwQa2YGOCGSTUnxtk",
   "firebase": {

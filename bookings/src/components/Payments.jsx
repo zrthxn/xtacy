@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import crypto from 'crypto';
 import LoadingPage from './LoadingPage';
-import PaymentPortal from './PaymentPortal';
 
 import Database from '../util/database';
 import Booking from '../util/booking';
@@ -15,7 +14,7 @@ class Payments extends Component {
     constructor() {
         super();
         this.state = {
-            paymentAuthorized: false,
+            paymentCreated: false,
             completion: false,
             paymentSuccesful: false,
             txnId: null,
@@ -30,7 +29,7 @@ class Payments extends Component {
         let returnKey = localStorage.getItem('x-return-key')
         let returnPayToken = localStorage.getItem('x-return-pay-token')
         let returnTxnId = localStorage.getItem('x-txn-id')
-
+        console.log("*************")
         if(returnKey==='PAY_INITIALIZE') {
             // Payment Initiate Process
             let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
@@ -51,10 +50,10 @@ class Payments extends Component {
             let hashSequence = JSON.stringify(POST_DATA)
             let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
             
-            const authReq = new XMLHttpRequest()
-            authReq.open('POST', '/_payment/authorize/', true)
-            authReq.setRequestHeader('Content-Type', 'application/json')
-            authReq.send(JSON.stringify({
+            const createReq = new XMLHttpRequest()
+            createReq.open('POST', '/_payment/create/', true)
+            createReq.setRequestHeader('Content-Type', 'application/json')
+            createReq.send(JSON.stringify({
                 data: POST_DATA,
                 csrf: {
                     key: localStorage.getItem(config.csrfTokenNameKey),
@@ -63,31 +62,37 @@ class Payments extends Component {
                 checksum: hmac
             }));
 
-            authReq.onreadystatechange = () => {
-                if(authReq.readyState===4 && authReq.status===200) {
-                    let authorizedPayment = JSON.parse(atob(JSON.parse(authReq.response).data))
-                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(authorizedPayment.payment)).digest('hex')            
-                    if(authorizedPayment.hash === responseHmac) {
-                        localStorage.setItem('x-txn-id', authorizedPayment.txnId)
+            createReq.onreadystatechange = () => {
+                if(createReq.readyState===4 && createReq.status===200) {
+                    console.log(createReq.response)
+                    console.log(typeof createReq.response)
+                    let paymentData = JSON.parse(createReq.response)
+                    console.log(paymentData)
+                    console.log('payments.jsx befoe hmac')
+                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(paymentData.payment)).digest('hex')            
+                    if(paymentData.hash === responseHmac) {
+                        console.log('payments.jsx hmac')
+                        localStorage.setItem('x-txn-id', paymentData.txnID)
                         this.setState({
                             amount: {
                                 base: base,
                                 total: amt
                             },
-                            paymentId: authorizedPayment.payment.id,
-                            txnId: authorizedPayment.txnId,
+                            paymentId: paymentData.payment.payment_id,
+                            txnId: paymentData.txnId,
                             data: {
                                 payer: POST_DATA.payer,
                                 eventData: POST_DATA.eventData,
                                 regData: this.props.regData
                             },
-                            paymentAuthorized: true
+                            paymentCreated: true
                         })
+                        this.action(paymentData.payment.longurl)
                     } else
                         this.paymentError('RESPONSE_HASH_MISMATCH')
-                } else if(authReq.readyState===4 && authReq.status===403) {
+                } else if(createReq.readyState===4 && createReq.status===403) {
                     this.paymentError('CSRF_TIMEOUT')
-                } else if(authReq.readyState===4 && authReq.status===500) {
+                } else if(createReq.readyState===4 && createReq.status===500) {
                     this.paymentError('SERVER_ERROR')
                 }
             }
@@ -96,18 +101,15 @@ class Payments extends Component {
             localStorage.removeItem('x-return-key')
             localStorage.removeItem('x-return-pay-token')
             localStorage.removeItem('x-txn-id')
-            
             /**
              * @author zrthxn
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
-
-                // If success
-                this.paymentSuccesful({ txnId: returnTxnId })
-
-                // If failed
-                this.paymentError({ txnId: returnTxnId })
+            let paymentData = Database.firestore.collection('transactions').doc(returnTxnId).get().then(() => {
+                if(paymentData.status==='Credit')   this.paymentSuccesful({ txnId: returnTxnId })
+                else if(paymentData.status==='Failed')  this.paymentError({ txnId: returnTxnId })
+            })
         }
     }
 
@@ -155,7 +157,7 @@ class Payments extends Component {
         Database.firestore.collection('transactions').doc(txn.txnId).update({
             status: 'FAILED | VERIFIED',
         }).then(()=>{
-            this.setState({ paymentAuthorized: false })
+            this.setState({ paymentCreated: false })
         }).catch((err) => console.error(err))
     }
 
@@ -177,7 +179,7 @@ class Payments extends Component {
         return (
             <div className="Payments container fit">
             {
-                this.state.paymentAuthorized ? (
+                this.state.paymentCreated ? (
                     this.state.completion ? (
                         this.state.paymentSuccesful ? <SuccessPage rgn={ this.state.rgn } payment={true}/> : <ErrorPage/>
                     ) : (
