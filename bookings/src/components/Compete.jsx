@@ -79,6 +79,8 @@ class Compete extends Component {
     action = () => {
         if(this.state.requiredFulfilled) {
             if(this.props.eventData.metadata.paid) {
+                localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
+                localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
                 this.setState({ paymentReady: true })
             } else {
                 this.success(null)
@@ -112,12 +114,12 @@ class Compete extends Component {
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.state.data.amount}
-                            data={this.props.eventData}
+                            eventData={this.props.eventData}
+                            regData={this.state.data}
                             back={ () => this.setState({ paymentReady: false }) }
-                            success={ this.success }
                         />
                     ) : (
-                        this.state.completion ? <SuccessPage rgn={this.state.rgn}/> : console.log()
+                        this.state.completion ? <SuccessPage rgn={this.state.rgn} payment={this.props.eventData.metadata.paid}/> : console.log()
                     )
                 ) : (
                     <div className="Compete container fit">
