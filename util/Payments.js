@@ -7,7 +7,8 @@ const crypto = require('crypto');
 const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
-const PaymentsConfig = require('../config.json').payments;
+const env = require('../config.json').env;
+const { API_KEY, AUTH_TOKEN } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
     let txnID = 'TXN', sum=0
@@ -52,8 +53,8 @@ exports.CreateNewPayment = (params) => {
         registerNewTxn(params).then((txnId)=>{
             request.post('https://test.instamojo.com/api/1.1/payment-requests/', {
                 headers : {
-                    'X-Api-Key': PaymentsConfig.ApiKey,
-                    'X-Auth-Token': PaymentsConfig.AuthToken
+                    'X-Api-Key': API_KEY,
+                    'X-Auth-Token': AUTH_TOKEN
                 },
                 form : {
                     purpose: params.eventData.title,

@@ -54,12 +54,15 @@ class Bookings extends Component {
                 Secu.generateSecurityFluff(4);
                 
                 let params = this.getParams(window.location), verified = false, hashSequence, hash
-                if(localStorage.getItem('x-return-key')==='PAY_INITIALIZE' || localStorage.getItem('x-return-key')===null) {
+                let returnKey = localStorage.getItem('x-return-key')
+                let returnPayToken = localStorage.getItem('x-return-pay-token')
+                let returnTxnId = localStorage.getItem('x-txn-id')
+                if(returnKey==='PAY_INITIALIZE' || returnKey===null) {
                     if (params.intent==='gen') params.event = 'any'
                     hashSequence = params.intent + config.clientKey + params.event
                     hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
                     if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
-                } else {
+                } else if(returnPayToken===crypto.createHmac('sha512', config.clientKey).update(returnKey + returnTxnId).digest('hex')) {
                     verified = true
                 }
         
