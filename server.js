@@ -475,9 +475,9 @@ api.post('/_barcode/:function/', (req,res)=>{
             .then((reg)=>{
                 res.json(reg.data())
             })
-            break;
+            break
         default:
-            break;
+            break
     }
 });
 
@@ -501,6 +501,12 @@ api.get('/_:api/test/', (req,res)=>{
                 }).catch(()=>{
                     res.send('Internal Error')
                 })
+            break
+        
+        case 'barcode':
+            let testObj = Database.firestore
+            if(testObj!==undefined) res.send('Barcode : Test Successful')
+            else res.send('Internal Error')
             break
 
         default:

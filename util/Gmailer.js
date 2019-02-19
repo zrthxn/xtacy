@@ -78,7 +78,7 @@ exports.TestGmailer = function() {
                 let testObj = google.gmail({version: 'v1', auth})
                 if (testObj!=null) return({ success: true })
             } catch(err) {
-                return({ success: false, errors: err })
+                resolve({ success: false, errors: err })
             }
         }).catch((err)=>{
             reject(err)
