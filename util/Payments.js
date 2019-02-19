@@ -89,7 +89,7 @@ exports.CreateNewPayment = (params) => {
                         resolve({
                             hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
                             payment: responseData.payment_request,
-                            txnID: txnId,
+                            txnId: txnId,
                             success: responseData.success
                         }
                     )
