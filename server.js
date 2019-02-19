@@ -435,7 +435,7 @@ cdn.post('/_upload/', (req,res)=>{
 // APIs ---------------------------------------------------------- APIs
 // ====================================================================
 
-api.post('/_sheets/:function/:options/', (req,res)=>{
+api.post('/_sheets/:function/', (req,res)=>{
     // == GSheets API == //
     Security.validateAPIKey(req.body.key, req.body.token)
         .then((result)=>{
@@ -447,7 +447,7 @@ api.post('/_sheets/:function/:options/', (req,res)=>{
         })
 });
 
-api.post('/_mail/:function/:options/', (req,res)=>{
+api.post('/_mail/:function/', (req,res)=>{
     // == Gmailer API == //
     Security.validateAPIKey(req.body.key, req.body.token)
         .then((result)=>{
@@ -457,6 +457,23 @@ api.post('/_mail/:function/:options/', (req,res)=>{
             console.error(error)
             res.sendStatus(500)
         })
+});
+
+api.post('/_barcode/:function/', (req,res)=>{
+    // == Barcode Reader == //
+    // Security.validateAPIKey()
+    switch(req.params.function) {
+        case 'read':
+            let { readCode } = req.body
+            Database.firestore.collection('registrations').doc(readCode)
+            .get()
+            .then((reg)=>{
+                
+            })
+            break;
+        default:
+            break;
+    }
 });
 
 api.get('/_:api/test/', (req,res)=>{
