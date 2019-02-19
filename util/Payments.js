@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
-const env = require('../config.json').env;
+const env = require('../config.json').payments.env;
 const { API_KEY, AUTH_TOKEN } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
