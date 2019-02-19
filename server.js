@@ -435,6 +435,12 @@ cdn.post('/_upload/', (req,res)=>{
 // APIs ---------------------------------------------------------- APIs
 // ====================================================================
 
+api.use((req, res, next)=>{
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    next()
+});
+
 api.post('/_sheets/:function/', (req,res)=>{
     // == GSheets API == //
     Security.validateAPIKey(req.body.key, req.body.token)
