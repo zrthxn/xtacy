@@ -103,7 +103,6 @@ class Payments extends Component {
             Database.firestore.collection('transactions').doc(returnTxnId).get()
             .then((snapshot)=>{
                 paymentData = snapshot.data()
-                console.log("lolololol");
                 if(paymentData.status==='Credit')
                     this.paymentSuccesful({ txnId: returnTxnId })
                 else if(paymentData.status==='Failed')
