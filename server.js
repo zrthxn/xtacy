@@ -334,14 +334,11 @@ homepage.post('/_payment/webhook/', (req,res)=>{
     if(webhookData !== null) {
         Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).get()
         .then((databaseEntry) => {
-            let { txnId } = databaseEntry.data()
-            console.log(txnId)
-            console.log(webhookData.payment_request_id)
+            let { txnId } = databaseEntry
             Database.firestore.collection('transactions').doc(txnId).update({
                 'paymentId' : webhookData.payment_id,
                 'status': webhookData.status,
             })
-            console.log(webhookData.payment_id, webhookData.status)
             res.send(200)
         })
     } else {
