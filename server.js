@@ -42,7 +42,7 @@ homepage.use(express.urlencoded({ extended: true }))
 homepage.use('/static', express.static( path.join(__dirname, 'homepage', 'static') ))
 homepage.use('/register', express.static( path.join(__dirname, 'bookings', 'build') ))
 homepage.use('/register/main', express.static( path.join(__dirname, 'bookings', 'build') ))
-homepage.use('/register/success', express.static( path.join(__dirname, 'bookings', 'build') ))
+homepage.use('/register/payment/', express.static( path.join(__dirname, 'bookings', 'build') ))
 homepage.use('/register/cancel', express.static( path.join(__dirname, 'bookings', 'build') ))
 
 homepage.set('views', path.join(__dirname, 'homepage'))
@@ -302,52 +302,46 @@ homepage.post('/_register/:type/', (req,res)=>{
         })
 });
 
-homepage.post('/_payment/authorize/', (req,res)=>{
+homepage.post('/_payment/create/', (req,res)=>{
     // Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
     //     .then((csrfRes)=>{
     //         if(csrfRes) {
-    //             let hashSequence = JSON.stringify(req.body.data)
-    //             let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
-    //             if ( req.body.checksum === hmac ) {
-    //                 Payments.authorizeNewPayment({
-    //                     amount: req.body.data.amount,
-    //                     payer: req.body.data.payer,
-    //                     eventData: req.body.data.eventData
-    //                 }).then((payment)=>{
-    //                     if(payment.success) 
-    //                         res.json(payment)
-    //                 }).catch((err)=>{
-    //                     res.status(500).send(err)
-    //                 })
-    //             } else 
-    //                 throw "HASH_INVALID"
-    //         } else
-    //             throw "CSRF_INVALID"
-    //     }).catch((err)=>{
+                let hashSequence = JSON.stringify(req.body.data)
+                let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
+                if ( req.body.checksum === hmac ) {
+                    Payments.CreateNewPayment({
+                        amount: req.body.data.amount,
+                        payer: req.body.data.payer,
+                        eventData: req.body.data.eventData
+                    }).then((payment)=>{
+                        if(payment.success) 
+                            res.json(payment)
+                    }).catch((err)=>{
+                        console.log(err)
+                        res.status(500).send(err)
+                    })
+                } else 
+                    throw "HASH_INVALID"
+    //      } else
+    //            throw "CSRF_INVALID"
+    //    }).catch((err)=>{
     //         res.status(403).send(err)
     //     })
 });
 
-homepage.post('/_payment/execute/', (req,res)=>{
-    // Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-    //     .then((csrfRes)=>{
-    //         if(csrfRes) {
-    //             let hashSequence = JSON.stringify(req.body.data)
-    //             let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
-    //             if ( req.body.checksum === hmac ) {
-    //                 Payments.executePayment(req.body.data).then((payment)=>{
-    //                     if(payment.success) 
-    //                         res.json(payment)
-    //                 }).catch((err)=>{
-    //                     res.status(500).send(err)
-    //                 })
-    //             } else 
-    //                 throw "HASH_INVALID"
-    //         } else
-    //             throw "CSRF_INVALID"
-    //     }).catch((err)=>{
-    //         res.status(500).send(err)
-    //     })
+homepage.post('/_payment/webhook/', (req,res)=>{
+    let webhookData = req.body
+    if(webhookData !== null)
+    {
+        res.send(200)
+            let databaseEntry = Database.firestore.collection('transactions').where('paymentRequestId' == webhookData.payment_request_id).get().then(() => {
+                let txnId = databaseEntry.txnId
+                Database.firestore.collection('transactions').doc(txnId).update({
+                'paymentId' : webhookData.payment_id,
+                'status': webhookData.status,
+            })
+        })
+    } else res.send(324)
 });
 
 // CONTENT DELIVERY NETWORK --------------------------------------- CDN
