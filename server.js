@@ -465,10 +465,9 @@ api.post('/_barcode/:function/', (req,res)=>{
     switch(req.params.function) {
         case 'read':
             let { readCode } = req.body
-            Database.firestore.collection('registrations').doc(readCode)
-            .get()
+            Database.firestore.collection('registrations').doc(readCode).get()
             .then((reg)=>{
-                
+                res.json(reg.data())
             })
             break;
         default:
