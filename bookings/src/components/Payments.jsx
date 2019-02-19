@@ -6,6 +6,8 @@ import PaymentPortal from './PaymentPortal';
 import Database from '../util/database';
 import Booking from '../util/booking';
 import './css/Payments.css';
+import SuccessPage from './SuccessPage';
+import ErrorPage from './ErrorPage';
 
 const config = require('../util/config.json');
 
@@ -14,8 +16,9 @@ class Payments extends Component {
         super();
         this.state = {
             paymentAuthorized: false,
-            CLIENT: null,
-            txnID: null,
+            completion: false,
+            paymentSuccesful: false,
+            txnId: null,
             paymentId: null,
             amount: null,
             data : null,
@@ -24,68 +27,114 @@ class Payments extends Component {
     }
 
     componentDidMount() {
-        let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
-        let POST_DATA = {
-            amount: {
-                base: base,
-                tax:  (amt - base).toFixed(2),
-                total: amt
-            },
-            payer: {
-                name: this.props.name,
-                email: this.props.email,
-                phone: this.props.phone,
-            },
-            eventData: this.props.data
-        }
-        
-        let hashSequence = JSON.stringify(POST_DATA)
-        let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-        
-        const authReq = new XMLHttpRequest()
-        authReq.open('POST', '/_payment/authorize/', true)
-        authReq.setRequestHeader('Content-Type', 'application/json')
-        authReq.send(JSON.stringify({
-            data: POST_DATA, 
-            csrf: {
-                key: localStorage.getItem(config.csrfTokenNameKey),
-                token: localStorage.getItem(config.csrfTokenName + localStorage.getItem(config.csrfTokenNameKey))
-            }, 
-            checksum: hmac
-        }));
+        let returnKey = localStorage.getItem('x-return-key')
+        let returnPayToken = localStorage.getItem('x-return-pay-token')
+        let returnTxnId = localStorage.getItem('x-txn-id')
 
-        authReq.onreadystatechange = () => {
-            if(authReq.readyState===4 && authReq.status===200) {
-                let authorizedPayment = JSON.parse(atob(JSON.parse(authReq.response).data))
-                let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(authorizedPayment.payment)).digest('hex')            
-                if(authorizedPayment.hash === responseHmac) {
-                    this.setState({
-                        amount: {
-                            base: base,
-                            total: amt
-                        },
-                        paymentId: authorizedPayment.payment.id,
-                        txnID: authorizedPayment.txnID,
-                        CLIENT: authorizedPayment.client,
-                        data: this.props.data,
-                        paymentAuthorized: true
-                    })
-                } else
-                    this.paymentError('RESPONSE_HASH_MISMATCH')
-            } else if(authReq.readyState===4 && authReq.status===403) {
-                this.paymentError('CSRF_TIMEOUT')
-            } else if(authReq.readyState===4 && authReq.status===500) {
-                this.paymentError('SERVER_ERROR')
+        if(returnKey==='PAY_INITIALIZE') {
+            // Payment Initiate Process
+            let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
+            let POST_DATA = {
+                eventData: this.props.eventData,
+                amount: {
+                    base: base,
+                    tax:  (amt - base).toFixed(2),
+                    total: amt
+                },
+                payer: {
+                    name: this.props.name,
+                    email: this.props.email,
+                    phone: this.props.phone,
+                }
             }
-        }        
+            
+            let hashSequence = JSON.stringify(POST_DATA)
+            let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+            
+            const authReq = new XMLHttpRequest()
+            authReq.open('POST', '/_payment/authorize/', true)
+            authReq.setRequestHeader('Content-Type', 'application/json')
+            authReq.send(JSON.stringify({
+                data: POST_DATA,
+                csrf: {
+                    key: localStorage.getItem(config.csrfTokenNameKey),
+                    token: localStorage.getItem(config.csrfTokenName + localStorage.getItem(config.csrfTokenNameKey))
+                }, 
+                checksum: hmac
+            }));
+
+            authReq.onreadystatechange = () => {
+                if(authReq.readyState===4 && authReq.status===200) {
+                    let authorizedPayment = JSON.parse(atob(JSON.parse(authReq.response).data))
+                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(authorizedPayment.payment)).digest('hex')            
+                    if(authorizedPayment.hash === responseHmac) {
+                        localStorage.setItem('x-txn-id', authorizedPayment.txnId)
+                        this.setState({
+                            amount: {
+                                base: base,
+                                total: amt
+                            },
+                            paymentId: authorizedPayment.payment.id,
+                            txnId: authorizedPayment.txnId,
+                            data: {
+                                payer: POST_DATA.payer,
+                                eventData: POST_DATA.eventData,
+                                regData: this.props.regData
+                            },
+                            paymentAuthorized: true
+                        })
+                    } else
+                        this.paymentError('RESPONSE_HASH_MISMATCH')
+                } else if(authReq.readyState===4 && authReq.status===403) {
+                    this.paymentError('CSRF_TIMEOUT')
+                } else if(authReq.readyState===4 && authReq.status===500) {
+                    this.paymentError('SERVER_ERROR')
+                }
+            }
+        } else if(returnPayToken===crypto.createHmac('sha512', config.clientKey).update(returnKey + returnTxnId).digest('hex')) {
+            // Payment Returned from Server
+            localStorage.removeItem('x-return-key')
+            localStorage.removeItem('x-return-pay-token')
+            localStorage.removeItem('x-txn-id')
+            
+            /**
+             * @author zrthxn
+             * Check for transaction success here
+             * The transaction ID is available as returnTxnId
+             */
+
+                // If success
+                this.paymentSuccesful({ txnId: returnTxnId })
+
+                // If failed
+                this.paymentError({ txnId: returnTxnId })
+        }
     }
-    paymentSuccesful = (success) => {
+
+    paymentSuccesful = (txn) => {
         console.log('PAYMENT_SUCCESSFUL')
-        Database.firestore.collection('transactions').doc(this.state.txnID).update({
-            status: 'SUCCESS',
+        Database.firestore.collection('transactions').doc(txn.txnId).update({
+            status: 'SUCCESS | VERIFIED',
             verified: true
         }).then(()=>{
-            this.props.success({ data: success.paymentData, txnID: this.state.txnID })
+            let hashSequence = JSON.stringify(this.state.data.regData)
+            let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+
+            if(this.state.data.eventData.type==='com') {
+                Booking.competeRegister(this.state.data.regData, hmac, txn.txnId).then((res)=>{
+                    if (res.validation) 
+                        this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
+                }).catch(()=>{
+                    alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
+                })
+            } else if(this.state.data.eventData.type==='tic') {
+                Booking.ticketRegister(this.state.data.regData, hmac, txn.txnId).then((res)=>{
+                    if (res.validation) 
+                        this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
+                }).catch(()=>{
+                    alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
+                })
+            }
         }).catch((err)=>{
             console.error(err);
         })
@@ -93,53 +142,61 @@ class Payments extends Component {
 
     paymentCancelled = () => {
         console.log('PAYMENT_CANCELLED')
-        Database.firestore.collection('transactions').doc(this.state.txnID).update({
+        Database.firestore.collection('transactions').doc(this.state.txnId).update({
             status: 'CANCELLED',
         }).then(()=>{
             this.props.back()
         }).catch((err) => console.error(err))
     }
 
-    paymentError = (code) => {
-        console.error('PAYMENT_FAILED', code)
-        localStorage.setItem('payment-error-code', code)
-        Database.firestore.collection('transactions').doc(this.state.txnID).update({
-            status: 'FAILED',
+    paymentError = (txn) => {
+        console.error('PAYMENT_FAILED', 'PORTAL_ERROR')
+        localStorage.setItem('payment-error-code', 'PORTAL_ERROR')
+        Database.firestore.collection('transactions').doc(txn.txnId).update({
+            status: 'FAILED | VERIFIED',
         }).then(()=>{
             this.setState({ paymentAuthorized: false })
         }).catch((err) => console.error(err))
     }
 
-    render() {
-        const { CLIENT } = this.state
+    action = (url) => {
+        // Redirect to action URL here
+        let returnKey = 'KEY'
+        for(let i=0;i<24;i++)
+            returnKey += Math.floor( Math.random() * 36 ).toString(36)
+        let returnPayToken = crypto.createHmac('sha512', config.clientKey).update(returnKey + this.state.txnId).digest('hex')
 
+        localStorage.setItem('x-return-key', returnKey)
+        localStorage.setItem('x-return-pay-token', returnPayToken)
+
+        window.location = url
+    }
+
+
+    render() {
         return (
             <div className="Payments container fit">
             {
                 this.state.paymentAuthorized ? (
-                    <div>
-                        <h2>Payments Page</h2>
+                    this.state.completion ? (
+                        this.state.paymentSuccesful ? <SuccessPage rgn={ this.state.rgn } payment={true}/> : <ErrorPage/>
+                    ) : (
+                        <div>
+                            <h2>Payments Page</h2>
 
-                        <div className="action container fit">
-                            <button className="button" onClick={ this.props.back.bind(this) }>BACK</button>
+                            <div className="action container fit">
+                                <button className="button" onClick={ this.props.back.bind(this) }>CANCEL</button>
+                            </div>
+
+                            <div className="pricing">
+                                <p>Total</p>
+                                <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
+                                <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                            </div>
+
+
                         </div>
-
-                        <div className="pricing">
-                            <p>Total</p>
-                            <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
-                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                        </div>
-
-                        <PaymentPortal
-                            env={"sandbox"}
-                            clientId={CLIENT}
-                            authorizedPayment={ this.state.paymentId }
-                            payerId={ this.state.txnID }
-                            onSuccess={ this.paymentSuccesful }
-                            onCancel={ this.paymentCancelled }
-                            onError={ () => this.paymentError('PORTAL_ERROR') }
-                        />
-                    </div>
+                    )
                 ) : (
                     <LoadingPage timeOut={5000}/>
                 )

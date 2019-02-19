@@ -10,7 +10,7 @@ import './Global.css';
 import Main from './Main';
 import LoadingPage from './components/LoadingPage';
 import ErrorPage from './components/ErrorPage';
-import SuccessPage from './components/SuccessPage';
+import Payments from './components/Payments';
 
 const config  = require('./util/config.json');
 
@@ -88,7 +88,7 @@ class Bookings extends Component {
                                         <Main intent={this.state.intent} event={this.state.event}/>
                                     </Route>
                                     
-                                    <Route path={'/success'} component={SuccessPage}/>
+                                    <Route path={'/payment'} component={Payments}/>
 
                                     <Route path={'/cancel'} component={ErrorPage}/>
 

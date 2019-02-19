@@ -120,12 +120,13 @@ header .container {
 /* NAVIGATION */
 header .sidebar-nav {
     display: block;
-    margin: 8em 2.5em;
+    margin: 8em 10em;
     width: 50%;
     height: fit-content;
     justify-self: center;
     align-self: flex-end;
     text-align: left;
+    transition: all 0.5s ease;
 } header .sidebar-nav ul {
     margin: 0;
     padding: 0;
@@ -141,7 +142,10 @@ header .sidebar-nav {
 } #sidebar-toggle:checked ~ .sidebar li {
     display: block;
     opacity: 1;
+} #sidebar-toggle:checked ~ .sidebar .sidebar-nav {
+    margin: 8em 2.5em;
 }
+
 
 header ul li a {
     text-decoration: none;
@@ -222,6 +226,8 @@ header ul li a {
     font-size: 24px;
     font-weight: 500;
     margin: 0 0;
+} .logo-text::after {
+    display: none;
 }
 
 .logo-rotor {
