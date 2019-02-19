@@ -331,17 +331,21 @@ homepage.post('/_payment/create/', (req,res)=>{
 
 homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
-    if(webhookData !== null)
-    {
-        res.send(200)
-            let databaseEntry = Database.firestore.collection('transactions').where('paymentRequestId' == webhookData.payment_request_id).get().then(() => {
-                let txnId = databaseEntry.txnId
-                Database.firestore.collection('transactions').doc(txnId).update({
+    if(webhookData !== null) {
+        Database.firestore.collection('transactions').where('paymentRequestId' == webhookData.payment_request_id).get().then((databaseEntry) => {
+            let { txnId } = databaseEntry
+            console.log(txnId)
+            console.log(webhookData.payment_request_id)
+            Database.firestore.collection('transactions').doc(txnId).update({
                 'paymentId' : webhookData.payment_id,
                 'status': webhookData.status,
             })
+            console.log(webhookData.payment_id, webhookData.status)
+            res.send(200)
         })
-    } else res.send(324)
+    } else {
+        res.send(324)
+    }
 });
 
 // CONTENT DELIVERY NETWORK --------------------------------------- CDN

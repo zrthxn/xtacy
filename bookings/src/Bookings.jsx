@@ -52,13 +52,16 @@ class Bookings extends Component {
                     result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
                 console.log('SR Tokens Verified')
                 Secu.generateSecurityFluff(4);
-
-                let params = this.getParams(window.location), verified = false
-                if (params.intent==='gen') params.event = 'any'
-        
-                let hashSequence = params.intent + config.clientKey + params.event
-                let hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-                if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+                
+                let params = this.getParams(window.location), verified = false, hashSequence, hash
+                if(localStorage.getItem('x-return-key')==='PAY_INITIALIZE' || localStorage.getItem('x-return-key')===null) {
+                    if (params.intent==='gen') params.event = 'any'
+                    hashSequence = params.intent + config.clientKey + params.event
+                    hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+                    if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+                } else {
+                    verified = true
+                }
         
                 this.setState({
                     intent: params.intent,

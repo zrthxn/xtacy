@@ -46,34 +46,33 @@ function registerNewTxn (params) {
             })
     })
 }
+
 exports.CreateNewPayment = (params) => {
     return new Promise((resolve,reject)=>{
         registerNewTxn(params).then((txnId)=>{
-            var headers = {
-                'X-Api-Key': PaymentsConfig.ApiKey,
-                'X-Auth-Token': PaymentsConfig.AuthToken
-            }
-            var payload = {
-                purpose: params.eventData.title,
-                amount: params.amount.total,
-                phone: params.payer.phone,
-                buyer_name : params.payer.name,
-                redirect_url: 'http://xtacy.org:3000/register/payment',
-                webhook: 'http://xtacy.org:3000/_payment/webhook',
-                email: params.payer.email,
-                allow_repeated_payments: false,
-            //    expire_at : 10 mins                
-            }
             request.post('https://test.instamojo.com/api/1.1/payment-requests/', {
-                form : payload,
-                headers : headers
-                }, function(err, res, body)
+                headers : {
+                    'X-Api-Key': PaymentsConfig.ApiKey,
+                    'X-Auth-Token': PaymentsConfig.AuthToken
+                },
+                form : {
+                    purpose: params.eventData.title,
+                    amount: params.amount.total,
+                    phone: params.payer.phone,
+                    buyer_name : params.payer.name,
+                    redirect_url: 'http://xtacy.org:3000/register/payment',
+                    webhook: 'http://xtacy.org:3000/_payment/webhook/',
+                    email: params.payer.email,
+                    allow_repeated_payments: false,
+                    // expire_at: 10 mins
+                }
+            }, function(err, res, body)
                 {          
                     if(err) reject(err)
                     if(res.statusCode===201 && body!==null)
                     {
                         var responseData = JSON.parse(body)
-                        Database.collection('transacations').doc(txnId).set({
+                        Database.collection('transactions').doc(txnId).set({
                             'txnId': txnId,
                             'paymentId': '',
                             'paymentRequestId': responseData.payment_request.id,
@@ -88,9 +87,9 @@ exports.CreateNewPayment = (params) => {
                         })
                         resolve({
                             hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
-                            'payment': responseData.payment_request,
-                            'txnID': txnId,
-                            'success': responseData.success
+                            payment: responseData.payment_request,
+                            txnID: txnId,
+                            success: responseData.success
                         }
                     )
                     } else reject({'status':false})

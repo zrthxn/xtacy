@@ -72,7 +72,7 @@ class Payments extends Component {
                     let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(paymentData.payment)).digest('hex')            
                     if(paymentData.hash === responseHmac) {
                         console.log('payments.jsx hmac')
-                        localStorage.setItem('x-txn-id', paymentData.txnID)
+                        localStorage.setItem('x-txn-id', paymentData.txnId)
                         this.setState({
                             amount: {
                                 base: base,
@@ -106,9 +106,14 @@ class Payments extends Component {
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
-            let paymentData = Database.firestore.collection('transactions').doc(returnTxnId).get().then(() => {
-                if(paymentData.status==='Credit')   this.paymentSuccesful({ txnId: returnTxnId })
-                else if(paymentData.status==='Failed')  this.paymentError({ txnId: returnTxnId })
+            Database.firestore.collection('transactions').doc(returnTxnId).get()
+            .then((paymentData)=>{
+                if(paymentData.status==='Credit')
+                    this.paymentSuccesful({ txnId: returnTxnId })
+                else if(paymentData.status==='Failed')
+                    this.paymentError({ txnId: returnTxnId })
+            }).catch(()=>{
+                this.paymentError({ txnId: null })
             })
         }
     }
