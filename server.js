@@ -333,7 +333,7 @@ homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
 	console.log(webhookData)
     if(webhookData !== null) {
-        Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).get().limit(1)
+        Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).limit(1).get()
         .then((snapshot) => {
             let { txnId } = snapshot.docs[0].data()
             Database.firestore.collection('transactions').doc(txnId).update({
