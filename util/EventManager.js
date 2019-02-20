@@ -229,14 +229,13 @@ exports.findEventPromoById = (__eventId) => {
     })
 }
 
-function validateTransaction (txnID) {
+function validateTransaction (txnId) {
     return new Promise((resolve,reject)=>{
-        if(txnID === ServerConfig.clientKey) resolve(true)
-        Database.collection('transactions').doc(txnID)
-            .get()
+        if(txnId === ServerConfig.clientKey) resolve(true)
+        Database.collection('transactions').doc(txnId).get()
             .then((txn)=>{
-                if(txn.txnID === txnID)
-                    if(txn.status === 'SUCCESS')
+                if(txn.data().txnId === txnId)
+                    if(txn.data().status === 'SUCCESS | VERIFIED')
                         resolve(true)
                     else
                         resolve(false)
