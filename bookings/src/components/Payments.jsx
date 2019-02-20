@@ -29,7 +29,7 @@ class Payments extends Component {
         let returnKey = localStorage.getItem('x-return-key')
         let returnPayToken = localStorage.getItem('x-return-pay-token')
         let returnTxnId = localStorage.getItem('x-txn-id')
-        
+
         if(returnKey==='PAY_INITIALIZE') {
             // Payment Initiate Process
             let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
@@ -106,7 +106,7 @@ class Payments extends Component {
                 let paymentData = snapshot.data()
                 if(paymentData.status==='Credit')
                     this.paymentSuccesful({ txnId: returnTxnId })
-                else if(paymentData.status==='Failed')
+                else
                     this.paymentError({ txnId: returnTxnId })
             }).catch(()=>{
                 this.paymentError({ txnId: null })
