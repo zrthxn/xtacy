@@ -112,28 +112,30 @@ class Payments extends Component {
                 }).catch(()=>{
                     this.paymentError({ txnId: null })
                 })
-            }, 4000)
+            }, 2500)
         }
     }
 
     paymentSuccesful = (txn) => {
         console.log('PAYMENT_SUCCESSFUL')
+        const regData = JSON.parse(atob(sessionStorage.getItem('x-reg-data-bundle')))
+        sessionStorage.removeItem('x-reg-data-bundle')
         Database.firestore.collection('transactions').doc(txn.txnId).update({
             status: 'SUCCESS | VERIFIED',
             verified: true
         }).then(()=>{
-            let hashSequence = JSON.stringify(this.state.data.regData)
+            let hashSequence = JSON.stringify(regData)
             let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
 
             if(this.state.data.eventData.type==='com') {
-                Booking.competeRegister(this.state.data.regData, hmac, txn.txnId).then((res)=>{
+                Booking.competeRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
                         this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
                     alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
             } else if(this.state.data.eventData.type==='tic') {
-                Booking.ticketRegister(this.state.data.regData, hmac, txn.txnId).then((res)=>{
+                Booking.ticketRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
                         this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
@@ -173,6 +175,8 @@ class Payments extends Component {
 
         localStorage.setItem('x-return-key', returnKey)
         localStorage.setItem('x-return-pay-token', returnPayToken)
+
+        sessionStorage.setItem('x-reg-data-bundle', btoa(JSON.stringify(this.state.data.regData)))
 
         window.location = this.state.redHotURL
     }
