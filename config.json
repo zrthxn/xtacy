@@ -28,8 +28,8 @@
       "AUTH_TOKEN": "test_2e9abbeb69a1c515e5eaa6bd1dc" 
     }, 
     "live": {
-      "API_KEY": "",
-      "AUTH_TOKEN": ""
+      "API_KEY": "ef26b37d2f2ebaaf1cc87b5fc326244c",
+      "AUTH_TOKEN": "28a5523a929568ea169efdf0e17a4ff3"
     }
   },
   "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
