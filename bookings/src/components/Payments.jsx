@@ -118,8 +118,8 @@ class Payments extends Component {
 
     paymentSuccesful = (txn) => {
         console.log('PAYMENT_SUCCESSFUL')
-        const regData = JSON.parse(atob(sessionStorage.getItem('x-reg-data-bundle')))
-        sessionStorage.removeItem('x-reg-data-bundle')
+        const { regData, eventData } = JSON.parse(atob(sessionStorage.getItem('x-data-bundle')))
+        sessionStorage.removeItem('x-data-bundle')
         Database.firestore.collection('transactions').doc(txn.txnId).update({
             status: 'SUCCESS | VERIFIED',
             verified: true
@@ -127,14 +127,14 @@ class Payments extends Component {
             let hashSequence = JSON.stringify(regData)
             let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
 
-            if(this.state.data.eventData.type==='com') {
+            if(eventData.type==='com') {
                 Booking.competeRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
                         this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
                     alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
-            } else if(this.state.data.eventData.type==='tic') {
+            } else if(eventData.type==='tic') {
                 Booking.ticketRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
                         this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
@@ -176,7 +176,7 @@ class Payments extends Component {
         localStorage.setItem('x-return-key', returnKey)
         localStorage.setItem('x-return-pay-token', returnPayToken)
 
-        sessionStorage.setItem('x-reg-data-bundle', btoa(JSON.stringify(this.state.data.regData)))
+        sessionStorage.setItem('x-data-bundle', btoa(JSON.stringify(this.state.data)))
 
         window.location = this.state.redHotURL
     }
