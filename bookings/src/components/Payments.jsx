@@ -130,14 +130,14 @@ class Payments extends Component {
             if(eventData.type==='com') {
                 Booking.competeRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
-                        this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
+                        this.setState({ paymentCreated: true, completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
                     alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
             } else if(eventData.type==='tic') {
                 Booking.ticketRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
-                        this.setState({ completion: true, paymentSuccesful: true, rgn: res.rgn })
+                        this.setState({ paymentCreated: true, completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
                     alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
@@ -207,7 +207,7 @@ class Payments extends Component {
                         </div>
                     )
                 ) : (
-                    <LoadingPage timeOut={15000}/>
+                    <LoadingPage timeOut={10000}/>
                 )
             }
             </div>
