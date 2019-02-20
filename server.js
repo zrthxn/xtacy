@@ -338,11 +338,10 @@ homepage.post('/_payment/webhook/', (req,res)=>{
             Database.firestore.collection('transactions').doc(txnId).update({
                 'paymentId' : webhookData.payment_id,
                 'status': webhookData.status,
-            })
-            res.send(200)
+            }).then(()=> res.sendStatus(200) )
         })
     } else {
-        res.send(324)
+        res.sendStatus(324)
     }
 });
 
