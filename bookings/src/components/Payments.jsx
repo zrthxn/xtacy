@@ -29,6 +29,7 @@ class Payments extends Component {
         let returnKey = localStorage.getItem('x-return-key')
         let returnPayToken = localStorage.getItem('x-return-pay-token')
         let returnTxnId = localStorage.getItem('x-txn-id')
+        
         if(returnKey==='PAY_INITIALIZE') {
             // Payment Initiate Process
             let base = this.props.amount, amt = Booking.calcTaxInclAmount(this.props.amount)
@@ -102,7 +103,7 @@ class Payments extends Component {
              */
             Database.firestore.collection('transactions').doc(returnTxnId).get()
             .then((snapshot)=>{
-                paymentData = snapshot.data()
+                let paymentData = snapshot.data()
                 if(paymentData.status==='Credit')
                     this.paymentSuccesful({ txnId: returnTxnId })
                 else if(paymentData.status==='Failed')
