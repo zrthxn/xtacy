@@ -303,9 +303,9 @@ homepage.post('/_register/:type/', (req,res)=>{
 });
 
 homepage.post('/_payment/create/', (req,res)=>{
-    // Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
-    //     .then((csrfRes)=>{
-    //         if(csrfRes) {
+    Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
+        .then((csrfRes)=>{
+            if(csrfRes) {
                 let hashSequence = JSON.stringify(req.body.data)
                 let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
                 if ( req.body.checksum === hmac ) {
@@ -322,11 +322,11 @@ homepage.post('/_payment/create/', (req,res)=>{
                     })
                 } else 
                     throw "HASH_INVALID"
-    //      } else
-    //            throw "CSRF_INVALID"
-    //    }).catch((err)=>{
-    //         res.status(403).send(err)
-    //     })
+            } else
+                throw "CSRF_INVALID"
+        }).catch((err)=>{
+            res.status(403).send(err)
+        })
 });
 
 homepage.post('/_payment/webhook/', (req,res)=>{
@@ -335,7 +335,7 @@ homepage.post('/_payment/webhook/', (req,res)=>{
     if(webhookData !== null) {
         Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).get()
         .then((snapshot) => {
-            let { txnId } = snapshot.data()
+            let { txnId } = snapshot[0].data()
             Database.firestore.collection('transactions').doc(txnId).update({
                 'paymentId' : webhookData.payment_id,
                 'status': webhookData.status,
