@@ -84,12 +84,13 @@ exports.CreateNewPayment = (params) => {
                             status: responseData.payment_request.status,
                             createdAt: responseData.payment_request.created_at,
                             modifiedAt: responseData.payment_request.modified_at
-                        })
-                        resolve({
-                            hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
-                            payment: responseData.payment_request,
-                            txnId: txnId,
-                            success: responseData.success
+                        }).then(()=>{
+                            resolve({
+                                hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
+                                payment: responseData.payment_request,
+                                txnId: txnId,
+                                success: responseData.success
+                            })
                         })
                     } else {
                         reject({ status: false })
