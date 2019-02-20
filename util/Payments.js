@@ -70,30 +70,30 @@ exports.CreateNewPayment = (params) => {
             }, function(err, res, body)
                 {          
                     if(err) reject(err)
-                    if(res.statusCode===201 && body!==null)
-                    {
+                    if(res.statusCode===201 && body!==null) {
                         var responseData = JSON.parse(body)
                         Database.collection('transactions').doc(txnId).set({
-                            'txnId': txnId,
-                            'paymentId': '',
-                            'paymentRequestId': responseData.payment_request.id,
-                            'amount': responseData.payment_request.amount,
-                            'purpose': responseData.payment_request.purpose,
-                            'name': responseData.payment_request.buyer_name,
-                            'email': responseData.payment_request.email,
-                            'phone': responseData.payment_request.phone,
-                            'status': responseData.payment_request.status,
-                            'createdAt': responseData.payment_request.created_at,
-                            'modifiedAt': responseData.payment_request.modified_at
+                            txnId: txnId,
+                            paymentId: '',
+                            paymentRequestId: responseData.payment_request.id,
+                            amount: responseData.payment_request.amount,
+                            purpose: responseData.payment_request.purpose,
+                            name: responseData.payment_request.buyer_name,
+                            email: responseData.payment_request.email,
+                            phone: responseData.payment_request.phone,
+                            status: responseData.payment_request.status,
+                            createdAt: responseData.payment_request.created_at,
+                            modifiedAt: responseData.payment_request.modified_at
                         })
                         resolve({
                             hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
                             payment: responseData.payment_request,
-                            txnID: txnId,
+                            txnId: txnId,
                             success: responseData.success
-                        }
-                    )
-                    } else reject({'status':false})
+                        })
+                    } else {
+                        reject({ status: false })
+                    }
                 }
             )
         })
