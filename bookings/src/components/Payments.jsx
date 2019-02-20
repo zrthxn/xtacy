@@ -207,7 +207,7 @@ class Payments extends Component {
                         </div>
                     )
                 ) : (
-                    <LoadingPage timeOut={10000}/>
+                    <LoadingPage timeOut={15000}/>
                 )
             }
             </div>
