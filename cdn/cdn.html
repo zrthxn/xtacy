@@ -73,12 +73,26 @@
 
     <section>
         <div class="container">
-            <h2>File Upload</h2>
-            <form action="/_upload" method="POST" encType="multipart/form-data">
-                <input type="text" name="filepath" placeholder="path">
-                <input type="file" name="fileupload">
-                <input type="submit" class="button solid" id="upload" value="UPLOAD"></input>
-            </form>
+            <!-- Tab links -->
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'upload')">Upload</button>
+                <button class="tablinks" onclick="openTab(event, 'lookup')">CDN Lookup</button>
+            </div>
+        
+            <!-- Tab content -->
+            <div id="upload" class="tabcontent">
+                <h3>Upload</h3>
+                <form action="/_upload" method="POST" encType="multipart/form-data">
+                    <input type="text" name="filepath" placeholder="path">
+                    <input type="file" name="fileupload">
+                    <input type="submit" class="button solid" id="upload" value="UPLOAD"></input>
+                </form>
+            </div>
+            
+            <div id="lookup" class="tabcontent">
+                <h3>CDN Lookup</h3>
+                <p>Add the functionality to modify the CDN Lookup table here</p> 
+            </div>
         </div>
     </section>
 
@@ -133,11 +147,51 @@
         //         }
         //     };
         // }
+
+        function openTab(event, tabId) {
+            var tabcontent, tablinks;
+
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for(let i=0; i<tabcontent.length; i++)
+                tabcontent[i].style.display = "none";
+
+            tablinks = document.getElementsByClassName("tablinks");
+            for(let i=0; i<tablinks.length; i++)
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+
+            document.getElementById(tabId).style.display = "block";
+            event.currentTarget.className += " active";
+        }
     </script>
 
     <style>
         .upper {
             text-align: left;
+        }
+
+        .tab {
+            overflow: hidden;
+            border-bottom: 1px solid #ccc;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 2em;
+            transition: 0.3s;
+        } .tab button:hover {
+            background-color: #ddd; 
+        } .tab button.active {
+            background-color: #ccc;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 1em 2em;
+            border: 1px solid #ccc;
+            border-top: none;
         }
     </style>
 </body>
