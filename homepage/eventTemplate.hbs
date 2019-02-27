@@ -25,7 +25,7 @@
 <script>
     setTimeout(function(){
         document.getElementById("reg").onclick = () => {
-            if(__data.type==='gen')
+        /*    if(__data.type==='gen')
                 __data.eventId = 'any';
             let checksum = getEventHash(__data.type, __data.eventId);
             sessionStorage.setItem( config.hashToken, checksum );
@@ -34,7 +34,8 @@
                 window.location = '/register/main?int=gen';
             else
                 window.location = '/register/main?int=' + __data.type + '&evt=' + __data.eventId;
-        }
+        }   */
+        window.alert("The registrations for Xtacy/'19 have not started yet, Stay tuned!")
     }, 100)
 </script>
 
