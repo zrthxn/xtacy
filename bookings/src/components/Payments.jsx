@@ -202,7 +202,9 @@ class Payments extends Component {
                                 <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
                                 <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                             </div>
-
+                            <p>
+                                By clicking on PAY you agree to the Xtacy terms and conditions.
+                            </p>
                             <button className="button solid green" onClick={this.action}>PAY</button>
                         </div>
                     )
