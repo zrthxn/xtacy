@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Payments from './Payments';
 import SuccessPage from './SuccessPage';
 
-import { firestore } from '../util/database';
 import Booking from '../util/booking';
 import './css/Tickets.css';
 import '../Global.css'; 
@@ -25,6 +24,11 @@ class Tickets extends Component {
                 tier: null,
                 number: 0,
                 amount: 0
+            },
+            errors: {
+                email: false,
+                phone: false,
+                name: false
             },
             required: [
                 'regName', 'regEmail', 'regPhone'
@@ -100,9 +104,13 @@ class Tickets extends Component {
 
     action = () => {
         if(this.state.requiredFulfilled) {
-            localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
-            localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
-            this.setState({ paymentReady: true })
+            if(!(this.state.errors.name || this.state.errors.phone || this.state.errors.email)){
+                localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
+                localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
+                this.setState({ paymentReady: true })
+            } else {
+                alert('Please ensure that the data entered is correct')
+            }
         } else {
             alert('Please fill in the required fields')
         }
@@ -118,6 +126,63 @@ class Tickets extends Component {
             }).catch(()=>{
                 alert('Error')
             })
+    }
+    validate(event)
+    {
+        if(event.target.id==='regEmail') {
+            if(event.target.value.match(/^\S+@\S+[\.][0-9a-z]+$/)==null){
+                this.setState({
+                    errors : {
+                        name: this.state.errors.name,
+                        phone: this.state.errors.phone,
+                        email: true
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: this.state.errors.name,
+                    phone: this.state.errors.phone,
+                    email: false
+                }
+            })
+        }
+        else if (event.target.id==='regPhone'){
+            if(event.target.value.match(/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[6789]\d{9}|(\d[ -]?){10}\d$/)==null){  
+                this.setState({
+                    errors : {
+                        name: this.state.errors.name,
+                        phone: true,
+                        email: this.state.errors.email
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: this.state.errors.name,
+                    phone: false,
+                    email: this.state.errors.email
+                }
+            })
+        }
+        else if(event.target.id==='regName'){
+            if(event.target.value.match(/^([^0-9]*)$/)==null){  //doesnt have a digit
+                this.setState({
+                    errors : {
+                        name: true,
+                        phone: this.state.errors.phone,
+                        email: this.state.errors.email
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: false,
+                    phone: this.state.errors.phone,
+                    email: this.state.errors.email
+                }
+            })
+        }
     }
 
     render() {
@@ -149,9 +214,9 @@ class Tickets extends Component {
 
                             <div className="form">
                                 <div className="container fit">
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regName" placeholder="Name"/>
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regEmail" placeholder="Email"/>
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regPhone" placeholder="Phone"/>
+                                    <input type="text" className={this.state.errors.name?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regName" placeholder="Name"/>
+                                    <input type="text" className={this.state.errors.email?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regEmail" placeholder="Email"/>
+                                    <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                     <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
                                 </div>
                             </div>

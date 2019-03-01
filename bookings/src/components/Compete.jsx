@@ -25,6 +25,11 @@ class Compete extends Component {
                 amount: null,
                 members : []
             },
+            errors :{
+                email: false,
+                phone: false,
+                number: false
+            },
             required: [
                 'regTeamName', 'regTeamEmail', 'regTeamPhone'
             ]
@@ -67,7 +72,7 @@ class Compete extends Component {
                         truth = false
             } else {
                 if ( this.state.data[field]===null || (event.target.id===field && payload===null) )
-                    truth = false
+                        truth = false
             }
         }
         this.setState({
@@ -78,12 +83,16 @@ class Compete extends Component {
 
     action = () => {
         if(this.state.requiredFulfilled) {
-            if(this.props.eventData.metadata.paid) {
-                localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
-                localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
-                this.setState({ paymentReady: true })
+            if(!(this.state.errors.name || this.state.errors.phone || this.state.errors.email)){
+                if(this.props.eventData.metadata.paid) {
+                    localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
+                    localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
+                    this.setState({ paymentReady: true })
+                } else {
+                    this.success(null)
+                }
             } else {
-                this.success(null)
+                alert('Please ensure the data entered is correct')
             }
         } else {
             alert('Please fill in the required fields')
@@ -102,6 +111,63 @@ class Compete extends Component {
                 alert('Error')
             })
     }
+    validate(event)
+    {
+        if(event.target.id==='regTeamEmail') {
+            if(event.target.value.match(/^\S+@\S+[\.][0-9a-z]+$/)==null){
+                this.setState({
+                    errors : {
+                        name: this.state.errors.name,
+                        phone: this.state.errors.phone,
+                        email: true
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: this.state.errors.name,
+                    phone: this.state.errors.phone,
+                    email: false
+                }
+            })
+        }
+        else if (event.target.id==='regTeamPhone'){
+            if(event.target.value.match(/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[6789]\d{9}|(\d[ -]?){10}\d$/)==null){  
+                this.setState({
+                    errors : {
+                        name: this.state.errors.name,
+                        phone: true,
+                        email: this.state.errors.email
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: this.state.errors.name,
+                    phone: false,
+                    email: this.state.errors.email
+                }
+            })
+        }
+        else if(event.target.id==='regTeamName'){
+            if(event.target.value.match(/^([^0-9]*)$/)==null){  //doesnt have a digit
+                this.setState({
+                    errors : {
+                        name: true,
+                        phone: this.state.errors.phone,
+                        email: this.state.errors.email
+                    }
+                })
+            }
+            else this.setState({
+                errors : {
+                    name: false,
+                    phone: this.state.errors.phone,
+                    email: this.state.errors.email
+                }
+            })
+        }
+    }
 
     render() {
         return (
@@ -110,7 +176,7 @@ class Compete extends Component {
                 this.state.paymentReady ? (
                     this.props.eventData.metadata.paid ? (
                         <Payments
-                            name={this.state.data.regTeamName}
+                            name={this.state.data.regTeamLeader}
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.state.data.amount}
@@ -134,9 +200,9 @@ class Compete extends Component {
 
                             <div className="form">
                                 <div className="container">
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regTeamName" placeholder="Team Name"/>
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regTeamEmail" placeholder="Team Email"/>
-                                    <input type="text" className="textbox" onChange={this.handleChange} id="regTeamPhone" placeholder="Phone Number"/>
+                                    <input type="text" className={this.state.errors.name?"textbox error":"textbox"} onChange={this.handleChange} id="regTeamName" placeholder="Team Name"/>
+                                    <input type="text" className={this.state.errors.email?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regTeamEmail" placeholder="Team Email"/>
+                                    <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regTeamPhone" placeholder="Phone Number"/>
                                     {
                                         this.props.eventData.metadata.collectTeamGit ? (
                                             <input type="text" className="textbox" onChange={this.handleChange} id="regTeamGit"
@@ -145,7 +211,7 @@ class Compete extends Component {
                                     }
                                     {
                                         this.props.eventData.metadata.teamSizeType==='loose' ? (
-                                            <input type="text" className="textbox" onChange={this.handleChange} id="regTeamLeader" placeholder="Team Leader Name"/>
+                                            <input type="text" className={this.state.errors.name?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regTeamLeader" placeholder="Team Leader Name"/>
                                         ) : console.log()
                                     }
                                     {
@@ -195,6 +261,7 @@ class Compete extends Component {
 }
 
 class Member extends Component {
+    
     render() {
         let index = this.props.index
         return (
