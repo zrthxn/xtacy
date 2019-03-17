@@ -104,6 +104,17 @@ img[class~="mobile"] {
     top: 35%;
     font-size: 8em;
     z-index: 200;
+
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.grid .hero #ongc {
+    max-width: 250px;
+}
+.grid .hero #moonstar {
+    max-width: 200px;
 }
 
 @media (max-width: 800px) {
@@ -143,6 +154,10 @@ img[class~="mobile"] {
 
     .grid .hero .Title {
         display: none;
+    }
+
+    .grid .hero #mobile_title_sponsors {
+        max-width: 200px;
     }
 }
 @media(min-width: 1200px) {
@@ -383,12 +398,21 @@ img[class~="mobile"] {
 /* ----- Sponsors ----- */
 .sponsors {
     padding: 3em;
-
-} .sponsors marquee {
-
+    display: flex;
+    flex-flow: column;
 } .sponsors img {
     width: 8em;
     margin: 2em 4em;
+} @media(max-width: 600px) {
+    .sponsors img {
+        margin: 1em;
+    }
+}
+@media(max-width: 600px) {
+    .sponsors .others img {
+        width: 6em;
+        margin: 1em;
+    }
 }
 
 /* ----- Call to Action ----- */

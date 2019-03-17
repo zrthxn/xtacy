@@ -179,7 +179,7 @@ exports.ticketRegister = (data, txn) => {
 
 exports.findEventById = (__eventId) => {
     return new Promise((resolve,reject)=>{
-        database.ref('/eventLookup/events'+ __eventId).once('value', (snapshot) => {
+        database.ref('/eventLookup/events/'+ __eventId).once('value', (snapshot) => {
             eventData = snapshot.val();
             if(eventData!=null) {
                 fs.readFile('./eventRegistry/content/' + eventData.eventId + '.html', (err, content)=> {
