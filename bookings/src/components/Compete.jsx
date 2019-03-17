@@ -43,7 +43,10 @@ class Compete extends Component {
         if(this.props.eventData.metadata.teamSizeType==='strict') {
             for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
                 _data.members.push({ index: i, name: null, email: null })
+            if(this.props.eventData.metadata.teamStrictType==='fixed')
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'members/name', 'members/email' ]
+            else if(this.props.eventData.metadata.teamStrictType==='flex')
+            req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'leader/name', 'leader/email' ]
         } else if(this.props.eventData.metadata.teamSizeType==='loose') {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
@@ -67,9 +70,15 @@ class Compete extends Component {
         for ( let field of this.state.required ) {
             if(field.includes('/')) {
                 field = field.split('/')
-                for ( let member of this.state.data.members )
-                    if ( member[field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null) )
-                        truth = false
+                if(field[0]==='members'){
+                    for ( let member of this.state.data.members )
+                        if ( member[field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null) )
+                            truth = false
+                }
+                else if(field[0]==='leader'){
+                    if(this.state.members[0][field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null))
+                            truth = false
+                }
             } else {
                 if ( this.state.data[field]===null || (event.target.id===field && payload===null) )
                         truth = false
@@ -111,8 +120,8 @@ class Compete extends Component {
                 alert('Error')
             })
     }
-    validate(event)
-    {
+    
+    validate = (event) => {
         if(event.target.id==='regTeamEmail') {
             if(event.target.value.match(/^\S+@\S+[\.][0-9a-z]+$/)==null){
                 this.setState({
@@ -122,8 +131,7 @@ class Compete extends Component {
                         email: true
                     }
                 })
-            }
-            else this.setState({
+            } else this.setState({
                 errors : {
                     name: this.state.errors.name,
                     phone: this.state.errors.phone,
@@ -133,12 +141,10 @@ class Compete extends Component {
         }
         else if (event.target.id==='regTeamPhone'){
             if(event.target.value.match(/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[6789]\d{9}|(\d[ -]?){10}\d$/)==null){  
+                let _err = this.state.errors
+                _err['phone'] = true
                 this.setState({
-                    errors : {
-                        name: this.state.errors.name,
-                        phone: true,
-                        email: this.state.errors.email
-                    }
+                    errors : _err
                 })
             }
             else this.setState({
@@ -176,7 +182,7 @@ class Compete extends Component {
                 this.state.paymentReady ? (
                     this.props.eventData.metadata.paid ? (
                         <Payments
-                            name={this.state.data.regTeamLeader}
+                            name={this.props.eventData.metadata.teamSizeType==='loose'?(this.state.data.regTeamLeader):(this.state.data.members[0].name)}
                             email={this.state.data.regTeamEmail}
                             phone={this.state.data.regTeamPhone}
                             amount={this.state.data.amount}

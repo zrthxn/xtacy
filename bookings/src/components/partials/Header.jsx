@@ -20,7 +20,7 @@ class Header extends Component {
                         <nav className="sidebar-nav">
                             <ul>
                                 <li><a href="/">home</a></li>
-                                <li><a href="/about">about</a></li>
+                                {/* <li><a href="/about">about</a></li> */}
                                 <li><a href="/events">events</a></li>
                                 <li><a href="/contact">contact</a></li>
                                 <li><a href="/signup">register</a></li>
@@ -35,7 +35,7 @@ class Header extends Component {
                     <nav className="desktop-nav">
                         <ul>
                             <li><a href="/">home</a></li>
-                            <li><a href="/about">about</a></li>
+                            {/* <li><a href="/about">about</a></li> */}
                             <li><a href="/events">events</a></li>
                             <li><a href="/contact">contact</a></li>
                             <li className="highlight"><a href="/signup" className="highlight">register</a></li>
