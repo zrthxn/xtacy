@@ -43,15 +43,12 @@ class Compete extends Component {
         if(this.props.eventData.metadata.teamSizeType==='strict') {
             for (let i=0; i<this.props.eventData.metadata.teamSize; i++)
                 _data.members.push({ index: i, name: null, email: null })
-            if(this.props.eventData.metadata.teamStrictType==='fixed')
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'members/name', 'members/email' ]
-            else if(this.props.eventData.metadata.teamStrictType==='flex')
-            req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'leader/name', 'leader/email' ]
         } else if(this.props.eventData.metadata.teamSizeType==='loose') {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
         _data.amount = (this.props.eventData.metadata.price)
-        
+        console.log(this.props.eventData)
         this.setState({
             data: _data,
             required: req
@@ -70,13 +67,13 @@ class Compete extends Component {
         for ( let field of this.state.required ) {
             if(field.includes('/')) {
                 field = field.split('/')
-                if(field[0]==='members'){
+                if(this.props.eventData.metadata.teamStrictType==='strict'){
                     for ( let member of this.state.data.members )
                         if ( member[field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null) )
                             truth = false
                 }
-                else if(field[0]==='leader'){
-                    if(this.state.members[0][field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null))
+                else if(this.props.eventData.metadata.teamStrictType==='flex'){
+                    if(this.state.data.members[0][field[1]]===null || (event.target.id.split('/')[1]===field[1] && payload===null))
                             truth = false
                 }
             } else {
