@@ -32,12 +32,13 @@ class Compete extends Component {
             },
             required: [
                 'regTeamName', 'regTeamEmail', 'regTeamPhone'
-            ]
+            ],
+            takesPayment: false
         }
     }
 
     componentDidMount() {
-        let _data = this.state.data, req
+        let _data = this.state.data, req, takesPayment
         _data.eventId = this.props.eventData.eventId
         if(this.props.eventData.metadata.collectTeamGit) _data['regTeamGit'] = null
         if(this.props.eventData.metadata.teamSizeType==='strict') {
@@ -48,10 +49,12 @@ class Compete extends Component {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
         _data.amount = (this.props.eventData.metadata.price)
-        console.log(this.props.eventData)
+        if(this.props.eventData.metadata.paid && this.props.eventData.metadata.instantPay)
+            _takesPayment = true
         this.setState({
             data: _data,
-            required: req
+            required: req,
+            takesPayment: _takesPayment
         })
     }
 
@@ -177,7 +180,7 @@ class Compete extends Component {
             <div>
             {
                 this.state.paymentReady ? (
-                    this.props.eventData.metadata.paid ? (
+                    this.state.takesPayment ? (
                         <Payments
                             name={this.props.eventData.metadata.teamSizeType==='loose'?(this.state.data.regTeamLeader):(this.state.data.members[0].name)}
                             email={this.state.data.regTeamEmail}
