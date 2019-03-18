@@ -303,7 +303,6 @@ homepage.post('/_register/:type/', (req,res)=>{
 });
 
 homepage.post('/_payment/create/', (req,res)=>{
-    console.log('create payment server')
     Security.validateCSRFTokens(req.body.csrf.key, req.body.csrf.token)
         .then((csrfRes)=>{
             if(csrfRes) {
