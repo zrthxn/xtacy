@@ -7,6 +7,7 @@ import Booking from '../util/booking';
 import './css/Payments.css';
 import SuccessPage from './SuccessPage';
 import ErrorPage from './ErrorPage';
+import { RSA_NO_PADDING } from 'constants';
 
 const config = require('../util/config.json');
 
@@ -132,14 +133,21 @@ class Payments extends Component {
                     if (res.validation) 
                         this.setState({ paymentCreated: true, completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
-                    alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
+                    alert('Payment Received. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
             } else if(eventData.type==='tic') {
                 Booking.ticketRegister(regData, hmac, txn.txnId).then((res)=>{
                     if (res.validation) 
                         this.setState({ paymentCreated: true, completion: true, paymentSuccesful: true, rgn: res.rgn })
                 }).catch(()=>{
-                    alert('Payment Recieved. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
+                    alert('Payment Received. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
+                })
+            } else if (eventData.type==='gen'){
+                Booking.generalRegister(regData, hmac, txn.txnId).then((res) => {
+                    if(res.validation)
+                        this.setState({ paymentCreated: true, completion:true, paymentSuccesful:true, rgn: res.rgn })
+                }).catch(() => {
+                    alert('Payment Received. Registration Error. Please take a screenshot of this message and contact us :: ' + txn.txnId)
                 })
             }
         }).catch((err)=>{

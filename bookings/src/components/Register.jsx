@@ -3,8 +3,10 @@ import crypto from 'crypto';
 import Booking from '../util/booking';
 import './css/Register.css';
 import '../Global.css';
+import Payments from './Payments';
 
 import SuccessPage from './SuccessPage';
+import { throws } from 'assert';
 
 const config = require('../util/config.json');
 
@@ -18,8 +20,11 @@ class Register extends Component {
                 regName: null,
                 regEmail: null,
                 regPhone: null,
-                regInst: null
+                regInst: null,
+                tier:'standard',
+                amount:0
             },
+            premium:false,
             errors: {
                 email: false,
                 phone: false,
@@ -43,19 +48,52 @@ class Register extends Component {
             data: _data
         })
     }
+
+    handleTierChange = (event) => {
+        let _data = this.state.data
+        if(event.target.value==='gold'){
+            _data.amount=500
+            this.setState({
+                tier:'gold',
+                premium:true,
+                data:_data
+            })
+        }
+        else if(event.target.value==='silver'){
+            _data.amount = 300
+            this.setState({
+                tier: 'silver',
+                premium:true,
+                data:_data
+            })
+        }
+        else {
+            _data.amount=0
+            this.setState({
+                tier: 'standard',
+                premium:true,
+                data:_data
+            })
+        }
+    }
     
     action = () => {
         if(this.state.requiredFulfilled) {
             if(!(this.state.errors.name || this.state.errors.phone || this.state.errors.email)){
-                let hashSequence = JSON.stringify(this.state.data)
-                let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
-                Booking.generalRegister(this.state.data, hmac)
-                    .then((res)=>{
-                        if (res.validation)
-                            this.setState({ completion: true, rgn: res.rgn })
-                    }).catch(()=>{
-                        alert('Error')
-                    })
+                if(!this.state.premium){
+                    let hashSequence = JSON.stringify(this.state.data)
+                    let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                    Booking.generalRegister(this.state.data, hmac)
+                        .then((res)=>{
+                            if (res.validation)
+                                this.setState({ completion: true, rgn: res.rgn })
+                        }).catch(()=>{
+                            alert('Error')
+                        })
+                }
+                else {
+                    this.setState({completion:true})
+                }
             } else {
                 alert('Please ensure that the data entered is correct')
             }
@@ -126,15 +164,32 @@ class Register extends Component {
         return (
             <div>
             {
-                this.state.completion ? (
-                    <SuccessPage rgn={this.state.rgn} payment={false}/>
+                this.state.completion ? ( this.state.premium ? ( 
+                    <Payments 
+                        name = {this.state.data.regName}
+                        email = {this.state.data.regEmail}
+                        phone = {this.state.data.phone}
+                        amount = {this.state.data.amount}
+                        eventData = {{
+                            'title': 'Xtacy Registration',
+                            'type': 'gen'
+                        }}
+                        regData = {this.state.data}
+                        back = { () => {this.setState({completion:false})}} />
+                    ) :  <SuccessPage rgn={this.state.rgn} payment={false}/>
                 ) : (
                     <div className="Register container fit">
                         <div className="fluff">
                             <h2>Registration</h2>
                             <p>Fill in the form and click register. 
                                 You will recieve a confirmation email 
-                                after a successful registration.</p>                        
+                                after a successful registration.</p>
+                            <p>
+                                You can decide between Standard, Silver and Gold passes for Xtacy'19.<br/>
+                                Standard pass only gives you entry to the fest, while Silver and Gold Passes come with their own perks.<br/>
+                                Silver pass perks <br/>
+                                Gold pass perks <br/>
+                                </p>                        
                         </div>
 
                         <div className="form">
@@ -143,7 +198,11 @@ class Register extends Component {
                                 <input type="text" className={this.state.errors.email?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regEmail" placeholder="Email"/>
                                 <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
-
+                                <select className="dropdown" id="tier" onChange={this.handleTierChange}>
+                                    <option value="standard">Standard</option>
+                                    <option value="silver">Silver</option>
+                                    <option value="gold">Gold</option>
+                                </select>
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             </div>
                         </div>

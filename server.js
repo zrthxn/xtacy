@@ -94,9 +94,9 @@ xtacy.listen(PORT, ()=>{
 homepage.get('/', (req,res)=>{
     res.render('index', { 'title' : 'Xtacy' })
 });
-homepage.get('/about', (req,res)=>{
-    res.render('about', { 'title' : 'About' })
-});
+/*homepage.get('/about', (req,res)=>{
+    res.render('about', { 'title' : 'About' })      
+});     */
 homepage.get('/contact', (req,res)=>{
     res.render('contact', { 'title' : 'Contact Us' })
 });
