@@ -65,7 +65,7 @@ class Bookings extends Component {
                 } else if(returnPayToken===crypto.createHmac('sha512', config.clientKey).update(returnKey + returnTxnId).digest('hex')) {
                     verified = true
                 }
-        
+                console.log(this.state)
                 this.setState({
                     intent: params.intent,
                     event: params.event,

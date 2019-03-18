@@ -200,11 +200,22 @@ class Register extends Component {
                                 <input type="text" className={this.state.errors.email?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regEmail" placeholder="Email"/>
                                 <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
-                                <select className="dropdown" id="tier" onChange={this.handleTierChange}>
-                                    <option value="standard">Standard</option>
-                                    <option value="silver">Silver</option>
-                                    <option value="gold">Gold</option>
-                                </select>
+                                
+                                    {
+                                        this.props.intent==='gen' ? (
+                                            <select className="dropdown" id="tier" onChange={this.handleTierChange}>
+                                            <option value="standard">Standard</option>
+                                            <option value="silver">Silver</option>
+                                            <option value="gold">Gold</option>
+                                            </select>
+                                        ):(
+                                            <select className="dropdown" id="tier" onChange={this.handleTierChange}>
+                                            <option value="silver">Silver</option>
+                                            <option value="gold">Gold</option>
+                                            </select>
+                                        )
+                                    }
+                                    
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             </div>
                         </div>
