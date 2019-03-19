@@ -230,7 +230,7 @@
             {{> loading }}
             <iframe src="" frameborder="0" id="drawer-event"></iframe>
             <div class="action" id="action">
-              <button id="button_main" class="button solid">REGISTER</button>    
+            {{!--  <button id="button_main" class="button solid">REGISTER</button>   --}}   
                 <button id="button_aux" class="button">READ MORE</button>
             </div>
         </div>
@@ -274,11 +274,11 @@
                         if (eventId!==undefined) iframe.src = '/event/' + eventId + '/promo';
 
                         document.getElementById("button_main").onclick = () => {
-                            sessionStorage.setItem( config.hashToken, checksum );
+                        /*    sessionStorage.setItem( config.hashToken, checksum );
                             if(data.type==='gen')
                                 window.location = '/register/main?int=gen';
                             else
-                                window.location = '/register/main?int=' + data.type + '&evt=' + eventId;    
+                                window.location = '/register/main?int=' + data.type + '&evt=' + eventId;    */
                         }   
                         document.getElementById("button_aux").onclick = () => {
                             window.location = '/event/' + eventId;  
