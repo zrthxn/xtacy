@@ -50,28 +50,27 @@ class Register extends Component {
     }
 
     handleTierChange = (event) => {
-        console.log(this.state)
         let _data = this.state.data
         if(event.target.value==='gold'){
             _data.amount=500
+            _data.tier='gold'
             this.setState({
-                tier:'gold',
                 premium:true,
                 data:_data
             })
         }
         else if(event.target.value==='silver'){
             _data.amount = 300
+            _data.tier='silver'
             this.setState({
-                tier: 'silver',
                 premium:true,
                 data:_data
             })
         }
         else {
             _data.amount=0
+            _data.tier='standard'
             this.setState({
-                tier: 'standard',
                 premium:true,
                 data:_data
             })
@@ -79,7 +78,6 @@ class Register extends Component {
     }
     
     action = () => {
-        console.log(this.state)
         if(this.state.requiredFulfilled) {
             if(!(this.state.errors.name || this.state.errors.phone || this.state.errors.email)){
                 if(!this.state.premium){
@@ -104,8 +102,7 @@ class Register extends Component {
         }
     }
 
-    validate(event)
-    {   
+    validate = (event) => {   
         if(event.target.id==='regEmail') {
             if(event.target.value.match(/^\S+@\S+[\.][0-9a-z]+$/)==null){
                 this.setState({
@@ -174,7 +171,8 @@ class Register extends Component {
                         amount = {this.state.data.amount}
                         eventData = {{
                             'title': 'Xtacy Registration',
-                            'type': 'gen'
+                            'type': 'gen',
+                            'tier': this.state.data.tier
                         }}
                         regData = {this.state.data}
                         back = { () => {this.setState({completion:false})}} />
