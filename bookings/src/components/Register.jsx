@@ -92,6 +92,8 @@ class Register extends Component {
                         })
                 }
                 else {
+                    localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
+                    localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
                     this.setState({completion:true})
                 }
             } else {
