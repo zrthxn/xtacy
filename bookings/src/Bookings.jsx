@@ -71,7 +71,7 @@ class Bookings extends Component {
                     hash: hash,
                     ref: params.ref,
                     verified: verified
-                })
+                }, () => {console.log()})
             }
         }).catch((err)=>{
             console.error(err)
