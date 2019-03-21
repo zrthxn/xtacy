@@ -32,12 +32,13 @@ class Compete extends Component {
             },
             required: [
                 'regTeamName', 'regTeamEmail', 'regTeamPhone'
-            ]
+            ],
+            takesPayment: false
         }
     }
 
     componentDidMount() {
-        let _data = this.state.data, req
+        let _data = this.state.data, req, _takesPayment=false
         _data.eventId = this.props.eventData.eventId
         if(this.props.eventData.metadata.collectTeamGit) _data['regTeamGit'] = null
         if(this.props.eventData.metadata.teamSizeType==='strict') {
@@ -48,10 +49,12 @@ class Compete extends Component {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
         _data.amount = (this.props.eventData.metadata.price)
-        console.log(this.props.eventData)
+        if(this.props.eventData.metadata.paid && this.props.eventData.metadata.instantPayment)
+            _takesPayment = true
         this.setState({
             data: _data,
-            required: req
+            required: req,
+            takesPayment: _takesPayment
         })
     }
 
@@ -90,7 +93,7 @@ class Compete extends Component {
     action = () => {
         if(this.state.requiredFulfilled) {
             if(!(this.state.errors.name || this.state.errors.phone || this.state.errors.email)){
-                if(this.props.eventData.metadata.paid) {
+                if(this.state.takesPayment) {
                     localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
                     localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
                     this.setState({ paymentReady: true })
@@ -106,7 +109,7 @@ class Compete extends Component {
     }
 
     success = (txn) => {
-        if(!this.props.eventData.metadata.paid) txn = 'NON_PAID'
+        if(!this.state.takesPayment) txn = 'NON_PAID'
         let hashSequence = JSON.stringify(this.state.data)
         let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
         Booking.competeRegister(this.state.data, hmac, txn)
@@ -177,7 +180,7 @@ class Compete extends Component {
             <div>
             {
                 this.state.paymentReady ? (
-                    this.props.eventData.metadata.paid ? (
+                    this.state.takesPayment ? (
                         <Payments
                             name={this.props.eventData.metadata.teamSizeType==='loose'?(this.state.data.regTeamLeader):(this.state.data.members[0].name)}
                             email={this.state.data.regTeamEmail}
@@ -188,7 +191,7 @@ class Compete extends Component {
                             back={ () => this.setState({ paymentReady: false }) }
                         />
                     ) : (
-                        this.state.completion ? <SuccessPage rgn={this.state.rgn} payment={this.props.eventData.metadata.paid}/> : console.log()
+                        this.state.completion ? <SuccessPage rgn={this.state.rgn} payment={this.state.takesPayment}/> : console.log()
                     )
                 ) : (
                     <div className="Compete container fit">
@@ -245,12 +248,20 @@ class Compete extends Component {
 
                         {
                             this.props.eventData.metadata.paid ? (
-                                <div className="pricing">
-                                    <p id="trP">{'\u20B9 ' + this.state.data.amount + ' per team'}</p>
-                                    <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
-                                    <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                                    <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
-                                </div>
+                                this.state.takesPayment?(
+                                    <div className="pricing">
+                                        <p id="trP">{'\u20B9 ' + this.state.data.amount + ' per team'}</p>
+                                        <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                        <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                        <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                    </div>
+                                ):(
+                                    <div className="pricing">
+                                        <h3>{'\u20B9 ' + this.state.data.amount + ' per team'}</h3>
+                                        <p id="tax"><i>You will be required to pay this amount on the spot.</i></p>
+                                        <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
+                                    </div>
+                                )
                             ) : (
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             )

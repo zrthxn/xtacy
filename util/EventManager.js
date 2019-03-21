@@ -18,7 +18,11 @@ exports.getEventData = (__eventId) => {
 
 exports.generalRegister = (data) => {
     return new Promise((resolve,reject)=>{
-        generateRegistrationID('gen',1).then((rgnId) => {
+        let _eventId = ""
+        if(data.tier==='standard') _eventId = 'gen'
+        else if(data.tier==='silver') _eventId = 'SILVER'
+        else if(data.tier==='gold')    _eventId='GOLD45'
+        generateRegistrationID(_eventId,1).then((rgnId) => {
         Database.collection('registrations').doc(rgnId).set({
             "rgnId":rgnId,
             "regName":data.regName,

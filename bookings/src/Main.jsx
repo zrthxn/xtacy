@@ -73,9 +73,13 @@ class Main extends Component {
                     this.state.intent!== 'gen' ? (
                         this.state.eventData.published ? (
                             this.state.intent!=='com' ? (
-                                this.state.intent!=='tic' ? (
-                                    <ErrorPage/>
-                                ) : (
+                                this.state.intent!=='tic' ? ( 
+                                    this.state.intent!=='prm' ? (
+                                        <ErrorPage/>
+                                    ) : ( 
+                                        <Register eventData = {this.state.eventData} intent={this.state.intent}/>
+                                    )
+                                ): (
                                     <Tickets eventData={this.state.eventData}/>
                                 )
                             ) : (
@@ -89,7 +93,7 @@ class Main extends Component {
                             </div>
                         )
                     ) : (
-                        <Register eventData={this.state.eventData}/>
+                        <Register eventData={this.state.eventData} intent={this.state.intent}/>
                     )
                 ) : (
                     <LoadingPage timeOut={2500}/>
