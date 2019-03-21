@@ -53,24 +53,24 @@ class Register extends Component {
         let _data = this.state.data
         if(event.target.value==='gold'){
             _data.amount=500
+            _data.tier='gold'
             this.setState({
-                tier:'gold',
                 premium:true,
                 data:_data
             })
         }
         else if(event.target.value==='silver'){
             _data.amount = 300
+            _data.tier='silver'
             this.setState({
-                tier: 'silver',
                 premium:true,
                 data:_data
             })
         }
         else {
             _data.amount=0
+            _data.tier='standard'
             this.setState({
-                tier: 'standard',
                 premium:true,
                 data:_data
             })
@@ -102,8 +102,7 @@ class Register extends Component {
         }
     }
 
-    validate(event)
-    {   
+    validate = (event) => {   
         if(event.target.id==='regEmail') {
             if(event.target.value.match(/^\S+@\S+[\.][0-9a-z]+$/)==null){
                 this.setState({
@@ -172,7 +171,8 @@ class Register extends Component {
                         amount = {this.state.data.amount}
                         eventData = {{
                             'title': 'Xtacy Registration',
-                            'type': 'gen'
+                            'type': 'gen',
+                            'tier': this.state.data.tier
                         }}
                         regData = {this.state.data}
                         back = { () => {this.setState({completion:false})}} />
@@ -198,11 +198,22 @@ class Register extends Component {
                                 <input type="text" className={this.state.errors.email?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regEmail" placeholder="Email"/>
                                 <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
-                                <select className="dropdown" id="tier" onChange={this.handleTierChange}>
-                                    <option value="standard">Standard</option>
-                                    <option value="silver">Silver</option>
-                                    <option value="gold">Gold</option>
-                                </select>
+                                
+                                    {
+                                        this.props.intent==='gen' ? (
+                                            <select className="dropdown" id="tier" onChange={this.handleTierChange}>
+                                            <option value="standard">Standard</option>
+                                            <option value="silver">Silver</option>
+                                            <option value="gold">Gold</option>
+                                            </select>
+                                        ):(
+                                            <select className="dropdown" id="tier" onChange={this.handleTierChange}>
+                                            <option value="silver">Silver</option>
+                                            <option value="gold">Gold</option>
+                                            </select>
+                                        )
+                                    }
+                                    
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             </div>
                         </div>

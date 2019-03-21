@@ -103,7 +103,7 @@
         </div>
 
         <div class="event-card">
-            <div class="card"><a href="gdance"><img src="/static/img/events/gdance.webp" alt="Group Dance"></a></div>            
+            <div class="card"><a href="#gdance"><img src="/static/img/events/gdance.webp" alt="Group Dance"></a></div>            
             <h3>Group Dance</h3>
             <h4>30 March</h4>
         </div>
@@ -230,7 +230,7 @@
             {{> loading }}
             <iframe src="" frameborder="0" id="drawer-event"></iframe>
             <div class="action" id="action">
-             {{!--   <button id="button_main" class="button solid">REGISTER</button>    --}}
+                <button id="button_main" class="button solid">REGISTER</button>    
                 <button id="button_aux" class="button">READ MORE</button>
             </div>
         </div>
@@ -265,6 +265,7 @@
     function setEventUrl() {
         setTimeout(function(){
             let eventId = window.location.href.split('#')[1];
+            console.log(eventId)
             let data, checksum
             getEventData(eventId, (_data)=>{
                 data = _data;
@@ -273,15 +274,16 @@
                     if (toggle.checked===true) {
                         if (eventId!==undefined) iframe.src = '/event/' + eventId + '/promo';
 
-                    /*    document.getElementById("button_main").onclick = () => {
+                        document.getElementById("button_main").onclick = () => {
                             sessionStorage.setItem( config.hashToken, checksum );
                             if(data.type==='gen')
                                 window.location = '/register/main?int=gen';
                             else
-                                window.location = '/register/main?int=' + data.type + '&evt=' + eventId;
-                        }   */
+                                window.location = '/register/main?int=' + data.type + '&evt=' + eventId;    
+                        }   
                         document.getElementById("button_aux").onclick = () => {
-                            window.location = '/event/' + eventId;
+                            console.log("****")
+                            window.location = '/event/' + eventId;  
                         }
                     }
                 });
