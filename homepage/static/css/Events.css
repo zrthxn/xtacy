@@ -197,6 +197,11 @@ img[class~="mobile"] {
     from { opacity: 0 } to { opacity: 0.6 }
 }
 
+.poster {
+    width : 85vh;
+    height: auto;
+}
+
 /* === Close Button === */
 
 .drawer .close {
