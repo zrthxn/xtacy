@@ -27,13 +27,14 @@
         document.getElementById("reg").onclick = () => {
            if(__data.type==='gen')
                 __data.eventId = 'any';
-            let checksum = getEventHash(__data.type, __data.eventId);
-            sessionStorage.setItem( config.hashToken, checksum );
-            
-            if(__data.type==='gen')
-                window.location = '/register/main?int=gen';
-            else
-                window.location = '/register/main?int=' + __data.type + '&evt=' + __data.eventId;
+            getEventHash(__data.type, __data.eventId, (checksum) => {
+                sessionStorage.setItem( config.hashToken, checksum );
+                
+                if(__data.type==='gen')
+                    window.location = '/register/main?int=gen';
+                else
+                    window.location = '/register/main?int=' + __data.type + '&evt=' + __data.eventId;
+            });
         }   
     }, 100)
 </script>
