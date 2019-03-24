@@ -312,7 +312,9 @@ function send(gmail, email, userId) {
                 'raw': email
             }
         }, (err, res)=>{
-            if(err) reject(err.errors[0])
+            if(err) {
+                console.log(err)
+                    reject(err.errors[0]) }
             if(res.status===200) resolve(res.status)
         })
     })
