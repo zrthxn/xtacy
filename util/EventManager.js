@@ -86,15 +86,18 @@ exports.competeRegister = (data, txn) => {
                 "regTeamSize":data.regTeamSize,
                 "members": [...data.members]
             })
+            let _values = [rgnId, data.regTeamName, data.regTeamEmail, data.regTeamPhone, data.regTeamInst,
+                data.regTeamGit, teamLeader, data.regTeamSize]
+            let members = data.members
+            for(let i=0; i<members.length; i++){
+                _values.push(members[i].name)
+                _values.push(members[i].email)
+            }
             GSheets.AppendToSpreadsheet([
                 {
                     ssId: ServerConfig.Sheets.spreadsheets.registrations,
                     sheet: data.eventId.toUpperCase(),
-                    values: [
-                        rgnId, data.regTeamName, data.regTeamEmail, data.regTeamPhone, data.regTeamInst,
-                        data.regTeamGit, teamLeader, data.regTeamSize, 
-                        ...data.members
-                    ]
+                    values: _values
                 }
             ]).then(()=>{
                 generateHashedBarcode(rgnId, 'pdf417').then((url)=>{

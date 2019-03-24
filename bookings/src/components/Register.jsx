@@ -186,12 +186,12 @@ class Register extends Component {
                             <p>Fill in the form and click register. 
                                 You will recieve a confirmation email 
                                 after a successful registration.</p>
-                            <p>
+                        {/*    <p>
                                 You can decide between Standard, Silver and Gold passes for Xtacy'19.<br/>
                                 Standard pass only gives you entry to the fest, while Silver and Gold Passes come with their own perks.<br/>
                                 Silver pass perks <br/>
                                 Gold pass perks <br/>
-                                </p>                        
+                        </p>                */}          
                         </div>
 
                         <div className="form">
@@ -201,7 +201,7 @@ class Register extends Component {
                                 <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
                                 
-                                    {
+                                    {/*
                                         this.props.intent==='gen' ? (
                                             <select className="dropdown" id="tier" onChange={this.handleTierChange}>
                                             <option value="standard">Standard</option>
@@ -214,7 +214,7 @@ class Register extends Component {
                                             <option value="gold">Gold</option>
                                             </select>
                                         )
-                                    }
+                                        */}       
                                     
                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                             </div>
