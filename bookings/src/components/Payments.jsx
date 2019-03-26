@@ -81,7 +81,7 @@ class Payments extends Component {
                                 eventData: POST_DATA.eventData,
                                 regData: this.props.regData
                             },
-                            redHotURL: paymentData.payment.longurl,
+                            redHotURL: paymentData.redirectUrl,
                             paymentCreated: true
                         })
                     } else
@@ -102,18 +102,18 @@ class Payments extends Component {
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
-            setTimeout(()=>{
+         //   setTimeout(()=>{
                 Database.firestore.collection('transactions').doc(returnTxnId).get()
                 .then((snapshot)=>{
                     let paymentData = snapshot.data()
-                    if(paymentData.status==='Credit')
+                    if(paymentData.status==='success')
                         this.paymentSuccesful({ txnId: returnTxnId })
                     else
                         this.paymentError({ txnId: returnTxnId })
                 }).catch(()=>{
                     this.paymentError({ txnId: null })
                 })
-            }, 2500)
+        //    }, 2500)
         }
     }
 
@@ -185,7 +185,7 @@ class Payments extends Component {
         localStorage.setItem('x-return-pay-token', returnPayToken)
 
         sessionStorage.setItem('x-data-bundle', btoa(JSON.stringify(this.state.data)))
-
+        console.log(this.state.redHotURL)
         window.location = this.state.redHotURL
     }
 
