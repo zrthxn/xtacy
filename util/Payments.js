@@ -8,7 +8,7 @@ const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
 const env = require('../config.json').payments.env;
-const { API_KEY, SALT, AUTH_TOKEN } = require('../config.json').payments[env];
+const { URI, API_KEY, SALT, AUTH_TOKEN, SURL, FURL } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
     let txnID = 'TXN', sum=0
@@ -51,10 +51,10 @@ function registerNewTxn (params) {
 exports.CreateNewPayment = (params) => {
     return new Promise((resolve,reject)=>{
         registerNewTxn(params).then((txnId)=>{
-            var hashSequence = API_KEY+'|'+txnId+'|'+params.amount.total+'|'+params.eventData.title+'|'+params.payer.name+'|'+params.payer.email+'|||||'+''+'||||||'+SALT
+            var payerName = params.payer.name.split(' ')
+            var hashSequence = API_KEY+'|'+txnId+'|'+params.amount.total+'|'+params.eventData.title+'|'+payerName[0]+'|'+params.payer.email+'|||||'+''+'||||||'+SALT
             var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
-            console.log(hash)
-            request.post({url:'https://sandboxsecure.payu.in/_payment', 
+            request.post({url:URI, 
                 headers : {
                     'Authorisation' : AUTH_TOKEN
                 },
@@ -63,11 +63,11 @@ exports.CreateNewPayment = (params) => {
                     txnid : txnId,
                     amount: params.amount.total,
                     productinfo: params.eventData.title,
-                    firstname: params.payer.name,       // remember to make it first name only, no spaces
+                    firstname: payerName[0],      
                     email: params.payer.email,
                     phone: params.payer.phone,
-                    surl : 'http://xtacy.org:3000/_payment/success',
-                    furl: 'http://xtacy.org:3000/_payment/failure',
+                    surl : SURL,
+                    furl: FURL,
                     hash : hash,
                     service_provider: 'payu_paisa'
                 }
@@ -105,14 +105,17 @@ exports.CreateNewPayment = (params) => {
                     if(res.statusCode >= 300 && res.statusCode <=400){
                         var _payment = {
                             amount : params.amount.total,
-                            name: params.payer.name,
+                            name: payerName[0],
                             email: params.payer.email,
                             phone: params.payer.phone,
+                            event: params.eventData.title,
+
                             status: 'Created',
                         }
                         Database.collection('transactions').doc(txnId).set({
                             txnId: txnId,
-                            name: params.payer.name,
+                            name: payerName[0],
+                            event: params.eventData.title,
                             email: params.payer.email,
                             phone: params.payer.phone,
                             status:'created',
