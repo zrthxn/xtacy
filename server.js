@@ -329,7 +329,7 @@ homepage.post('/_payment/create/', (req,res)=>{
         })
 });
 
-homepage.post('/_payment/webhook/', (req,res)=>{
+/*homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
     if(webhookData !== null) {
         Database.firestore.collection('transactions').where('paymentRequestId', '==', webhookData.payment_request_id).limit(1).get()
@@ -343,7 +343,31 @@ homepage.post('/_payment/webhook/', (req,res)=>{
     } else {
         res.sendStatus(324)
     }
-});
+}); */
+
+homepage.post('/_payment/success/', (req,res) => {
+    payData = req.body
+    Database.firestore.collection('transactions').doc(payData.txnid).update({
+        paymentId: payData.encryptedPaymentId,
+        payuMoneyId : payData.payuMoneyId,
+        status: payData.status,
+        addedOn: payData.addedon
+    }).then( () => {
+        res.redirect('/register/payment')
+    })
+})
+
+homepage.post('/_payment/failure/', (req,res) => {
+    payData = req.body
+    Database.firestore.collection('transactions').doc(payData.txnid).update({
+        paymentId: payData.encryptedPaymentId,
+        payuMoneyId : payData.payuMoneyId,
+        status: payData.status,
+        addedOn: payData.addedon
+    }).then( () => {
+        res.redirect('/register/payment')
+    })
+})
 
 // CONTENT DELIVERY NETWORK --------------------------------------- CDN
 // ====================================================================

@@ -69,7 +69,7 @@
 
 /*  */
 .event-card {
-    position: relative;
+    position: relative;   
     height: fit-content;
     text-align: left;
     width: 16em;
@@ -195,6 +195,20 @@ img[class~="mobile"] {
     animation: drawerShadow 1s ease;
 } @keyframes drawerShadow {
     from { opacity: 0 } to { opacity: 0.6 }
+}
+
+@media (min-width: 800px) {
+    .poster {
+        width : 50vw;
+        height: auto;
+    }
+}
+@media (max-width: 800px)
+{
+    .poster {
+        width:90vw;
+        height:auto;
+    }
 }
 
 /* === Close Button === */

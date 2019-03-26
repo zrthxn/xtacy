@@ -92,11 +92,16 @@ exports.AppendToSpreadsheet = function (payload) {
                     },
                     auth: auth
                 }, function(err, response) {
-                    if (!err) results = [...results, response]
-                    else errors = [...errors, err]
+                    if (!err) {
+                        results = [...results, response]
+                        console.log("Spreadsheet Payload Delivered")
+                    }
+                    else {
+                        errors = [...errors, err]
+                        console.log(errors)
+                    }
                 }) 
             })
-            console.log("Spreadsheet Payload Delivered")
             resolve(results, errors)
         }).catch((err)=>{
             reject(err)

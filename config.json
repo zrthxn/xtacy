@@ -24,8 +24,9 @@
   "payments": {
     "env": "sandbox",
     "sandbox": {
-      "API_KEY": "test_eac399e665246c6d7b6f21dc34a", 
-      "AUTH_TOKEN": "test_2e9abbeb69a1c515e5eaa6bd1dc" 
+      "API_KEY": "0nGi8vGW", 
+      "SALT": "XDHXV8CAA8",
+      "AUTH_TOKEN": "Tbq1kW7kpBoawenCEp/+SlDb9/U0AzjNJxRgIXjsPKM=" 
     }, 
     "live": {
       "API_KEY": "",
