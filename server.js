@@ -346,11 +346,11 @@ homepage.post('/_payment/create/', (req,res)=>{
 
 homepage.post('/_payment/success/', (req,res) => {
     var payData = req.body
-    let responseHashSequence = `${SALT}|${payData.status}||||||||||XTACY|` + 
+    let responseHashSequence = `${SALT}|${payData.status}|||||||||||` + 
         `${payData.email}|${payData.firstname}|${payData.productinfo}|${payData.amount}|${payData.txnid}|${API_KEY}`
     var hash = crypto.createHash('sha512').update(responseHashSequence).digest('hex')
     if(hash===payData.hash){ 
-            Database.firestore.collection('transactions').doc(payData.txnid).update({
+        Database.firestore.collection('transactions').doc(payData.txnid).update({
             paymentId: payData.encryptedPaymentId,
             payuMoneyId : payData.payuMoneyId,
             status: payData.status,
