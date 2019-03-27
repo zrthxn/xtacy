@@ -23,7 +23,8 @@ class Compete extends Component {
                 regTeamPhone: null,
                 regTeamInst: null,
                 amount: null,
-                members : []
+                members : [],
+                coordinatorMail : null
             },
             errors :{
                 email: false,
@@ -49,6 +50,10 @@ class Compete extends Component {
             req = [ 'regTeamName', 'regTeamEmail', 'regTeamPhone', 'regTeamLeader', 'regTeamSize' ]
         }
         _data.amount = (this.props.eventData.metadata.price)
+        if(this.props.eventData.coordinatorMail!=null){
+            _data.coordinatorMail = this.props.eventData.coordinatorMail
+        }
+        else { _data.coordinatorMail = 'javed.azimus@gmail.com' }   //email used for dumping purposes, will forward emails to coordinators as the emails keep coming
         if(this.props.eventData.metadata.paid && this.props.eventData.metadata.instantPayment)
             _takesPayment = true
         this.setState({

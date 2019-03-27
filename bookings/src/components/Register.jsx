@@ -35,7 +35,25 @@ class Register extends Component {
             ]
         }
     }
-
+    componentDidMount() {
+        let _data = this.state.data
+        if(this.props.intent==='gen'){
+            _data.tier = 'standard'
+            _data.amount=0
+            this.setState({
+                premium: false,
+                data:_data
+            })
+        }
+        else if(this.props.intent==='prm'){
+            _data.tier = 'gold'
+            _data.amount = 150
+            this.setState({
+                premium: true,
+                data: _data
+            })
+        }
+    }
     handleChange = (event) => {
         let payload = null, truth = true, _data = this.state.data
         if ( event.target.value!=="" ) payload = event.target.value
@@ -52,16 +70,8 @@ class Register extends Component {
     handleTierChange = (event) => {
         let _data = this.state.data
         if(event.target.value==='gold'){
-            _data.amount=500
+            _data.amount=150
             _data.tier='gold'
-            this.setState({
-                premium:true,
-                data:_data
-            })
-        }
-        else if(event.target.value==='silver'){
-            _data.amount = 300
-            _data.tier='silver'
             this.setState({
                 premium:true,
                 data:_data
@@ -71,7 +81,7 @@ class Register extends Component {
             _data.amount=0
             _data.tier='standard'
             this.setState({
-                premium:true,
+                premium:false,
                 data:_data
             })
         }
@@ -169,7 +179,7 @@ class Register extends Component {
                     <Payments 
                         name = {this.state.data.regName}
                         email = {this.state.data.regEmail}
-                        phone = {this.state.data.phone}
+                        phone = {this.state.data.regPhone}
                         amount = {this.state.data.amount}
                         eventData = {{
                             'title': 'Xtacy Registration',
@@ -186,12 +196,9 @@ class Register extends Component {
                             <p>Fill in the form and click register. 
                                 You will recieve a confirmation email 
                                 after a successful registration.</p>
-                        {/*    <p>
-                                You can decide between Standard, Silver and Gold passes for Xtacy'19.<br/>
-                                Standard pass only gives you entry to the fest, while Silver and Gold Passes come with their own perks.<br/>
-                                Silver pass perks <br/>
-                                Gold pass perks <br/>
-                        </p>                */}          
+                            <p>
+                                <b>Gold Pass needed for Kunal Kamra's Show</b> <br/>
+                            </p>                         
                         </div>
 
                         <div className="form">
@@ -201,22 +208,36 @@ class Register extends Component {
                                 <input type="text" className={this.state.errors.phone?"textbox error":"textbox"} onChange={this.handleChange} onBlur={this.validate.bind(this)} id="regPhone" placeholder="Phone"/>
                                 <input type="text" className="textbox" onChange={this.handleChange} id="regInst" placeholder="Institution (Optional)"/>
                                 
-                                    {/*
+                                    {
                                         this.props.intent==='gen' ? (
                                             <select className="dropdown" id="tier" onChange={this.handleTierChange}>
                                             <option value="standard">Standard</option>
-                                            <option value="silver">Silver</option>
                                             <option value="gold">Gold</option>
                                             </select>
                                         ):(
                                             <select className="dropdown" id="tier" onChange={this.handleTierChange}>
-                                            <option value="silver">Silver</option>
                                             <option value="gold">Gold</option>
+                                            <option value="standard">Standard</option>
                                             </select>
                                         )
-                                        */}       
+                                    }
+                                    {
+                                        this.state.premium?(
+                                            <div className="pricing"> 
+                                            <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
+                                            <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                            <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                            </div>
+                                        ):(
+                                            <div className="pricing">
+                                                <br /><br /><br />
+                                                <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
+                                            </div>
+                                        )
+                                    }       
                                     
-                                <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
+                               
                             </div>
                         </div>
                     </div>

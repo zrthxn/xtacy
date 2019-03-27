@@ -22,6 +22,8 @@ const api = express();
 const PORT = process.env.PORT || 3000;
 const ServerConfig = require('./config.json');
 const __domain = require('./config.json').domain;
+const env = require('./config.json').payments.env;
+const { URI, API_KEY, SALT, AUTH_TOKEN, SURL, FURL } = require('./config.json').payments[env];
 
 const Security = require('./util/Security');
 const Gmailer = require('./util/Gmailer');
@@ -329,7 +331,7 @@ homepage.post('/_payment/create/', (req,res)=>{
         })
 });
 
-homepage.post('/_payment/webhook/', (req,res)=>{
+/*homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
 	console.log(webhookData)
     if(webhookData !== null) {
@@ -344,7 +346,47 @@ homepage.post('/_payment/webhook/', (req,res)=>{
     } else {
         res.sendStatus(324)
     }
-});
+}); */
+
+homepage.post('/_payment/success/', (req,res) => {
+    var payData = req.body
+    Database.firestore.collection('transactions').doc(payData.txnid).get().then((snapshot) =>{
+        let dbData = snapshot.data()
+        let hashSequence = SALT + '|' + payData.status + '|' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
+        var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
+        if(hash===payData.hash){ 
+                Database.firestore.collection('transactions').doc(payData.txnid).update({
+                paymentId: payData.encryptedPaymentId,
+                payuMoneyId : payData.payuMoneyId,
+                status: payData.status,
+                addedOn: payData.addedon
+            }).then( () => {
+                res.redirect('/register/payment')
+            })
+        }
+        else { console.log("Payment hash mismatch") }
+    })
+})
+
+homepage.post('/_payment/failure/', (req,res) => {
+    var payData = req.body
+    Database.firestore.collection('transactions').doc(payData.txnid).get().then((snapshot) =>{
+        let dbData = snapshot.data()
+        let hashSequence = SALT + '|' + payData.status + '|' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
+        var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
+        if(hash===payData.hash){ 
+                Database.firestore.collection('transactions').doc(payData.txnid).update({
+                paymentId: payData.encryptedPaymentId,
+                payuMoneyId : payData.payuMoneyId,
+                status: payData.status,
+                addedOn: payData.addedon
+            }).then( () => {
+                res.redirect('/register/payment')
+            })
+        }
+        else { console.log("Payment hash mismatch") }
+    })
+})
 
 // CONTENT DELIVERY NETWORK --------------------------------------- CDN
 // ====================================================================

@@ -24,12 +24,20 @@
   "payments": {
     "env": "sandbox",
     "sandbox": {
-      "API_KEY": "test_eac399e665246c6d7b6f21dc34a", 
-      "AUTH_TOKEN": "test_2e9abbeb69a1c515e5eaa6bd1dc" 
+      "URI": "https://sandboxsecure.payu.in/_payment",
+      "API_KEY": "0nGi8vGW",
+      "SALT": "XDHXV8CAA8",
+      "AUTH_TOKEN": "Tbq1kW7kpBoawenCEp/+SlDb9/U0AzjNJxRgIXjsPKM=",
+      "SURL": "http://xtacy.org:3000/_payment/success",
+      "FURL": "http://xtacy.org:3000/_payment/failure"
     }, 
     "live": {
-      "API_KEY": "ef26b37d2f2ebaaf1cc87b5fc326244c",
-      "AUTH_TOKEN": "28a5523a929568ea169efdf0e17a4ff3"
+      "URI":"https://secure.payu.in/_payment",
+      "API_KEY": "jBbKdkeu",
+      "SALT": "oH4OSVqugy",
+      "AUTH_TOKEN": "iU43WVHaJ1/Y8ohdbg/Ql5qH+lNEOf0yMrkm9Zi4C5o=",
+      "SURL": "http://xtacy.org/_payment/success",
+      "FURL": "http://xtacy.org/_payment/failure"
     }
   },
   "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",

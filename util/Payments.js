@@ -8,7 +8,7 @@ const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
 const env = require('../config.json').payments.env;
-const { API_KEY, AUTH_TOKEN } = require('../config.json').payments[env];
+const { URI, API_KEY, SALT, AUTH_TOKEN, SURL, FURL } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
     let txnID = 'TXN', sum=0
@@ -51,24 +51,28 @@ function registerNewTxn (params) {
 exports.CreateNewPayment = (params) => {
     return new Promise((resolve,reject)=>{
         registerNewTxn(params).then((txnId)=>{
-            request.post('https://test.instamojo.com/api/1.1/payment-requests/', {
+            var payerName = params.payer.name.split(' ')
+            var hashSequence = API_KEY+'|'+txnId+'|'+params.amount.total+'|'+params.eventData.title+'|'+payerName[0]+'|'+params.payer.email+'|||||'+''+'||||||'+SALT
+            var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
+            request.post({url:URI, 
                 headers : {
-                    'X-Api-Key': API_KEY,
-                    'X-Auth-Token': AUTH_TOKEN
+                    'Authorisation' : AUTH_TOKEN
                 },
                 form : {
-                    purpose: params.eventData.title,
+                    key: API_KEY,
+                    txnid : txnId,
                     amount: params.amount.total,
-                    phone: params.payer.phone,
-                    buyer_name : params.payer.name,
-                    redirect_url: 'https://xtacy.org/register/payment',
-                    webhook: 'https://xtacy.org/_payment/webhook/',
+                    productinfo: params.eventData.title,
+                    firstname: payerName[0],      
                     email: params.payer.email,
-                    allow_repeated_payments: false,
-                    // expire_at: 10 mins
+                    phone: params.payer.phone,
+                    surl : SURL,
+                    furl: FURL,
+                    hash : hash,
+                    service_provider: 'payu_paisa'
                 }
             }, function(err, res, body)
-                {          
+            /*    {          
                     if(err) reject(err)
                     if(res.statusCode===201 && body!==null) {
                         var responseData = JSON.parse(body)
@@ -95,6 +99,44 @@ exports.CreateNewPayment = (params) => {
                     } else {
                         reject({ status: false })
                     }
+                }       */
+                {
+                    if(err) reject(err)
+                    if(res.statusCode >= 300 && res.statusCode <=400){
+                        var _payment = {
+                            amount : params.amount.total,
+                            name: payerName[0],
+                            email: params.payer.email,
+                            phone: params.payer.phone,
+                            event: params.eventData.title,
+
+                            status: 'Created',
+                        }
+                        Database.collection('transactions').doc(txnId).set({
+                            txnId: txnId,
+                            name: payerName[0],
+                            event: params.eventData.title,
+                            email: params.payer.email,
+                            phone: params.payer.phone,
+                            status:'created',
+                            amount: params.amount.total,
+                            addedOn : '',
+                            paymentId : '',
+                            payuMoneyId: '',
+
+                        }).then(() =>{
+                            resolve({
+                                hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(_payment)).digest('hex'),
+                                payment : _payment,
+                                txnId: txnId,
+                                redirectUrl : res.headers.location.toString(),
+                                success: true
+                            })
+                        })  
+                    }   
+                    else {
+                        reject({status : false})    
+                    }   
                 }
             )
         })
