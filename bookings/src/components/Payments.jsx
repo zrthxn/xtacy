@@ -104,13 +104,31 @@ class Payments extends Component {
             localStorage.removeItem('x-return-key')
             localStorage.removeItem('x-return-pay-token')
             localStorage.removeItem('x-txn-id')
+            let cookies = decodeURIComponent(document.cookie).split(';'), cVal = ''
+            for(let i=0; i<cookies.length; i++){
+                let cookie = cookies[i].split('=')
+                if(cookie[0]==='x-pay-key'){
+                    cVal = cookie[1]
+                    break;
+                }
+            }
+            if(cVal===config.clientKey){
+                Database.firestore.collection('transactions').doc(returnTxnId).update({
+                    status: 'success',
+                    addedOn: new Date(Date.now())
+                }).then(() => {
+                    this.paymentSuccesful({ txnId : returnTxnId})
+                })
+            } else {
+                this.paymentError('SERVER_ERROR')
+            }
             /**
              * @author zrthxn
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
          //   setTimeout(()=>{
-                Database.firestore.collection('transactions').doc(returnTxnId).get()
+            /*    Database.firestore.collection('transactions').doc(returnTxnId).get()
                 .then((snapshot)=>{
                     let paymentData = snapshot.data()
                     if(paymentData.status==='success')
@@ -119,7 +137,7 @@ class Payments extends Component {
                         this.paymentError({ txnId: returnTxnId })
                 }).catch(()=>{
                     this.paymentError({ txnId: null })
-                })
+                })          */
         //    }, 2500)
         }
     }

@@ -376,6 +376,7 @@ homepage.all('/_payment/success/', (req,res) => {
     //         status: payData.status,
     //         addedOn: payData.addedon
     //     }).then(() => {
+            res.cookie( 'x-pay-key', ServerConfig.clientKey, { expires: new Date(Date.now() + 300000) } )
             res.redirect('/register/payment')
     //     })
     // }
