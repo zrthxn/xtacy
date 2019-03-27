@@ -104,7 +104,7 @@ class Payments extends Component {
             localStorage.removeItem('x-return-key')
             localStorage.removeItem('x-return-pay-token')
             localStorage.removeItem('x-txn-id')
-            let cookies = decodeURIComponent(document.cookie).split(';'), cVal = ''
+            let cookies = decodeURIComponent(document.cookie).split('; '), cVal = ''
             for(let i=0; i<cookies.length; i++){
                 let cookie = cookies[i].split('=')
                 if(cookie[0]==='x-pay-key'){
