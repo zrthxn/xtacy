@@ -25,19 +25,19 @@
     "env": "sandbox",
     "sandbox": {
       "URI": "https://sandboxsecure.payu.in/_payment",
-      "API_KEY": "0nGi8vGW",
-      "SALT": "XDHXV8CAA8",
-      "AUTH_TOKEN": "Tbq1kW7kpBoawenCEp/+SlDb9/U0AzjNJxRgIXjsPKM=",
-      "SURL": "http://xtacy.org:3000/_payment/success",
-      "FURL": "http://xtacy.org:3000/_payment/failure"
+      "API_KEY": "jBbKdkeu",
+      "SALT": "oH4OSVqugy",
+      "AUTH_TOKEN": "iU43WVHaJ1/Y8ohdbg/Ql5qH+lNEOf0yMrkm9Zi4C5o=",
+      "SURL": "https://xtacy.org/_payment/success",
+      "FURL": "https://xtacy.org/_payment/failure"
     }, 
     "live": {
       "URI":"https://secure.payu.in/_payment",
       "API_KEY": "jBbKdkeu",
       "SALT": "oH4OSVqugy",
       "AUTH_TOKEN": "iU43WVHaJ1/Y8ohdbg/Ql5qH+lNEOf0yMrkm9Zi4C5o=",
-      "SURL": "http://xtacy.org/_payment/success",
-      "FURL": "http://xtacy.org/_payment/failure"
+      "SURL": "https://xtacy.org/_payment/success",
+      "FURL": "https://xtacy.org/_payment/failure"
     }
   },
   "firebaseClientAPIKey": "AIzaSyAd17pI-aG3Mx8x_HXNz4lQ7VWRWnSgy4E",
