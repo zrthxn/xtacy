@@ -88,8 +88,9 @@ class Main extends Component {
                         ) : (
                             <div className="container">
                                 <Loading/>
-                                <h2>Not Published</h2>
-                                <p>Registrations are disabled for this event</p>
+                                <h2>Event Disabled!</h2>
+                                <p>Registrations are temporarily disabled for this event due to some problems on our end. 
+                                    Please try again later.</p>
                             </div>
                         )
                     ) : (
