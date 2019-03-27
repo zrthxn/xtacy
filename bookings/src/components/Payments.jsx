@@ -102,18 +102,16 @@ class Payments extends Component {
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
-         //   setTimeout(()=>{
-                Database.firestore.collection('transactions').doc(returnTxnId).get()
-                .then((snapshot)=>{
-                    let paymentData = snapshot.data()
-                    if(paymentData.status==='success')
-                        this.paymentSuccesful({ txnId: returnTxnId })
-                    else
-                        this.paymentError({ txnId: returnTxnId })
-                }).catch(()=>{
-                    this.paymentError({ txnId: null })
-                })
-        //    }, 2500)
+            Database.firestore.collection('transactions').doc(returnTxnId).get()
+            .then((snapshot)=>{
+                let paymentData = snapshot.data()
+                if(paymentData.status==='success')
+                    this.paymentSuccesful({ txnId: returnTxnId })
+                else
+                    this.paymentError({ txnId: returnTxnId })
+            }).catch(()=>{
+                this.paymentError({ txnId: null })
+            })
         }
     }
 
