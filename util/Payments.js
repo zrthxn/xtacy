@@ -8,7 +8,7 @@ const Database = require('./Database').firestore;
 const ServerConfig = require('../config.json');
 
 const env = require('../config.json').payments.env;
-const { API_KEY, SALT, AUTH_TOKEN } = require('../config.json').payments[env];
+const { URI, API_KEY, SALT, AUTH_TOKEN, SURL, FURL } = require('../config.json').payments[env];
 
 function registerNewTxn (params) {
     let txnID = 'TXN', sum=0
@@ -48,94 +48,22 @@ function registerNewTxn (params) {
     })
 }
 
-exports.CreateNewPayment = (params) => {
+exports.CreateNewPayment = (data) => {
     return new Promise((resolve,reject)=>{
-        registerNewTxn(params).then((txnId)=>{
-            var hashSequence = API_KEY+'|'+txnId+'|'+params.amount.total+'|'+params.eventData.title+'|'+params.payer.name+'|'+params.payer.email+'|||||'+''+'||||||'+SALT
-            var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
-            console.log(hash)
-            request.post({url:'https://sandboxsecure.payu.in/_payment', 
-                headers : {
-                    'Authorisation' : AUTH_TOKEN
-                },
-                form : {
-                    key: API_KEY,
-                    txnid : txnId,
-                    amount: params.amount.total,
-                    productinfo: params.eventData.title,
-                    firstname: params.payer.name,       // remember to make it first name only, no spaces
-                    email: params.payer.email,
-                    phone: params.payer.phone,
-                    surl : 'http://xtacy.org:3000/_payment/success',
-                    furl: 'http://xtacy.org:3000/_payment/failure',
-                    hash : hash,
-                    service_provider: 'payu_paisa'
-                }
-            }, function(err, res, body)
-            /*    {          
-                    if(err) reject(err)
-                    if(res.statusCode===201 && body!==null) {
-                        var responseData = JSON.parse(body)
-                        Database.collection('transactions').doc(txnId).set({
-                            txnId: txnId,
-                            paymentId: '',
-                            paymentRequestId: responseData.payment_request.id,
-                            amount: responseData.payment_request.amount,
-                            purpose: responseData.payment_request.purpose,
-                            name: responseData.payment_request.buyer_name,
-                            email: responseData.payment_request.email,
-                            phone: responseData.payment_request.phone,
-                            status: responseData.payment_request.status,
-                            createdAt: responseData.payment_request.created_at,
-                            modifiedAt: responseData.payment_request.modified_at
-                        }).then(()=>{
-                            resolve({
-                                hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(responseData.payment_request)).digest('hex'),
-                                payment: responseData.payment_request,
-                                txnId: txnId,
-                                success: responseData.success
-                            })
-                        })
-                    } else {
-                        reject({ status: false })
-                    }
-                }       */
-                {
-                    if(err) reject(err)
-                    if(res.statusCode >= 300 && res.statusCode <=400){
-                        var _payment = {
-                            amount : params.amount.total,
-                            name: params.payer.name,
-                            email: params.payer.email,
-                            phone: params.payer.phone,
-                            status: 'Created',
-                        }
-                        Database.collection('transactions').doc(txnId).set({
-                            txnId: txnId,
-                            name: params.payer.name,
-                            email: params.payer.email,
-                            phone: params.payer.phone,
-                            status:'created',
-                            amount: params.amount.total,
-                            addedOn : '',
-                            paymentId : '',
-                            payuMoneyId: '',
-
-                        }).then(() =>{
-                            resolve({
-                                hash : crypto.createHmac('sha256', ServerConfig.clientKey).update(JSON.stringify(_payment)).digest('hex'),
-                                payment : _payment,
-                                txnId: txnId,
-                                redirectUrl : res.headers.location.toString(),
-                                success: true
-                            })
-                        })  
-                    }   
-                    else {
-                        reject({status : false})    
-                    }   
-                }
-            )
+        registerNewTxn(data).then((txnId)=>{
+            resolve({
+                txnId: txnId,
+                API_KEY : API_KEY,
+                SALT : SALT,
+                AUTH_TOKEN : AUTH_TOKEN,
+                SURL : SURL,
+                FURL: FURL,
+                URI : URI,
+                hash: crypto.createHmac('sha256', ServerConfig.clientKey).update(AUTH_TOKEN).digest('hex'),
+                success: true
+            })
         })
+    }).catch((err)=>{
+        console.log(err)
     })
 }

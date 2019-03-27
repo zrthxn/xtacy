@@ -25,16 +25,16 @@ class Main extends Component {
             // DEBUG ======================================== //
             // this.setState({
             //     intent: this.props.intent,
-            //     event: 'dastan',
+            //     event: 'kunalk',
             //     eventData: {
-            //         title: 'Mehmood Bhai',
-            //         eventId: 'dastan',
-            //         dates: 16,
+            //         title: 'KK',
+            //         eventId: 'kunalk',
+            //         dates: 30,
             //         type: this.props.intent,
             //         published: true,
             //         metadata: {
             //             time: '1:00 PM',
-            //             paid: true,
+            //             paid: false,
             //             price: 5,
             //             teams: false,
             //             teamSize: null,

@@ -22,6 +22,7 @@ class Payments extends Component {
             paymentId: null,
             amount: null,
             data : null,
+            hash: null,
             required: []
         }
     }
@@ -66,22 +67,28 @@ class Payments extends Component {
             createReq.onreadystatechange = () => {
                 if(createReq.readyState===4 && createReq.status===200) {
                     let paymentData = JSON.parse(createReq.response)
-                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(JSON.stringify(paymentData.payment)).digest('hex')            
+                    let responseHmac = crypto.createHmac('sha256', config.clientKey).update(paymentData.AUTH_TOKEN).digest('hex')            
                     if(paymentData.hash === responseHmac) {
                         localStorage.setItem('x-txn-id', paymentData.txnId)
+                        
+                        let hashSequence = `${paymentData.API_KEY}|${paymentData.txnId}|${amt}|` + 
+                            `${this.props.eventData.title}|${this.props.name}|${this.props.email}|` + 
+                            `${'XTACY'}||||||||||${paymentData.SALT}`
+                        let hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
+
                         this.setState({
                             amount: {
                                 base: base,
                                 total: amt
                             },
-                            paymentId: paymentData.payment.payment_id,
+                            hash: hash,
                             txnId: paymentData.txnId,
+                            paymentData : paymentData,
                             data: {
                                 payer: POST_DATA.payer,
                                 eventData: POST_DATA.eventData,
                                 regData: this.props.regData
                             },
-                            redHotURL: paymentData.redirectUrl,
                             paymentCreated: true
                         })
                     } else
@@ -97,21 +104,41 @@ class Payments extends Component {
             localStorage.removeItem('x-return-key')
             localStorage.removeItem('x-return-pay-token')
             localStorage.removeItem('x-txn-id')
+            let cookies = decodeURIComponent(document.cookie).split('; '), cVal = ''
+            for(let i=0; i<cookies.length; i++){
+                let cookie = cookies[i].split('=')
+                if(cookie[0]==='x-pay-key'){
+                    cVal = cookie[1]
+                    break;
+                }
+            }
+            if(cVal===config.clientKey){
+                Database.firestore.collection('transactions').doc(returnTxnId).update({
+                    status: 'success',
+                    addedOn: new Date(Date.now())
+                }).then(() => {
+                    this.paymentSuccesful({ txnId : returnTxnId})
+                })
+            } else {
+                this.paymentError('SERVER_ERROR')
+            }
             /**
              * @author zrthxn
              * Check for transaction success here
              * The transaction ID is available as returnTxnId
              */
-            Database.firestore.collection('transactions').doc(returnTxnId).get()
-            .then((snapshot)=>{
-                let paymentData = snapshot.data()
-                if(paymentData.status==='success')
-                    this.paymentSuccesful({ txnId: returnTxnId })
-                else
-                    this.paymentError({ txnId: returnTxnId })
-            }).catch(()=>{
-                this.paymentError({ txnId: null })
-            })
+         //   setTimeout(()=>{
+            /*    Database.firestore.collection('transactions').doc(returnTxnId).get()
+                .then((snapshot)=>{
+                    let paymentData = snapshot.data()
+                    if(paymentData.status==='success')
+                        this.paymentSuccesful({ txnId: returnTxnId })
+                    else
+                        this.paymentError({ txnId: returnTxnId })
+                }).catch(()=>{
+                    this.paymentError({ txnId: null })
+                })          */
+        //    }, 2500)
         }
     }
 
@@ -181,10 +208,11 @@ class Payments extends Component {
 
         localStorage.setItem('x-return-key', returnKey)
         localStorage.setItem('x-return-pay-token', returnPayToken)
-
         sessionStorage.setItem('x-data-bundle', btoa(JSON.stringify(this.state.data)))
-        console.log(this.state.redHotURL)
-        window.location = this.state.redHotURL
+        //here send the form to paymentData.URI
+        // document.getElementById('payForm').submit()
+        if(this.props.eventData.tier==='gold')
+            window.location = 'https://www.payumoney.com/paybypayumoney/#/0839A766DA2456A41A64631ABE2C883F'
     }
 
 
@@ -197,21 +225,33 @@ class Payments extends Component {
                         this.state.paymentSuccesful ? <SuccessPage rgn={ this.state.rgn } payment={true}/> : <ErrorPage/>
                     ) : (
                         <div>
-                            <h2>Payments Page</h2>
-
                             <div className="action container fit">
                                 <button className="button" onClick={ this.props.back.bind(this) }>CANCEL</button>
                             </div>
-
-                            <div className="pricing">
-                                <p>Total</p>
-                                <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
-                                <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                            </div>
-                            <p>
-                                By clicking on PAY you agree to the Xtacy terms and conditions.
-                            </p>
-                            <button className="button solid green" onClick={this.action}>PAY</button>
+                            <form action={this.state.paymentData.URI} method="POST" name="payForm" id="payForm">
+                                <input type ="hidden" name="key" value={this.state.paymentData.API_KEY} />
+                                <input type="hidden" name="hash" value={this.state.paymentData.hash} /> 
+                                <input type="hidden" name="txnid" value={this.state.paymentData.txnId} />
+                                <input type="hidden" name="firstname" value={this.props.name} />                                
+                                <input type="hidden" name="service_provider" value="payu_paisa" />
+                                <input type="hidden" name="amount" value ={this.state.amount.total} />
+                                <input type="hidden" name="email" value={this.props.email} />
+                                <input type="hidden" name="phone" value={this.props.phone} />
+                                <input type="hidden" name="productinfo" value={this.props.eventData.title} />
+                                <input type="hidden" name="surl" value={this.state.paymentData.SURL} />
+                                <input type="hidden" name="furl" value={this.state.paymentData.FURL} />
+                                <input type="hidden" name="udf1" value="XTACY"/>
+                                <input type="hidden" name="hash" value={this.state.hash} />
+                                    <div className="pricing">
+                                        <p>Total</p>
+                                        <h3>{'\u20B9 ' + Booking.calcTaxInclAmount(this.props.amount)}</h3>
+                                        <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                    </div>
+                                    <p>
+                                        By clicking on PAY you agree to the Xtacy terms and conditions.
+                                    </p>
+                                <button className="button solid green" type="button" onClick = {this.action.bind(this)}>PAY</button>
+                            </form> 
                         </div>
                     )
                 ) : (

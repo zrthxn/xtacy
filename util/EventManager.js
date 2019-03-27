@@ -115,8 +115,39 @@ exports.competeRegister = (data, txn) => {
                             { id: 'url', data: url }
                         ]
                     ).then(()=>{
-                        console.log('New Registration', rgnId)
-                        resolve(rgnId)
+                        let _values = [
+                                { id : 'regTeamName', data : data.regTeamName },
+                                { id: 'teamLeader', data: teamLeader },
+                                { id: 'rgn', data: rgnId},
+                                { id: 'regTeamEmail', data: data.regTeamEmail },
+                                { id: 'regTeamPhone', data: data.regTeamPhone },
+                                { id: 'regTeamInst', data : data.regTeamInst},
+                                { id: 'regTeamGit', data : data.regTeamGit },
+                                { id: 'title', data :data.eventId }
+                            ]
+                        for(let i=0; i<5; i++){
+                            let _id = 'member' + i
+                            if(i<data.members.length){
+                                let obj = {id: _id, data : data.members[i].name}
+                                _values.push(obj)
+                            }
+                            else {
+                                let obj = {id :_id, data: ' '}
+                                _values.push(obj)
+                            }
+                        }
+                        Gmailer.SingleDataDelivery(
+                            {
+                                to : data.coordinatorMail,
+                                from: 'hello@xtacy.org',
+                                subject: 'New Registration | Xtacy'
+                            },
+                            fs.readFileSync('./mail/templates/coordinatorReg.html').toString(),
+                            _values
+                            ).then( ()=> {
+                                console.log('New Registration', rgnId)
+                                resolve(rgnId)
+                        })
                     })
                 }).catch((err)=> console.error(err))   
             }).catch((err)=>{
@@ -130,7 +161,7 @@ exports.competeRegister = (data, txn) => {
 
 exports.ticketRegister = (data, txn) => {
     return new Promise((resolve,reject)=>{
-        generateRegistrationID(data.eventId, data.number).then( (rgnId) => {
+        generateRegistrationID(data.eventId, data.number).then((rgnId) => {
             if(txn === 'NON_PAID') txn = ServerConfig.clientKey
             validateTransaction(txn).then((r)=>{
                 if(!r) reject()
