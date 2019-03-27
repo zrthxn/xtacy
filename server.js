@@ -346,22 +346,22 @@ homepage.post('/_payment/create/', (req,res)=>{
 
 homepage.post('/_payment/success/', (req,res) => {
     var payData = req.body
-    Database.firestore.collection('transactions').doc(payData.txnid).get().then((snapshot) =>{
-        let dbData = snapshot.data()
-        let hashSequence = SALT + '|' + payData.status + '|'+ 'XTACY' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
-        var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
-        if(hash===payData.hash){ 
-                Database.firestore.collection('transactions').doc(payData.txnid).update({
-                paymentId: payData.encryptedPaymentId,
-                payuMoneyId : payData.payuMoneyId,
-                status: payData.status,
-                addedOn: payData.addedon
-            }).then( () => {
-                res.redirect('/register/payment')
-            })
-        }
-        else { console.log("Payment hash mismatch") }
-    })
+    let responseHashSequence = `${SALT}|${payData.status}||||||||||XTACY|` + 
+        `${payData.email}|${payData.firstname}|${payData.productinfo}|${payData.amount}|${payData.txnid}|${API_KEY}`
+    var hash = crypto.createHash('sha512').update(responseHashSequence).digest('hex')
+    if(hash===payData.hash){ 
+            Database.firestore.collection('transactions').doc(payData.txnid).update({
+            paymentId: payData.encryptedPaymentId,
+            payuMoneyId : payData.payuMoneyId,
+            status: payData.status,
+            addedOn: payData.addedon
+        }).then( () => {
+            res.redirect('/register/payment')
+        })
+    }
+    else {
+        console.log("Payment hash mismatch") 
+    }
 })
 
 homepage.post('/_payment/failure/', (req,res) => {
