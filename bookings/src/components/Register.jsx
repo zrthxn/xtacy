@@ -70,7 +70,7 @@ class Register extends Component {
     handleTierChange = (event) => {
         let _data = this.state.data
         if(event.target.value==='gold'){
-            _data.amount=200
+            _data.amount=150
             _data.tier='gold'
             this.setState({
                 premium:true,
@@ -196,12 +196,9 @@ class Register extends Component {
                             <p>Fill in the form and click register. 
                                 You will recieve a confirmation email 
                                 after a successful registration.</p>
-                        {/*    <p>
-                                You can decide between Standard, Silver and Gold passes for Xtacy'19.<br/>
-                                Standard pass only gives you entry to the fest, while Silver and Gold Passes come with their own perks.<br/>
-                                Silver pass perks <br/>
-                                Gold pass perks <br/>
-                        </p>                */}          
+                            <p>
+                                <b>Gold Pass needed for Kunal Kamra's Show</b> <br/>
+                            </p>                         
                         </div>
 
                         <div className="form">
