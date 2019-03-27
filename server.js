@@ -311,11 +311,7 @@ homepage.post('/_payment/create/', (req,res)=>{
                 let hashSequence = JSON.stringify(req.body.data)
                 let hmac = crypto.createHmac('sha256', ServerConfig.clientKey).update(hashSequence).digest('hex')
                 if ( req.body.checksum === hmac ) {
-                    Payments.CreateNewPayment({
-                        amount: req.body.data.amount,
-                        payer: req.body.data.payer,
-                        eventData: req.body.data.eventData
-                    }).then((payment)=>{
+                    Payments.CreateNewPayment(req.body.data).then((payment)=>{
                         if(payment.success) 
                             res.json(payment)
                     }).catch((err)=>{
@@ -329,7 +325,7 @@ homepage.post('/_payment/create/', (req,res)=>{
         }).catch((err)=>{
             res.status(403).send(err)
         })
-});
+});  
 
 /*homepage.post('/_payment/webhook/', (req,res)=>{
     let webhookData = req.body
@@ -352,7 +348,7 @@ homepage.post('/_payment/success/', (req,res) => {
     var payData = req.body
     Database.firestore.collection('transactions').doc(payData.txnid).get().then((snapshot) =>{
         let dbData = snapshot.data()
-        let hashSequence = SALT + '|' + payData.status + '|' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
+        let hashSequence = SALT + '|' + payData.status + '|'+ 'XTACY' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
         var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
         if(hash===payData.hash){ 
                 Database.firestore.collection('transactions').doc(payData.txnid).update({
@@ -372,7 +368,7 @@ homepage.post('/_payment/failure/', (req,res) => {
     var payData = req.body
     Database.firestore.collection('transactions').doc(payData.txnid).get().then((snapshot) =>{
         let dbData = snapshot.data()
-        let hashSequence = SALT + '|' + payData.status + '|' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
+        let hashSequence = SALT + '|' + payData.status + '|' +'XTACY' + '|||||'+''+'|||||'+dbData.email+'|'+dbData.name+'|'+dbData.event+'|'+dbData.amount+'|'+dbData.txnId+'|'+API_KEY
         var hash = crypto.createHash('sha512').update(hashSequence).digest('hex')
         if(hash===payData.hash){ 
                 Database.firestore.collection('transactions').doc(payData.txnid).update({

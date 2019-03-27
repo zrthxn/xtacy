@@ -2,7 +2,7 @@
   "name": "bookings",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://xtacy.org/",
+  "proxy": "http://xtacy.org:3000/",
   "homepage": "https://xtacy.org/register",
   "dependencies": {
     "firebase": "^5.7.2",
