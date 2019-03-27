@@ -108,16 +108,11 @@ class Payments extends Component {
             for(let i=0; i<cookies.length; i++){
                 let cookie = cookies[i].split('=')
                 if(cookie[0]==='x-pay-key'){
-                    console.log("cookie")
-                    console.log(cVal)
                     cVal = cookie[1]
                     break;
                 }
             }
-            console.log("!cookie")
-            console.log(cVal)
             if(cVal===config.clientKey){
-                console.log("1")
                 Database.firestore.collection('transactions').doc(returnTxnId).update({
                     status: 'success',
                     addedOn: new Date(Date.now())
@@ -125,7 +120,6 @@ class Payments extends Component {
                     this.paymentSuccesful({ txnId : returnTxnId})
                 })
             } else {
-                console.log(3)
                 this.paymentError('SERVER_ERROR')
             }
             /**
@@ -152,7 +146,6 @@ class Payments extends Component {
         console.log('PAYMENT_SUCCESSFUL')
         const { regData, eventData } = JSON.parse(atob(sessionStorage.getItem('x-data-bundle')))
         sessionStorage.removeItem('x-data-bundle')
-        console.log("2")
         Database.firestore.collection('transactions').doc(txn.txnId).update({
             status: 'SUCCESS | VERIFIED',
             verified: true

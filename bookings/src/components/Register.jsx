@@ -47,7 +47,7 @@ class Register extends Component {
         }
         else if(this.props.intent==='prm'){
             _data.tier = 'gold'
-            _data.amount = 1
+            _data.amount = 150
             this.setState({
                 premium: true,
                 data: _data
@@ -70,7 +70,7 @@ class Register extends Component {
     handleTierChange = (event) => {
         let _data = this.state.data
         if(event.target.value==='gold'){
-            _data.amount=1
+            _data.amount=150
             _data.tier='gold'
             this.setState({
                 premium:true,
