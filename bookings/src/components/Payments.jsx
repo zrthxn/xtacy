@@ -192,7 +192,9 @@ class Payments extends Component {
         localStorage.setItem('x-return-pay-token', returnPayToken)
         sessionStorage.setItem('x-data-bundle', btoa(JSON.stringify(this.state.data)))
         //here send the form to paymentData.URI
-        document.getElementById('payForm').submit()
+        // document.getElementById('payForm').submit()
+        if(this.props.eventData.tier==='gold')
+            window.location = 'https://www.payumoney.com/paybypayumoney/#/0839A766DA2456A41A64631ABE2C883F'
     }
 
 
