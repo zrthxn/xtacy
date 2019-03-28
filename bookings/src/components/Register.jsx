@@ -229,6 +229,7 @@ class Register extends Component {
                                         <p><b>Step 1</b>: Pay INR 154.45 using Google Pay or PhonePe to <b>8173824682</b> (Syed Mohammad Mehdi Rizvi)</p>
                                         <br/><p><b>Step 2</b>: Fill this form and upload a screenshot of the confirmation page.</p><br/>
                                         <p><b>Step 3</b>: We will verify your payment and send you a confirmation email within 2 hours.</p><br/>
+                                        <b>YOU NEED TO MAKE SEPERATE REGISTRATIONS FOR EACH INDIVIDUAL i.e. ONE PAYMENT FOR ONE REGISTRATION</b><br/>
                                     </div>
                                 ) : (
                                     console.log()
