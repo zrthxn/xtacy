@@ -50,7 +50,9 @@ exports.acknowledgement = (data) => {
     })
 }
 
-
+exports.verifyAck = () => {
+    
+}
 
 exports.generalRegister = (data) => {
     return new Promise((resolve,reject)=>{
