@@ -5,7 +5,10 @@ import './css/Register.css';
 import '../Global.css';
 import Payments from './Payments';
 
+import { storage } from '../util/database';
 import SuccessPage from './SuccessPage';
+import CustomUploadButton from 'react-firebase-file-uploader/lib/CustomUploadButton';
+import AcknowledegmentPage from './AcknowledgmentPage';
 import { throws } from 'assert';
 
 const config = require('../util/config.json');
@@ -24,6 +27,7 @@ class Register extends Component {
                 tier:'standard',
                 amount:0
             },
+            uploading : false,
             premium:false,
             errors: {
                 email: false,
@@ -99,12 +103,25 @@ class Register extends Component {
                                 this.setState({ completion: true, rgn: res.rgn })
                         }).catch(()=>{
                             alert('Error')
-                        })
+                        })     
                 }
                 else {
+                    var ack = ''
+                    for(let i=0; i<6; i++){
+                        ack += Math.floor(Math.random()*10)
+                    }
+                    
+                    let _data = this.state.data   
+                    _data['txn'] = ack
                     localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
                     localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
-                    this.setState({completion:true})
+                    let hashSequence = JSON.stringify(_data)
+                        let hmac = crypto.createHmac('sha256', config.clientKey).update(hashSequence).digest('hex')
+                        Booking.bookingAcknowledegment(_data, hmac).then((ack) => {
+                            this.setState({
+                                completion: true, rgn : ack
+                            })
+                        })
                 }
             } else {
                 alert('Please ensure that the data entered is correct')
@@ -176,7 +193,8 @@ class Register extends Component {
             <div>
             {
                 this.state.completion ? ( this.state.premium ? ( 
-                    <Payments 
+                    <AcknowledegmentPage rgn = {this.state.rgn} payment = {false} />
+                /*    <Payments 
                         name = {this.state.data.regName}
                         email = {this.state.data.regEmail}
                         phone = {this.state.data.regPhone}
@@ -187,7 +205,7 @@ class Register extends Component {
                             'tier': this.state.data.tier
                         }}
                         regData = {this.state.data}
-                        back = { () => {this.setState({completion:false})}} />
+                    back = { () => {this.setState({completion:false})}} />  */
                     ) :  <SuccessPage rgn={this.state.rgn} payment={false}/>
                 ) : (
                     <div className="Register container fit">
@@ -198,7 +216,21 @@ class Register extends Component {
                                 after a successful registration.</p>
                             <p>
                                 <b>Gold Pass needed for Kunal Kamra's Show</b> <br/>
-                            </p>                         
+                            </p>  
+
+                            {
+                                this.state.premium ? (
+                                    <div>
+                                        <br/>
+                                        <br/>
+                                        <p><b>Step 1</b>: Pay INR 154.45 using Google Pay or PhonePe to <b>8173824682</b> (Syed Mohammad Mehdi Rizvi)</p>
+                                        <br/><p><b>Step 2</b>: Fill this form and upload a screenshot of the confirmation page.</p><br/>
+                                        <p><b>Step 3</b>: We will verify your payment and send you a confirmation email within 2 hours.</p><br/>
+                                    </div>
+                                ) : (
+                                    console.log()
+                                )
+                            }                       
                         </div>
 
                         <div className="form">
@@ -225,24 +257,32 @@ class Register extends Component {
                                         this.state.premium?(
                                             <div className="pricing"> 
                                                 <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
-                                                <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                                <h3>{'Total \u20B9 ' + 154.54}</h3>
                                                 <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+                                                
+                                                <p>Sample Screenshot</p>
+                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/>
 
-                                                <p>Step 1: Pay INR 154.45 using Google Pay or PhonePe to 8173824682 (Syed Mohammad Mehdi Rizvi)</p>
-
-                                                <h3>Upload</h3>
-                                                <form action="/_upload" method="POST" encType="multipart/form-data">
-                                                    <input type="text" name="filepath" placeholder="path"/>
-                                                    <input type="file" name="fileupload"/>
-                                                    <input type="submit" class="button solid" id="upload" value="UPLOAD"/>
-                                                </form>
-
-                                                <p>Step 2: Fill the following form and upload a screenshot of the confirmation page.</p>
-                                                <p>Step 3: We will verify your payment and send you a confirmation email within 2 hours.</p>
-
-                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="100px" alt="Sample"/>
-
-                                                <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                            {/*    <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
+                                                
+                                                <CustomUploadButton
+                                                    className="button solid"
+                                                    accept="image/*"
+                                                    storageRef={storage.ref('payScreenshots')}
+                                                    onUploadError={this.handleUploadError}
+                                                    onProgress={()=> this.setState({uploading: true})}
+                                                    onUploadSuccess={this.action.bind(this)}
+                                                    style={{color: 'white', padding: 10}} >
+                                                    Upload and Proceed
+                                                </CustomUploadButton>
+                                                {
+                                                    this.state.uploading ? (
+                                                        <h3> Uploading... </h3>
+                                                    ) : (
+                                                        console.log()
+                                                    )
+                                                }
+                                                
                                             </div>
                                         ):(
                                             <div className="pricing">

@@ -285,7 +285,10 @@ homepage.post('/_register/:type/', (req,res)=>{
                         EventManager.competeRegister(data, txn).then((rgn) => registrationSuccessful(rgn) )
                     } else if(req.params.type==='tic') {
                         EventManager.ticketRegister(data, txn).then((rgn) => registrationSuccessful(rgn) )
-                    } else {
+                    } else if(req.params.type==='ack'){
+                        EventManager.acknowledgement(data, txn).then(() => { res.sendStatus(200)} ) 
+                    }
+                     else {
                         res.json({ validation: false })
                     }
 
