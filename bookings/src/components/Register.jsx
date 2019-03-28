@@ -211,23 +211,38 @@ class Register extends Component {
                                     {
                                         this.props.intent==='gen' ? (
                                             <select className="dropdown" id="tier" onChange={this.handleTierChange}>
-                                            <option value="standard">Standard</option>
-                                            <option value="gold">Gold</option>
+                                                <option value="standard">Standard</option>
+                                                <option value="gold">Gold</option>
                                             </select>
                                         ):(
                                             <select className="dropdown" id="tier" onChange={this.handleTierChange}>
-                                            <option value="gold">Gold</option>
-                                            <option value="standard">Standard</option>
+                                                <option value="gold">Gold</option>
+                                                <option value="standard">Standard</option>
                                             </select>
                                         )
                                     }
                                     {
                                         this.state.premium?(
                                             <div className="pricing"> 
-                                            <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
-                                            <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
-                                            <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
-                                            <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
+                                                <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
+                                                <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
+                                                <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
+
+                                                <p>Step 1: Pay INR 154.45 using Google Pay or PhonePe to 8173824682 (Syed Mohammad Mehdi Rizvi)</p>
+
+                                                <h3>Upload</h3>
+                                                <form action="/_upload" method="POST" encType="multipart/form-data">
+                                                    <input type="text" name="filepath" placeholder="path"/>
+                                                    <input type="file" name="fileupload"/>
+                                                    <input type="submit" class="button solid" id="upload" value="UPLOAD"/>
+                                                </form>
+
+                                                <p>Step 2: Fill the following form and upload a screenshot of the confirmation page.</p>
+                                                <p>Step 3: We will verify your payment and send you a confirmation email within 2 hours.</p>
+
+                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="100px" alt="Sample"/>
+
+                                                <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button>
                                             </div>
                                         ):(
                                             <div className="pricing">
@@ -235,9 +250,7 @@ class Register extends Component {
                                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
                                             </div>
                                         )
-                                    }       
-                                    
-                               
+                                    }                                      
                             </div>
                         </div>
                     </div>
