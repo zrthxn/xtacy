@@ -27,6 +27,7 @@ class Register extends Component {
                 tier:'standard',
                 amount:0
             },
+            txn: '',
             uploading : false,
             premium:false,
             errors: {
@@ -40,13 +41,18 @@ class Register extends Component {
         }
     }
     componentDidMount() {
+        var ack = ''
+        for(let i=0; i<6; i++){
+            ack += Math.floor(Math.random()*10)
+        }
         let _data = this.state.data
         if(this.props.intent==='gen'){
             _data.tier = 'standard'
             _data.amount=0
             this.setState({
                 premium: false,
-                data:_data
+                data:_data,
+                txn : ack
             })
         }
         else if(this.props.intent==='prm'){
@@ -54,7 +60,8 @@ class Register extends Component {
             _data.amount = 150
             this.setState({
                 premium: true,
-                data: _data
+                data: _data,
+                txn: ack
             })
         }
     }
@@ -106,13 +113,9 @@ class Register extends Component {
                         })     
                 }
                 else {
-                    var ack = ''
-                    for(let i=0; i<6; i++){
-                        ack += Math.floor(Math.random()*10)
-                    }
                     
                     let _data = this.state.data   
-                    _data['txn'] = ack
+                    _data['txn'] = this.state.txn
                     localStorage.setItem('x-return-key', 'PAY_INITIALIZE')
                     localStorage.setItem('x-return-pay-token', 'PAY_INITIALIZE')
                     let hashSequence = JSON.stringify(_data)
@@ -268,6 +271,7 @@ class Register extends Component {
                                                 <CustomUploadButton
                                                     className="button solid"
                                                     accept="image/*"
+                                                    filename = { file => this.state.txn + file.name.split('.')[1]}
                                                     storageRef={storage.ref('payScreenshots')}
                                                     onUploadError={this.handleUploadError}
                                                     onProgress={()=> this.setState({uploading: true})}
