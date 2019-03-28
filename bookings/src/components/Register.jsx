@@ -266,7 +266,8 @@ class Register extends Component {
                                                 
                                                 {/* <p>Sample Screenshot</p>
                                                 <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/> */}
-                                                <b>REGISTRATIONS ARE CURRENTLY DISABLED</b>
+                                                <b>REGISTRATIONS ARE CURRENTLY DISABLED</b><br/>
+                                                <b>Registrations will continue in the morning</b>
                                             {/*    <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
                                                 
                                                 {/* <CustomUploadButton
