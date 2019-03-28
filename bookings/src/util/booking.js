@@ -59,6 +59,26 @@ exports.competeRegister = (data, hash, txn) => {
     });
 }
 
+exports.bookingAcknowledegment = (data,hash) => {
+    let csrf = {
+        key: localStorage.getItem(config.csrfTokenNameKey),
+        token: localStorage.getItem(config.csrfTokenName + 
+            localStorage.getItem(config.csrfTokenNameKey))
+    };
+
+    return new Promise((resolve,reject)=>{
+        const ackReq = new XMLHttpRequest();
+        ackReq.open('POST', '/_register/ack/', true)
+        ackReq.setRequestHeader('Content-Type', 'application/json');
+        ackReq.send(JSON.stringify({data: data, checksum: hash, csrf: csrf}))
+    
+        ackReq.onreadystatechange = () => {
+            if(ackReq.readyState===4 && ackReq.status===200){
+                resolve(data.txn)
+            }
+        }
+    })
+}
 exports.ticketRegister = (data, hash, txn) => {
     let csrf = {
         key: localStorage.getItem(config.csrfTokenNameKey),

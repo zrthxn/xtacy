@@ -1,5 +1,6 @@
 const firebase = require('firebase/app');
 require('firebase/database');
+require('firebase/storage');
 require('firebase/auth');
 require('firebase/firestore');
 
@@ -13,8 +14,10 @@ exports.firebase = firebase
 const database = firebase.database()
 exports.database = database
 
+const storage = firebase.storage()
+exports.storage = storage
+
 const firestore = firebase.firestore()
-firestore.settings({ timestampsInSnapshots: true })
 exports.firestore = firestore
 
 /**
