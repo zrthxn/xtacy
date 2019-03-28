@@ -224,12 +224,12 @@ class Register extends Component {
                             {
                                 this.state.premium ? (
                                     <div>
-                                        <br/>
+                                        {/* <br/>
                                         <br/>
                                         <p><b>Step 1</b>: Pay INR 154.45 using Google Pay or PhonePe to <b>8173824682</b> (Syed Mohammad Mehdi Rizvi)</p>
                                         <br/><p><b>Step 2</b>: Fill this form and upload a screenshot of the confirmation page.</p><br/>
                                         <p><b>Step 3</b>: We will verify your payment and send you a confirmation email within 2 hours.</p><br/>
-                                        <b>YOU NEED TO MAKE SEPERATE REGISTRATIONS FOR EACH INDIVIDUAL i.e. ONE PAYMENT FOR ONE REGISTRATION</b><br/>
+                                        <b>YOU NEED TO MAKE SEPERATE REGISTRATIONS FOR EACH INDIVIDUAL i.e. ONE PAYMENT FOR ONE REGISTRATION</b><br/> */}
                                     </div>
                                 ) : (
                                     console.log()
@@ -264,12 +264,12 @@ class Register extends Component {
                                                 <h3>{'Total \u20B9 ' + 154.54}</h3>
                                                 <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                                                 
-                                                <p>Sample Screenshot</p>
-                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/>
-
+                                                {/* <p>Sample Screenshot</p>
+                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/> */}
+                                                <b>REGISTRATIONS ARE CURRENTLY DISABLED</b>
                                             {/*    <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
                                                 
-                                                <CustomUploadButton
+                                                {/* <CustomUploadButton
                                                     className="button solid"
                                                     accept="image/*"
                                                     filename = { file => this.state.txn + file.name.split('.')[1]}
@@ -279,15 +279,15 @@ class Register extends Component {
                                                     onUploadSuccess={this.action.bind(this)}
                                                     style={{color: 'white', padding: 10}} >
                                                     Upload and Proceed
-                                                </CustomUploadButton>
-                                                {
+                                                </CustomUploadButton> */}
+                                                {/* {
                                                     this.state.uploading ? (
                                                         <h3> Uploading... </h3>
                                                     ) : (
                                                         console.log()
                                                     )
-                                                }
-                                                
+                                                } */}
+
                                             </div>
                                         ):(
                                             <div className="pricing">
