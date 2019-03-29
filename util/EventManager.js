@@ -28,25 +28,25 @@ exports.acknowledgement = (data) => {
                     ]
                 }
             ])
-            // .then(()=>{
-            //         Gmailer.SingleDataDelivery(
-            //             {
-            //                 to: data.regEmail,
-            //                 from: 'hello@xtacy.org',
-            //                 subject: 'Registration Acknowledgment | Team Xtacy',
-            //             }, 
-            //             fs.readFileSync('./mail/templates/regAcknowledgment.html').toString(),
-            //             [
-            //                 { id: 'regName', data: data.regName },
-            //                 { id: 'ack', data: data.txn }
-            //             ]
-            //         ).then(()=>{
-            //             console.log('New Registration, needs verification', data.txn)
-            //             resolve(data.txn)
-            //         })                  
-            // }).catch((err)=>{
-            //     reject(err)
-            // })
+            .then(()=>{
+                    Gmailer.SingleDataDelivery(
+                        {
+                            to: data.regEmail,
+                            from: 'hello@xtacy.org',
+                            subject: 'Registration Acknowledgment | Team Xtacy',
+                        }, 
+                        fs.readFileSync('./mail/templates/regAcknowledgment.html').toString(),
+                        [
+                            { id: 'regName', data: data.regName },
+                            { id: 'ack', data: data.txn }
+                        ]
+                    ).then(()=>{
+                        console.log('New Registration, needs verification', data.txn)
+                        resolve(data.txn)
+                    })                  
+            }).catch((err)=>{
+                reject(err)
+            })
         })
     })
 }
