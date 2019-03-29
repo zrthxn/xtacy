@@ -78,7 +78,7 @@ exports.generalRegister = (data) => {
                     Gmailer.SingleDataDelivery(
                         {
                             to: data.regEmail,
-                            from: 'hello@xtacy.org',
+                            from: 'mailer.xtacy@gmail.com',
                             subject: 'Registration Confirmation | Team Xtacy',
                         }, 
                         fs.readFileSync('./mail/templates/generalRegConfirmation.html').toString(),
