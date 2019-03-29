@@ -258,7 +258,7 @@ class Register extends Component {
                                         )
                                     }
                                     {
-                                        this.state.premium?(
+                                        this.state.premium ? (
                                             <div className="pricing"> 
                                                 {/* <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
                                                 <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
@@ -268,7 +268,24 @@ class Register extends Component {
                                                 <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/> */}
                                                 <b>REGISTRATIONS HAVE BEEN CLOSED</b><br/>
                                                 <b>Thanks for the overwhelming response</b>
-                                               {/* <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
+
+                                                All those who paid and got an acknowledgement number will recieve a confirmation email.
+                                                In case you have paid  and didn't recieve an email with a barcode, you 
+                                                can get entry by showing us your payment SMS or email from your bank or from the payment app.<br/>
+                                                <br/><br/>
+                                                Entry will start at 6:30pm on 30th March. Please reach by 5:00pm sharp.<br/>
+                                                The venue for the event is Open Air Theatre (Amphitheater), Gate No. 13, Jamia Millia Islamia.<br/><br/>
+                                                <br/><br/>
+
+                                                <b>Rules</b>
+                                                <ol>
+                                                    <li><b>Strictly no videography of any kind.</b> This is a request from Kunal himself</li>
+                                                    <li>Large bags and backpacks are not allowed.</li>
+                                                    <li>Liquids and eatables are not allowed.</li>
+                                                </ol>
+                                                
+                                                
+                                                {/* <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
                                                 
                                                 {/* <CustomUploadButton
                                                     className="button solid"
@@ -290,7 +307,7 @@ class Register extends Component {
                                                 } */}
 
                                             </div>
-                                        ):(
+                                        ) : (
                                             <div className="pricing">
                                                 <br /><br /><br />
                                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
