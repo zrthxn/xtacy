@@ -224,12 +224,12 @@ class Register extends Component {
                             {
                                 this.state.premium ? (
                                     <div>
-                                        <br/>
+                                        {/* <br/>
                                         <br/>
                                         <p><b>Step 1</b>: Pay {'\u20B9 '+Booking.calcTaxInclAmount(this.state.data.amount)} using Google Pay or PhonePe to <b>8173824682</b> (Syed Mohammad Mehdi Rizvi)</p>
                                         <br/><p><b>Step 2</b>: Fill this form and upload a screenshot of the confirmation page.</p><br/>
                                         <p><b>Step 3</b>: We will verify your payment and send you a confirmation email within 2 hours.</p><br/>
-                                        <b>YOU NEED TO MAKE SEPERATE REGISTRATIONS FOR EACH INDIVIDUAL i.e. ONE PAYMENT FOR ONE REGISTRATION</b><br/>
+                                        <b>YOU NEED TO MAKE SEPERATE REGISTRATIONS FOR EACH INDIVIDUAL i.e. ONE PAYMENT FOR ONE REGISTRATION</b><br/> */}
                                     </div>
                                 ) : (
                                     console.log()
@@ -258,19 +258,36 @@ class Register extends Component {
                                         )
                                     }
                                     {
-                                        this.state.premium?(
+                                        this.state.premium ? (
                                             <div className="pricing"> 
-                                                <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
+                                                {/* <p id="trP">{'\u20B9 ' + this.state.data.amount +' per person'}</p>
                                                 <h3>{'Total \u20B9 ' + Booking.calcTaxInclAmount(this.state.data.amount)}</h3>
                                                 <p id="tax"><i>Incl. of 18% GST and 2.5% fees</i></p>
                                                 
                                                 <p>Sample Screenshot</p>
-                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/>
-                                                {/* <b>REGISTRATIONS HAVE BEEN CLOSED</b><br/>
-                                                <b>Thanks for the overwhelming response</b> */}
-                                               {/* <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
+                                                <img id="SamplePay" src="/static/img/Sample.jpeg" width="200px" alt="Sample"/> */}
+                                                <b>REGISTRATIONS HAVE BEEN CLOSED</b><br/>
+                                                <b>Thanks for the overwhelming response</b>
+
+                                                All those who paid and got an acknowledgement number will recieve a confirmation email.
+                                                In case you have paid  and didn't recieve an email with a barcode, you 
+                                                can get entry by showing us your payment SMS or email from your bank or from the payment app.<br/>
+                                                <br/><br/>
+                                                Entry will start at 6:30pm on 30th March. Please reach by 5:00pm sharp.<br/>
+                                                The venue for the event is Open Air Theatre (Amphitheater), Gate No. 13, Jamia Millia Islamia.<br/><br/>
+                                                <br/><br/>
+
+                                                <b>Rules</b>
+                                                <ol>
+                                                    <li><b>Strictly no videography of any kind.</b> This is a request from Kunal himself</li>
+                                                    <li>Large bags and backpacks are not allowed.</li>
+                                                    <li>Liquids and eatables are not allowed.</li>
+                                                </ol>
                                                 
-                                                <CustomUploadButton
+                                                
+                                                {/* <button className="button solid" id="reg" onClick={ this.action.bind(this) }>PROCEED</button> */}
+                                                
+                                                {/* <CustomUploadButton
                                                     className="button solid"
                                                     accept="image/*"
                                                     filename = { file => this.state.txn + file.name.split('.')[1]}
@@ -287,10 +304,10 @@ class Register extends Component {
                                                     ) : (
                                                         console.log()
                                                     )
-                                                }
+                                                } */}
 
                                             </div>
-                                        ):(
+                                        ) : (
                                             <div className="pricing">
                                                 <br /><br /><br />
                                                 <button className="button solid" id="reg" onClick={ this.action.bind(this) }>REGISTER</button>
