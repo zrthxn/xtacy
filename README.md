@@ -1,5 +1,6 @@
 # XTACY Website
-### v0.1.3 Beta
+### v1.0.1 Stable
+[![HitCount](http://hits.dwyl.io/zrthxn/touchjs.svg)](http://hits.dwyl.io/zrthxn/touchjs)
 
 ### How to Run
 1. Install Node (from nodejs.org).
