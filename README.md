@@ -1,6 +1,6 @@
 # XTACY Website
 ### v1.0.1 Stable
-[![HitCount](http://hits.dwyl.io/zrthxn/touchjs.svg)](http://hits.dwyl.io/zrthxn/touchjs)
+[![HitCount](http://hits.dwyl.io/zrthxn/xtacy.svg)](http://hits.dwyl.io/zrthxn/xtacy)
 
 ### How to Run
 1. Install Node (from nodejs.org).
