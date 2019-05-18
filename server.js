@@ -169,7 +169,7 @@ homepage.use(function(req, res, next) {
 homepage.get('/_secu/csrtoken/', (req,res)=>{
     // == Webpage CSRF Token Generation == //
     if(req.headers.host.match(/xtacy[.]org*/i)) {
-        Security.generateCSRFTokens()
+        Security.generateCSRFTokens(req)
             .then((result)=>{
                 res.json({ key : result.key, token : result.token })
             }).catch((error)=>{
