@@ -31,11 +31,14 @@ exports.validateCSRFTokens = (key, token) => {
     })
 }
 
-exports.generateCSRFTokens = () => {
+exports.generateCSRFTokens = (req) => {
     var key = generateTokenKey(12)
     var token = crypto.createHmac('sha256', ServerConfig.clientKey).update(key).digest('hex')
     return new Promise((resolve,reject)=>{
         database.ref('csrf-tokens/' + key).set({
+            "ip": req.ip,
+            "userAgent": "// TODO //",
+            "etc": "// TODO //",
             "token": token,
             "valTime": (new Date()).getTime()
         }).then(()=>{
