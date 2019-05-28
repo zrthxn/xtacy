@@ -159,11 +159,11 @@ homepage.get('/event/:eventId/promo/', (req,res)=>{
 
 // // --------------------------
 // Remove for production build
-homepage.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+// homepage.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
 // // --------------------------
 
 homepage.get('/_secu/csrtoken/', (req,res)=>{
