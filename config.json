@@ -30,7 +30,7 @@
       "AUTH_TOKEN": "Tbq1kW7kpBoawenCEp/+SlDb9/U0AzjNJxRgIXjsPKM=",
       "SURL": "http://xtacy.org:3000/_payment/success",
       "FURL": "http://xtacy.org:3000/_payment/failure"
-    }, 
+    },
     "production": {
       "URI":"https://secure.payu.in/_payment",
       "API_KEY": "jBbKdkeu",
