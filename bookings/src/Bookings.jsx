@@ -38,44 +38,44 @@ class Bookings extends Component {
 
     componentDidMount() {
         // DEBUG ======================================== //
-        // let params = this.getParams(window.location)
-        // if (params.intent==='gen') params.event = 'any'
-        // this.setState({
-        //     intent: params.intent,
-        //     event: params.event,
-        //     ref: params.ref,
-        //     verified: true
-        // })
+        let params = this.getParams(window.location)
+        if (params.intent==='gen') params.event = 'any'
+        this.setState({
+            intent: params.intent,
+            event: params.event,
+            ref: params.ref,
+            verified: true
+        })
         // ---------------------------------------------- //
-        Secu.validateToken().then((result)=>{
-            if (result==='CSR_TOKEN_VALID' || result==='CSR_TOKEN_GEN' || result==='CSR_TOKEN_GEN' ||
-                    result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
-                console.log('SR Tokens Verified')
-                Secu.generateSecurityFluff(4);
+        // Secu.validateToken().then((result)=>{
+        //     if (result==='CSR_TOKEN_VALID' || result==='CSR_TOKEN_GEN' || result==='CSR_TOKEN_GEN' ||
+        //             result==='CSR_TOKEN_RENEW' || result==='CSR_TIME_VALID') {
+        //         console.log('SR Tokens Verified')
+        //         Secu.generateSecurityFluff(4);
                 
-                let params = this.getParams(window.location), verified = false, hashSequence, hash
-                let returnKey = localStorage.getItem('x-return-key')
-                let returnPayToken = localStorage.getItem('x-return-pay-token')
-                let returnTxnId = localStorage.getItem('x-txn-id')
-                if(returnKey==='PAY_INITIALIZE' || returnKey===null) {
-                    if (params.intent==='gen') params.event = 'any'
-                    hashSequence = params.intent + config.clientKey + params.event
-                    hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
-                    if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
-                } else if(returnPayToken===crypto.createHmac('sha512', config.clientKey).update(returnKey + returnTxnId).digest('hex')) {
-                    verified = true
-                }
-                this.setState({
-                    intent: params.intent,
-                    event: params.event,
-                    hash: hash,
-                    ref: params.ref,
-                    verified: verified
-                }, () => {console.log()})
-            }
-        }).catch((err)=>{
-            console.error(err)
-        });
+        //         let params = this.getParams(window.location), verified = false, hashSequence, hash
+        //         let returnKey = localStorage.getItem('x-return-key')
+        //         let returnPayToken = localStorage.getItem('x-return-pay-token')
+        //         let returnTxnId = localStorage.getItem('x-txn-id')
+        //         if(returnKey==='PAY_INITIALIZE' || returnKey===null) {
+        //             if (params.intent==='gen') params.event = 'any'
+        //             hashSequence = params.intent + config.clientKey + params.event
+        //             hash = crypto.createHash('sha256').update(hashSequence).digest('hex')
+        //             if ( sessionStorage.getItem(config.hashToken) === hash ) verified = true
+        //         } else if(returnPayToken===crypto.createHmac('sha512', config.clientKey).update(returnKey + returnTxnId).digest('hex')) {
+        //             verified = true
+        //         }
+        //         this.setState({
+        //             intent: params.intent,
+        //             event: params.event,
+        //             hash: hash,
+        //             ref: params.ref,
+        //             verified: verified
+        //         }, () => {console.log()})
+        //     }
+        // }).catch((err)=>{
+        //     console.error(err)
+        // });
         // ============================================== //
     }
     
