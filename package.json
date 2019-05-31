@@ -2,10 +2,10 @@
   "name": "xtacy",
   "version": "0.1.3",
   "description": "",
-  "main": "server.js",
+  "main": "xtacy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node xtacy.js"
   },
   "author": "",
   "license": "ISC",
